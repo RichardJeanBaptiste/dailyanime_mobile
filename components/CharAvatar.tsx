@@ -23,14 +23,14 @@ export default function CharAvatar({name, item} : {name: string, item: any}){
                 <QuoteModal currentQuote={item} modalVisible={modalVisible} setVisible={setVisible}/>
                 <Pressable onPress={setVisible} style={{ width: 'auto', alignItems: 'center', justifyContent: 'center' }}>
                     <Image 
-                        style={{ width: screenDimesions * .25, height: screenDimesions * .25, borderRadius: 62.5 }}
+                        style={{ width: screenDimesions * .20, height: screenDimesions * .20, borderRadius: 62.5 }}
                         source={{
                             uri: item.img_links[0]
                         }}
                         contentFit="cover"
                         contentPosition={"center"}
                     />
-                    <Text style={{ marginTop: '10%', paddingBottom: '2%', color: 'white'}}>{item.name}</Text>
+                    <Text style={{ marginTop: '10%', paddingBottom: '2%', color: 'white', width: screenDimesions * .25, textAlign: 'center'}}>{item.name}</Text>
                 </Pressable>
             </View>
         </QuoteProvider>

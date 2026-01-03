@@ -84,19 +84,6 @@ export default function CharQuery() {
         
     }
 
-    const cycleImages = () => {
-
-        console.log(`Image Error: ${currentQuote.img_links[imageUriIndex]}`)
-
-        setImageUriIndex( imageUriIndex + 1)
-
-        if(imageUriIndex > currentQuote.img_links.length) {
-            console.log("No Images");
-        }
-    }
-
-
-
     const panResponder = useMemo(() => {
     
             const nextQuote = () => {
@@ -113,7 +100,7 @@ export default function CharQuery() {
             const prevQuote = () => {
                 let index = logIndex - 1;
 
-                if(index <= 0) {
+                if(index < 0) {
                     console.log("Start of Array")
                     return
                 } else {

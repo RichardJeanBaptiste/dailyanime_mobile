@@ -38,7 +38,7 @@ export default function Characters(){
                 contentContainerStyle={{ 
                     paddingHorizontal: 10, 
                     paddingBottom: 30,
-                    width: '80%', 
+                    width: '100%', 
                 }}
                 columnWrapperStyle={{ 
                     gap: 16, 
