@@ -120,6 +120,43 @@ export default function RootLayout() {
           headerTintColor: 'white'
         }}
       />
+
+      <Drawer.Screen
+        name="privacy"
+        options={{
+          drawerLabel: '',
+          drawerLabelStyle: {
+            color: 'white'
+          },
+          drawerItemStyle: {
+            display: 'none'
+          },
+          title: '',
+          headerStyle: {
+            backgroundColor: '#25292e'
+          },
+          headerTintColor: 'white'
+        }}
+      />
+
+      <Drawer.Screen
+        name="terms"
+        options={{
+          drawerLabel: '',
+          drawerLabelStyle: {
+            color: 'white'
+          },
+          drawerItemStyle: {
+            display: 'none'
+          },
+          title: '',
+          headerStyle: {
+            backgroundColor: '#25292e'
+          },
+          headerTintColor: 'white'
+        }}
+      />
+
     </Drawer>
   )
 }

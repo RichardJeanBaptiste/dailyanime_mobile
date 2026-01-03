@@ -1,11 +1,15 @@
 import { Image } from 'expo-image';
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
 export default function About() {
+
+    const router = useRouter();
+
     return (
         <ScrollView
             contentContainerStyle= {{
@@ -53,10 +57,16 @@ export default function About() {
                     <View style={styles.about_items}>
                         <Text style={[styles.text1]}>FAQs</Text>
                     </View>
+                    
+                    <Pressable onPress={() => router.push('/privacy')}>
+                        <Text style={[styles.text1, styles.about_items, {marginTop: '-2%'}]}>Privacy Policy</Text>
+                    </Pressable>
+                    
 
-                    <Text style={[styles.text1, styles.about_items, {marginTop: '-2%'}]}>Privacy Policy</Text>
-
-                    <Text style={[styles.text1, styles.about_items, {marginTop: '-2%'}]}>Terms & Conditions</Text>
+                    <Pressable onPress={() => router.push('/terms')}>
+                        <Text style={[styles.text1, styles.about_items, {marginTop: '-2%'}]}>Terms & Conditions</Text>
+                    </Pressable>
+                    
                     
                 </View>
             </View>
