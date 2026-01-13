@@ -6,9 +6,9 @@ export default {
         name: "dailyanime",
         slug: "dailyanime",
         owner: "richinbk",
-        version: "1.0.0", // Ensure you have a version
+        version: "1.0.0", 
         orientation: "portrait",
-        icon: "./assets/images/icon.png", // Ensure this path is correct
+        icon: "./assets/images/icon.png", 
         userInterfaceStyle: "light",
         scheme: "dailyanime",
         userInterfaceStyle: "automatic",
@@ -21,7 +21,7 @@ export default {
             }
         },
         android: {
-            package: "com.richinbk.dailyanime", // <--- ADD THIS LINE
+            package: "com.richinbk.dailyanime", 
             adaptiveIcon: {
                 backgroundColor: "#E6F4FE",
                 foregroundImage: "./assets/images/android-icon-foreground.png",
@@ -31,7 +31,7 @@ export default {
             edgeToEdgeEnabled: true,
             predictiveBackGestureEnabled: false,
             package: "com.company.dailyanime",
-            googleServicesFile: "google-services.json"
+            googleServicesFile: process.env.GOOGLE_SERVICES_FILE ?? './google-services.json'
         },
         plugins: [
             "expo-router",

@@ -4,8 +4,9 @@ import Constants from 'expo-constants';
 import 'react-native-url-polyfill/auto';
 
 
-const supabaseUrl = Constants.expoConfig.extra.supabaseUrl;
-const supabaseKey = Constants.expoConfig.extra.supabaseAnonKey;
+const supabaseUrl = Constants.expoConfig.extra.supabaseUrl ?? '';
+const supabaseKey = Constants.expoConfig.extra.supabaseAnonKey ?? '';
+
 
 export const supabase = createClient(
   supabaseUrl,
