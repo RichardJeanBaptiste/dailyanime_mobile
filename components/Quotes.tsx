@@ -1,5 +1,6 @@
 import { supabase } from "@/utils";
 import { Image } from "expo-image";
+import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { QuoteLogItem } from "./Interfaces";
@@ -33,6 +34,64 @@ export default function Quotes() {
 
     useEffect(() => {
         getQuote();
+
+        async function setupNotifications() {
+            // Optional: Cancel all previous notifications to avoid duplicates
+            await Notifications.cancelAllScheduledNotificationsAsync();
+
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Daily Check-in",
+                    body: "Time to open the app!",
+                },
+                trigger: {
+                    type: Notifications.SchedulableTriggerInputTypes.DAILY,
+                    hour: 11, 
+                    minute: 21,
+                },
+            });
+        }
+
+        const getSubQuote = async () => {
+            const { data, error } = await supabase.rpc('get_multiples');
+
+            let x = {
+                name: data[logIndex].name || '',
+                anime: data[logIndex].anime || '',
+                img_links: data[logIndex].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
+                quote: data[logIndex].quote || '',
+                biography: data[logIndex].biography || '',
+                wiki: data[logIndex].wiki || '' 
+            }
+
+            return x;
+        }
+
+        const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+            // This is your "callback" logic
+            console.log("User clicked the notification!");            
+             
+            // Example: Check which notification was clicked
+            const title = response.notification.request.content.title;
+            if (title === "Daily Check-in") {
+                // Navigate to a specific screen or perform an action
+                console.log("Navigating to Check-in screen...");
+
+            //     getSubQuote().then(quoteData => {
+            //         // This runs once the Supabase data is fetched
+            //         console.log(quoteData);
+            //         setCurrentQuote(quoteData); 
+                
+            //         // If you use navigation, you might put it here or outside
+            //         // navigation.navigate('QuoteDetail', { data: quoteData });
+            //     }).catch(err => {
+            //         console.error("Error fetching sub quote:", err);
+            //     });
+            }
+        });
+
+        setupNotifications();
+        return () => subscription.remove();
     },[]);
 
     useEffect(() => {
@@ -137,12 +196,12 @@ export default function Quotes() {
             setQuoteLog(prevLog => [...prevLog, ...data]) 
 
             setCurrentQuote({
-                name: data[0].name || '',
-                anime: data[0].anime || '',
-                img_links: data[0].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
-                quote: data[0].quote || '',
-                biography: data[0].biography || '',
-                wiki: data[0].wiki || ''
+                name: data[logIndex].name || '',
+                anime: data[logIndex].anime || '',
+                img_links: data[logIndex].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
+                quote: data[logIndex].quote || '',
+                biography: data[logIndex].biography || '',
+                wiki: data[logIndex].wiki || ''
             })
         }
     }

@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from "react";
-import { Button, Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -40,39 +40,16 @@ export default function Index() {
       notificationListener.remove();
       responseListener.remove();
     };
+
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ color: 'white'}}>Title: {notification && notification.request.content.title} </Text>
-        <Text style={{ color: 'white'}}>Body: {notification && notification.request.content.body}</Text>
-        <Text style={{ color: 'white'}}>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-      </View>
-      <Button
-        title="Press to schedule a notification"
-        onPress={async () => {
-          await schedulePushNotification();
-        }}
-      />
       <Quotes/>
     </View>
   );
 }
 
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: 'Here is the notification body',
-      data: { data: 'goes here', test: { test1: 'more data' } },
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: 2,
-    },
-  });
-}
 
 async function registerForPushNotificationsAsync() {
   let token;
@@ -129,5 +106,3 @@ const styles = StyleSheet.create({
   }
 });
 
-
-/// <Text style={{ color: 'white' }}>{expoPushToken}</Text>
