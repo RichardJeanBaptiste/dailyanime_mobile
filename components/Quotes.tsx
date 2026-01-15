@@ -35,14 +35,40 @@ export default function Quotes() {
     useEffect(() => {
         getQuote();
 
+
+        const getSubQuote = async () => {
+            const { data, error } = await supabase.rpc('get_multiples');
+
+            if(error) {
+                console.log('supabase error with subscription', error);
+            }
+
+            console.log("Current Sub Quote\n===============================\n",data);
+
+            let x = {
+                name: data[0].name || '',
+                anime: data[0].anime || '',
+                img_links: data[0].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
+                quote: data[0].quote || '',
+                biography: data[0].biography || '',
+                wiki: data[0].wiki || '' 
+            }
+
+            setQuoteLog((prevLog) => [x, ...prevLog]);
+
+            return x;
+        }
+
         async function setupNotifications() {
+
+            
             // Optional: Cancel all previous notifications to avoid duplicates
             await Notifications.cancelAllScheduledNotificationsAsync();
 
             await Notifications.scheduleNotificationAsync({
                 content: {
-                    title: "Daily Check-in",
-                    body: "Time to open the app!",
+                    title: (await getSubQuote()).name,
+                    body: (await getSubQuote()).quote,
                 },
                 trigger: {
                     type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -51,22 +77,7 @@ export default function Quotes() {
                 },
             });
         }
-
-        const getSubQuote = async () => {
-            const { data, error } = await supabase.rpc('get_multiples');
-
-            let x = {
-                name: data[logIndex].name || '',
-                anime: data[logIndex].anime || '',
-                img_links: data[logIndex].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
-                quote: data[logIndex].quote || '',
-                biography: data[logIndex].biography || '',
-                wiki: data[logIndex].wiki || '' 
-            }
-
-            return x;
-        }
-
+        
         const subscription = Notifications.addNotificationResponseReceivedListener(response => {
             // This is your "callback" logic
             console.log("User clicked the notification!");            
@@ -77,16 +88,16 @@ export default function Quotes() {
                 // Navigate to a specific screen or perform an action
                 console.log("Navigating to Check-in screen...");
 
-            //     getSubQuote().then(quoteData => {
-            //         // This runs once the Supabase data is fetched
-            //         console.log(quoteData);
-            //         setCurrentQuote(quoteData); 
+                // getSubQuote().then(quoteData => {
+                //     // This runs once the Supabase data is fetched
+                //     console.log(quoteData);
+                //     setCurrentQuote(quoteData); 
                 
-            //         // If you use navigation, you might put it here or outside
-            //         // navigation.navigate('QuoteDetail', { data: quoteData });
-            //     }).catch(err => {
-            //         console.error("Error fetching sub quote:", err);
-            //     });
+                //     // If you use navigation, you might put it here or outside
+                //     // navigation.navigate('QuoteDetail', { data: quoteData });
+                // }).catch(err => {
+                //     console.error("Error fetching sub quote:", err);
+                // });
             }
         });
 
@@ -190,7 +201,7 @@ export default function Quotes() {
         const { data, error } = await supabase.rpc('get_multiples')
 
         if(error) {
-            console.error('RPC Error:' , error)
+            console.log('RPC Error:' , error)
         } else {
             
             setQuoteLog(prevLog => [...prevLog, ...data]) 
