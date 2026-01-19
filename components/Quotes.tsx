@@ -1,4 +1,5 @@
 import { supabase } from "@/utils";
+import * as RNFS from '@dr.pogodin/react-native-fs';
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useState } from 'react';
@@ -31,11 +32,42 @@ export default function Quotes() {
 
     const [logIndex, setLogIndex] = useState(0);
 
+    const [data, setAppData] = useState<any>();
+
+    const loadJsonFile = async () => {
+        const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
+    try {
+      // 1. Check if the file exists first to avoid errors
+      const exists = await RNFS.exists(filePath);
+      
+      if (exists) {
+        // 2. Read the file as a string
+        const content = await RNFS.readFile(filePath, 'utf8');
+        
+        // 3. Parse the string back into a JSON object
+       const jsonObject = JSON.parse(JSON.parse(content));
+
+        //console.log(jsonObject);
+        // 4. Update state
+        setAppData(jsonObject);
+        console.log('Data loaded successfully');
+      } else {
+        console.log('No saved file found');
+      }
+    } catch (error) {
+      console.error('Error reading file:', error);
+      //Alert.alert("Error", "Could not read data file.");
+    }
+  };
+
 
     useEffect(() => {
+
+        loadJsonFile();
+
         getQuote();
 
-
+        
         const getSubQuote = async () => {
             const { data, error } = await supabase.rpc('get_multiples');
 
@@ -287,6 +319,8 @@ export default function Quotes() {
                 {/********************** Quotes **************************/}
                 
                 <View style={styles.quotes}>
+
+                    <Text onPress={() => console.log(data[0])} style={{ color: 'white', fontSize: 24}}>Test Data</Text>
                     {/* FULL SWIPE AREA */}
                         <View
                             style={{ flex: 1, width: '100%', height: '100%' }}

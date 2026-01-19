@@ -1,7 +1,7 @@
+import * as RNFS from '@dr.pogodin/react-native-fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, processLock } from '@supabase/supabase-js';
 import Constants from 'expo-constants';
-import * as SQLite from 'expo-sqlite';
 import 'react-native-url-polyfill/auto';
 
 
@@ -22,6 +22,32 @@ export const supabase = createClient(
     },
 })
 
+const saveJsonFile = async (jsonObject) => {
+  // Define the file name and path
+  const fileName = 'user_data.json';
+  const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+
+  
+  try {
+    // Convert object to string (with 2-space indentation for readability)
+    const jsonString = JSON.stringify(jsonObject, null, 2);
+
+    //console.log(jsonString);
+
+    // Write the file
+    // Note: The Pogodin fork handles the 'utf8' encoding similarly
+    await RNFS.writeFile(path, jsonString, 'utf8');
+    
+    console.log(`Success! File saved at: ${path}`);
+    return path;
+  } catch (error) {
+    console.error('Failed to write JSON file:', error);
+    throw error;
+  }
+};
+
+
+
 const exportTable = async () => {
   const { data , error } = await supabase.rpc('get_quotes_json');
 
@@ -32,49 +58,20 @@ const exportTable = async () => {
 
   const json = JSON.stringify(data, null, 2);
 
-  ///console.log(`======================================== JSON =============================\n\n${json}`);
+  saveJsonFile(json);
 
   return json;
 }
 
-let jsonDump = exportTable();
+exportTable();
 
-const saveJsonToDbAsync = async (jsonDump) => {
-  const db = await SQLite.openDatabaseAsync('anime_quotes.db');
 
-  try {
-    
-    await db.execAsync(`
-      CREATE TABLE IF NOT EXISTS quotes (
-          id INTEGER PRIMARY KEY,
-          quote TEXT,
-          character TEXT,
-      );
-    `);
 
-    await db.withTransactionAsync(async () => {
-        const statement = await db.prepareAsync(
-          'INSERT OR REPLACE INTO quotes (id, quote, character) VALUES (?, ?, ?, ?)'
-        );
 
-        try {
 
-          for (const item of jsonDump) {
-            await statement.executeAsync([
-                item.id,
-                item.quote,
-                item.character
-            ]);
-          }
 
-        } finally {
-          await statement.finalizeAsync();
-        }
-    });
 
-    console.log("Write Complete");
-  } catch (error) {
-    console.error("Async write failed: ", error);
-  }
-}
+
+
+
       
