@@ -43,7 +43,7 @@ export default function Quotes() {
                 console.log('supabase error with subscription', error);
             }
 
-            console.log("Current Sub Quote\n===============================\n",data);
+            //console.log("Current Sub Quote\n===============================\n",data);
 
             let x = {
                 name: data[0].name || '',
