@@ -1,10 +1,9 @@
-import { supabase } from "@/utils";
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
-import { QuoteLogItem } from "./Interfaces";
+import { QuoteLogItem2 } from "./Interfaces";
 import QuoteButtons from "./QuoteButtons";
 import { QuoteProvider } from "./QuoteContext";
 import QuoteModal from "./QuoteModal";
@@ -15,85 +14,75 @@ const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 
 export default function Quotes() {
 
-    const [currentQuote, setCurrentQuote] = useState({
-        name: '',
-        anime: '',
-        img_links: [],
-        quote: '',
-        biography: '',
-        wiki: ''
-    });
-
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [quoteLog, setQuoteLog] = useState<QuoteLogItem[]>([]);
+    const [data, setAppData] = useState<QuoteLogItem2[]>([]);
 
-    const [logIndex, setLogIndex] = useState(0);
+    const [displayIndex, setDisplayIndex] = useState(0);
 
-    const [data, setAppData] = useState<any>();
+    const [currentQuote, setCurrentQuote] = useState({
+        name: data?.[displayIndex]?.char_name ,
+        anime: data?.[displayIndex]?.anime || '',
+        img_links: data?.[displayIndex]?.img_links || [],
+        quote: data?.[displayIndex]?.quote || '',
+        biography: data?.[displayIndex]?.biography || '',
+        wiki: data?.[displayIndex]?.wiki || ''
+    });
+
+    const [ quoteLog, setQuoteLog ] = useState<Number[]>([]);
 
     const loadJsonFile = async () => {
         const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
     try {
-      // 1. Check if the file exists first to avoid errors
       const exists = await RNFS.exists(filePath);
       
       if (exists) {
         // 2. Read the file as a string
         const content = await RNFS.readFile(filePath, 'utf8');
         
-        // 3. Parse the string back into a JSON object
-       const jsonObject = JSON.parse(JSON.parse(content));
-
-        //console.log(jsonObject);
-        // 4. Update state
+        const jsonObject = JSON.parse(JSON.parse(content));
+        
         setAppData(jsonObject);
+
+        const randomIndex = Math.floor(Math.random() * (jsonObject.length - 0 + 1)) + 0;
+
+        console.log(randomIndex);
+
         console.log('Data loaded successfully');
       } else {
         console.log('No saved file found');
       }
     } catch (error) {
-      console.error('Error reading file:', error);
-      //Alert.alert("Error", "Could not read data file.");
+        console.error('Error reading file:', error);
     }
   };
 
 
     useEffect(() => {
 
+
         loadJsonFile();
-
-        getQuote();
-
         
         const getSubQuote = async () => {
-            const { data, error } = await supabase.rpc('get_multiples');
-
-            if(error) {
-                console.log('supabase error with subscription', error);
-            }
-
-            //console.log("Current Sub Quote\n===============================\n",data);
-
+          
             let x = {
-                name: data[0].name || '',
-                anime: data[0].anime || '',
-                img_links: data[0].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
-                quote: data[0].quote || '',
-                biography: data[0].biography || '',
-                wiki: data[0].wiki || '' 
+                name: data?.[displayIndex]?.char_name ,
+                anime: data?.[displayIndex]?.anime || '',
+                img_links: data?.[displayIndex]?.img_links || [],
+                quote: data?.[displayIndex]?.quote || '',
+                biography: data?.[displayIndex]?.biography || '',
+                wiki: data?.[displayIndex]?.wiki || ''
             }
 
-            setQuoteLog((prevLog) => [x, ...prevLog]);
+            //setQuoteLog((prevLog) => [x, ...prevLog]);
 
             return x;
         }
 
         async function setupNotifications() {
 
-            
             // Optional: Cancel all previous notifications to avoid duplicates
             await Notifications.cancelAllScheduledNotificationsAsync();
 
@@ -137,69 +126,38 @@ export default function Quotes() {
         return () => subscription.remove();
     },[]);
 
-    useEffect(() => {
-
-        if (quoteLog.length > 0) {
-            const index = quoteLog.length - 1; 
-            const selectedQuote = quoteLog[index];
-
-            setCurrentQuote({
-                name: selectedQuote.name || '',
-                anime: selectedQuote.anime || '',
-                img_links: selectedQuote.img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
-                quote: selectedQuote.quote || '',
-                biography: selectedQuote.biography || '',
-                wiki: selectedQuote.wiki || ''
-            });
-        }
-
-    },[quoteLog]);
-
     
 
     const panResponder = useMemo(() => {
 
         const nextQuote = () => {
-        
-            let index = logIndex + 1;
 
+            setDisplayIndex(prevIndex => {
+                const nextIndex = prevIndex + 1;
 
-            if (index >= quoteLog.length) {
-                console.log("End of array")
-                addMoreQuotes();
-                return
-            }
+                if(nextIndex >= data.length) {
+                    console.log("End of array");
+                    return prevIndex;
+                }
 
-            setCurrentQuote({
-                name: quoteLog[index].name || '',
-                anime: quoteLog[index].anime || '',
-                img_links: quoteLog[index].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
-                quote: quoteLog[index].quote || '',
-                biography: quoteLog[index].biography || '',
-                wiki: quoteLog[index].wiki || ''
+                return nextIndex;
             });
-
-            setLogIndex(index);
+        
         }
 
         const previousQuote = () => {
 
-            let index = logIndex - 1;
+            setDisplayIndex(prevIndex => {
+                
+                const nextIndex = prevIndex - 1;
 
-            if(index < 0){
-                return 
-            }
+                if( nextIndex < 0) {
+                    console.log("Start");
+                    return prevIndex;
+                }
 
-            setCurrentQuote({
-                name: quoteLog[index].name || '',
-                anime: quoteLog[index].anime || '',
-                img_links: quoteLog[index].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
-                quote: quoteLog[index].quote || '',
-                biography: quoteLog[index].biography || '',
-                wiki: quoteLog[index].wiki || ''
+                return nextIndex;
             });
-
-            setLogIndex(index)
         }
 
         return PanResponder.create({
@@ -225,49 +183,21 @@ export default function Quotes() {
             }
         });
 
-    }, [logIndex, quoteLog]);
+    }, [displayIndex]);
 
-
-    const getQuote = async () => {
-
-        const { data, error } = await supabase.rpc('get_multiples')
-
-        if(error) {
-            console.log('RPC Error:' , error)
-        } else {
-            
-            setQuoteLog(prevLog => [...prevLog, ...data]) 
-
-            setCurrentQuote({
-                name: data[logIndex].name || '',
-                anime: data[logIndex].anime || '',
-                img_links: data[logIndex].img_links || ['https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg','',''],
-                quote: data[logIndex].quote || '',
-                biography: data[logIndex].biography || '',
-                wiki: data[logIndex].wiki || ''
-            })
-        }
-    }
-
-    const addMoreQuotes = async () => {
-
-        const { data, error } = await supabase.rpc('get_multiples');
-
-        if(error) {
-            console.error('RPC Error: ', error)
-        } else {
-
-            setQuoteLog(prevLog => [...prevLog, ...data]) 
-
-        }
-    }
-
+  
 
     const cycleImages = () => {
 
         console.log(`Image Error: ${currentQuote.img_links[imageUriIndex]}`)
 
-        setImageUriIndex( imageUriIndex + 1)
+        setImageUriIndex( imageUriIndex + 1 )
+
+        setImageUriIndex( prevIndex => {
+            const newIndex = prevIndex + 1;
+
+            return newIndex;
+        })
 
         if(imageUriIndex > currentQuote.img_links.length) {
             console.log("No Images");
@@ -278,22 +208,36 @@ export default function Quotes() {
         setModalVisible(!modalVisible)
     }
 
+    const pushToFront = () => {
+        //setQuoteLog(prevArray => ['new', ...prevArray]);
+    }
+
 
     return (
         <QuoteProvider>
             <View style={styles.quotes_container}>
                 {/*********************** Modal *************************/}
-                <QuoteModal currentQuote={currentQuote} modalVisible={modalVisible} setVisible={setVisible}/>
+                <QuoteModal 
+                    currentQuote={{
+                        name: data?.[displayIndex]?.char_name,
+                        anime: data?.[displayIndex]?.anime,
+                        biography: data?.[displayIndex]?.biography,
+                        wiki: data?.[displayIndex]?.wiki,
+                        img_links: data?.[displayIndex]?.img_links || []
+                    }} 
+                    modalVisible={modalVisible} 
+                    setVisible={setVisible}
+                />
 
-                {/*********************** Title *************************/}
+                {/*************************** Title *****************************/}
                 <View style={styles.title_container}>
                         <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
                             <Pressable onPress={() => setModalVisible(true)}>
                                 {/* Only render the Image component if the URL is a non-empty string */}
-                                    {currentQuote.img_links[imageUriIndex] ? (
+                                    {data?.[displayIndex]?.img_links[imageUriIndex] ? (
                                     <Image
                                         style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={{ uri: currentQuote.img_links[imageUriIndex] }}
+                                        source={{ uri: data?.[displayIndex]?.img_links[imageUriIndex] }}
                                         cachePolicy="memory-disk"
                                         contentFit="fill"
                                         contentPosition={"bottom left"}
@@ -308,11 +252,14 @@ export default function Quotes() {
                                     />
                                 )}
                             </Pressable>
+
+                            
+                            
                         </View>
 
                         <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                            <Text style={[styles.text, {fontSize: 18}]}>{currentQuote.name}</Text>
-                            <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote.anime}</Text>
+                            <Text style={[styles.text, {fontSize: 18}]}>{data?.[displayIndex]?.char_name || ''}</Text>
+                            <Text style={[styles.text, {marginTop: '5%'} ]}>{data?.[displayIndex]?.anime || ''}</Text>
                         </View>
                 </View>
 
@@ -320,8 +267,8 @@ export default function Quotes() {
                 
                 <View style={styles.quotes}>
 
-                    <Text onPress={() => console.log(data[0])} style={{ color: 'white', fontSize: 24}}>Test Data</Text>
-                    {/* FULL SWIPE AREA */}
+                        {/***********************************  FULL SWIPE AREA *****************************************/}
+
                         <View
                             style={{ flex: 1, width: '100%', height: '100%' }}
                             pointerEvents="box-only"
@@ -330,14 +277,18 @@ export default function Quotes() {
                             <View 
                                 style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                             >
-                                <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{currentQuote.quote}</Text>
+                                <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[displayIndex]?.quote || ''}</Text>
                             </View>
                         </View>
                 </View>
 
                 {/********************** Quote Buttons ******************/}
 
-                <QuoteButtons wikiLink={currentQuote.wiki} quote={currentQuote.quote} name={currentQuote.name}/>
+                    <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '25%'}} onPress={pushToFront}>Push to front</Text>            
+                    <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '20%'}} onPress={() => console.log(quoteLog)}>Show Quote Log</Text>
+                    
+
+                <QuoteButtons wikiLink={data?.[displayIndex]?.wiki || ''} quote={data?.[displayIndex]?.quote || ''} name={data?.[displayIndex]?.char_name || ''}/>
 
             </View>
         </QuoteProvider>
