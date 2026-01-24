@@ -1,12 +1,12 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import { Image } from "expo-image";
-import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { QuoteLogItem2 } from "./Interfaces";
 import QuoteButtons from "./QuoteButtons";
 import { QuoteProvider } from "./QuoteContext";
 import QuoteModal from "./QuoteModal";
+import { shuffleArray } from './methods';
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -20,112 +20,54 @@ export default function Quotes() {
 
     const [data, setAppData] = useState<QuoteLogItem2[]>([]);
 
+    const [quoteLog, setQuoteLog] = useState<number[]>([]);
+
     const [displayIndex, setDisplayIndex] = useState(0);
 
     const [currentQuote, setCurrentQuote] = useState({
-        name: data?.[displayIndex]?.char_name ,
-        anime: data?.[displayIndex]?.anime || '',
-        img_links: data?.[displayIndex]?.img_links || [],
-        quote: data?.[displayIndex]?.quote || '',
-        biography: data?.[displayIndex]?.biography || '',
-        wiki: data?.[displayIndex]?.wiki || ''
+        name: data?.[quoteLog[displayIndex]]?.char_name ,
+        anime: data?.[quoteLog[displayIndex]]?.anime || '',
+        img_links: data?.[quoteLog[displayIndex]]?.img_links || [],
+        quote: data?.[quoteLog[displayIndex]]?.quote || '',
+        biography: data?.[quoteLog[displayIndex]]?.biography || '',
+        wiki: data?.[quoteLog[displayIndex]]?.wiki || ''
     });
 
-    const [ quoteLog, setQuoteLog ] = useState<Number[]>([]);
 
     const loadJsonFile = async () => {
         const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
-    try {
-      const exists = await RNFS.exists(filePath);
-      
-      if (exists) {
-        // 2. Read the file as a string
-        const content = await RNFS.readFile(filePath, 'utf8');
+        try {
+        const exists = await RNFS.exists(filePath);
         
-        const jsonObject = JSON.parse(JSON.parse(content));
-        
-        setAppData(jsonObject);
+        if (exists) {
+            // 2. Read the file as a string
+            const content = await RNFS.readFile(filePath, 'utf8');
+            
+            const jsonObject = JSON.parse(JSON.parse(content));
 
-        const randomIndex = Math.floor(Math.random() * (jsonObject.length - 0 + 1)) + 0;
+            const indices = Array.from({ length: jsonObject.length }, (_, i) => i);
 
-        console.log(randomIndex);
+            const randomizedIndicies = shuffleArray(indices);
 
-        console.log('Data loaded successfully');
-      } else {
-        console.log('No saved file found');
-      }
-    } catch (error) {
-        console.error('Error reading file:', error);
-    }
-  };
+            setQuoteLog(randomizedIndicies);
+            
+            setAppData(jsonObject);
+
+            console.log('Data loaded successfully');
+        } else {
+            console.log('No saved file found');
+        }
+        } catch (error) {
+            console.error('Error reading file:', error);
+        }
+    };
 
 
     useEffect(() => {
-
-
         loadJsonFile();
-        
-        const getSubQuote = async () => {
-          
-            let x = {
-                name: data?.[displayIndex]?.char_name ,
-                anime: data?.[displayIndex]?.anime || '',
-                img_links: data?.[displayIndex]?.img_links || [],
-                quote: data?.[displayIndex]?.quote || '',
-                biography: data?.[displayIndex]?.biography || '',
-                wiki: data?.[displayIndex]?.wiki || ''
-            }
-
-            //setQuoteLog((prevLog) => [x, ...prevLog]);
-
-            return x;
-        }
-
-        async function setupNotifications() {
-
-            // Optional: Cancel all previous notifications to avoid duplicates
-            await Notifications.cancelAllScheduledNotificationsAsync();
-
-            await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: (await getSubQuote()).name,
-                    body: (await getSubQuote()).quote,
-                },
-                trigger: {
-                    type: Notifications.SchedulableTriggerInputTypes.DAILY,
-                    hour: 11, 
-                    minute: 21,
-                },
-            });
-        }
-        
-        const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-            // This is your "callback" logic
-            console.log("User clicked the notification!");            
-             
-            // Example: Check which notification was clicked
-            const title = response.notification.request.content.title;
-            if (title === "Daily Check-in") {
-                // Navigate to a specific screen or perform an action
-                console.log("Navigating to Check-in screen...");
-
-                // getSubQuote().then(quoteData => {
-                //     // This runs once the Supabase data is fetched
-                //     console.log(quoteData);
-                //     setCurrentQuote(quoteData); 
-                
-                //     // If you use navigation, you might put it here or outside
-                //     // navigation.navigate('QuoteDetail', { data: quoteData });
-                // }).catch(err => {
-                //     console.error("Error fetching sub quote:", err);
-                // });
-            }
-        });
-
-        setupNotifications();
-        return () => subscription.remove();
     },[]);
 
+    
     
 
     const panResponder = useMemo(() => {
@@ -136,13 +78,12 @@ export default function Quotes() {
                 const nextIndex = prevIndex + 1;
 
                 if(nextIndex >= data.length) {
-                    console.log("End of array");
+                    //console.log("End of array");
                     return prevIndex;
                 }
 
                 return nextIndex;
             });
-        
         }
 
         const previousQuote = () => {
@@ -152,12 +93,13 @@ export default function Quotes() {
                 const nextIndex = prevIndex - 1;
 
                 if( nextIndex < 0) {
-                    console.log("Start");
+                    //console.log("Start");
                     return prevIndex;
                 }
 
                 return nextIndex;
             });
+
         }
 
         return PanResponder.create({
@@ -183,7 +125,7 @@ export default function Quotes() {
             }
         });
 
-    }, [displayIndex]);
+    }, [displayIndex, data]);
 
   
 
@@ -208,10 +150,6 @@ export default function Quotes() {
         setModalVisible(!modalVisible)
     }
 
-    const pushToFront = () => {
-        //setQuoteLog(prevArray => ['new', ...prevArray]);
-    }
-
 
     return (
         <QuoteProvider>
@@ -219,11 +157,11 @@ export default function Quotes() {
                 {/*********************** Modal *************************/}
                 <QuoteModal 
                     currentQuote={{
-                        name: data?.[displayIndex]?.char_name,
-                        anime: data?.[displayIndex]?.anime,
-                        biography: data?.[displayIndex]?.biography,
-                        wiki: data?.[displayIndex]?.wiki,
-                        img_links: data?.[displayIndex]?.img_links || []
+                        name: data?.[quoteLog[displayIndex]]?.char_name,
+                        anime: data?.[quoteLog[displayIndex]]?.anime,
+                        biography: data?.[quoteLog[displayIndex]]?.biography,
+                        wiki: data?.[quoteLog[displayIndex]]?.wiki,
+                        img_links: data?.[quoteLog[displayIndex]]?.img_links || []
                     }} 
                     modalVisible={modalVisible} 
                     setVisible={setVisible}
@@ -234,10 +172,10 @@ export default function Quotes() {
                         <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
                             <Pressable onPress={() => setModalVisible(true)}>
                                 {/* Only render the Image component if the URL is a non-empty string */}
-                                    {data?.[displayIndex]?.img_links[imageUriIndex] ? (
+                                    {data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] ? (
                                     <Image
                                         style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={{ uri: data?.[displayIndex]?.img_links[imageUriIndex] }}
+                                        source={{ uri: data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] }}
                                         cachePolicy="memory-disk"
                                         contentFit="fill"
                                         contentPosition={"bottom left"}
@@ -252,14 +190,11 @@ export default function Quotes() {
                                     />
                                 )}
                             </Pressable>
-
-                            
-                            
                         </View>
 
                         <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                            <Text style={[styles.text, {fontSize: 18}]}>{data?.[displayIndex]?.char_name || ''}</Text>
-                            <Text style={[styles.text, {marginTop: '5%'} ]}>{data?.[displayIndex]?.anime || ''}</Text>
+                            <Text style={[styles.text, {fontSize: 18}]}>{data?.[quoteLog[displayIndex]]?.char_name}</Text>
+                            <Text style={[styles.text, {marginTop: '5%'} ]}>{data?.[quoteLog[displayIndex]]?.anime || ''}</Text>
                         </View>
                 </View>
 
@@ -277,23 +212,86 @@ export default function Quotes() {
                             <View 
                                 style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                             >
-                                <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[displayIndex]?.quote || ''}</Text>
+                                <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[quoteLog[displayIndex]]?.quote || ''}</Text>
                             </View>
                         </View>
                 </View>
 
                 {/********************** Quote Buttons ******************/}
 
-                    <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '25%'}} onPress={pushToFront}>Push to front</Text>            
-                    <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '20%'}} onPress={() => console.log(quoteLog)}>Show Quote Log</Text>
-                    
-
-                <QuoteButtons wikiLink={data?.[displayIndex]?.wiki || ''} quote={data?.[displayIndex]?.quote || ''} name={data?.[displayIndex]?.char_name || ''}/>
+                <QuoteButtons wikiLink={data?.[quoteLog[displayIndex]]?.wiki || ''} quote={data?.[quoteLog[displayIndex]]?.quote || ''} name={data?.[quoteLog[displayIndex]]?.char_name || ''}/>
 
             </View>
         </QuoteProvider>
     );
 }
+
+/**
+ * <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '25%'}} onPress={()}> Push to front </Text>            
+    <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '20%'}} onPress={() => console.log(quoteLog)}>Show Quote Log</Text>
+    <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[quoteLog[displayIndex]]?.quote || ''}</Text>
+
+
+    const getSubQuote = async () => {
+          
+        //     let x = {
+        //         name: data?.[displayIndex]?.char_name ,
+        //         anime: data?.[displayIndex]?.anime || '',
+        //         img_links: data?.[displayIndex]?.img_links || [],
+        //         quote: data?.[displayIndex]?.quote || '',
+        //         biography: data?.[displayIndex]?.biography || '',
+        //         wiki: data?.[displayIndex]?.wiki || ''
+        //     }
+
+        //     //setQuoteLog((prevLog) => [x, ...prevLog]);
+
+        //     return x;
+        // }
+
+        // async function setupNotifications() {
+
+        //     // Optional: Cancel all previous notifications to avoid duplicates
+        //     await Notifications.cancelAllScheduledNotificationsAsync();
+
+        //     await Notifications.scheduleNotificationAsync({
+        //         content: {
+        //             title: (await getSubQuote()).name,
+        //             body: (await getSubQuote()).quote,
+        //         },
+        //         trigger: {
+        //             type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        //             hour: 11, 
+        //             minute: 21,
+        //         },
+        //     });
+        // }
+        
+        // const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+        //     // This is your "callback" logic
+        //     console.log("User clicked the notification!");            
+             
+        //     // Example: Check which notification was clicked
+        //     const title = response.notification.request.content.title;
+        //     if (title === "Daily Check-in") {
+        //         // Navigate to a specific screen or perform an action
+        //         console.log("Navigating to Check-in screen...");
+
+        //         // getSubQuote().then(quoteData => {
+        //         //     // This runs once the Supabase data is fetched
+        //         //     console.log(quoteData);
+        //         //     setCurrentQuote(quoteData); 
+                
+        //         //     // If you use navigation, you might put it here or outside
+        //         //     // navigation.navigate('QuoteDetail', { data: quoteData });
+        //         // }).catch(err => {
+        //         //     console.error("Error fetching sub quote:", err);
+        //         // });
+        //     }
+        // });
+
+        // setupNotifications();
+        // return () => subscription.remove();
+ */
 
 
 const styles = StyleSheet.create({
