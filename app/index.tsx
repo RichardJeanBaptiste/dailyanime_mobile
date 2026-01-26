@@ -1,3 +1,4 @@
+import { QuoteProvider } from "@/components/QuoteContext";
 import Quotes from "@/components/Quotes";
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
@@ -44,9 +45,11 @@ export default function Index() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Quotes/>
-    </View>
+    <QuoteProvider>
+      <View style={styles.container}>
+        <Quotes/>
+      </View>
+    </QuoteProvider>
   );
 }
 

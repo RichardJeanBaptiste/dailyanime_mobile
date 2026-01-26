@@ -22,13 +22,9 @@ export default function Characters(){
             return error;
         }
 
-        //console.log(data);
         setAllChars(data);
     }
 
-    const showChars = () => {
-        console.log(allChars)
-    }
 
     return (
         <View style={{ flex: 1, backgroundColor: '#25292e' }}>

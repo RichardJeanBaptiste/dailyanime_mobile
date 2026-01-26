@@ -5,6 +5,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 interface QuoteContextType {
     charQuery: (name: string) => void;
     jsonData: any;
+    isLoading: boolean;
 }
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
@@ -18,26 +19,21 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     }
 
     const [ jsonData, setJsonData ] = useState([]);
+    const [ isLoading, setIsLoading ] = useState(true);
 
     const loadJsonFile = async () => {
         const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
         try {
             const exists = await RNFS.exists(filePath);
-            
             if (exists) {
-                // 2. Read the file as a string
                 const content = await RNFS.readFile(filePath, 'utf8');
-                
-                const jsonObject = JSON.parse(JSON.parse(content));
-
+                const jsonObject = JSON.parse(content);
                 setJsonData(jsonObject);
-
-                console.log('Data loaded successfully');
-            } else {
-                console.log('No saved file found');
             }
         } catch (error) {
             console.error('Error reading file:', error);
+        } finally {
+            setIsLoading(false); 
         }
     };
 
@@ -47,11 +43,12 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
    
     return (
-        <QuoteContext.Provider value={{ charQuery, jsonData }}>
+        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading }}>
             {children}
         </QuoteContext.Provider>
     )
 }
+
 
 export const useSearchContext = () => {
     const context = useContext(QuoteContext);

@@ -1,3 +1,4 @@
+import * as RNFS from '@dr.pogodin/react-native-fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, processLock } from '@supabase/supabase-js';
 import Constants from 'expo-constants';
@@ -21,48 +22,40 @@ export const supabase = createClient(
     },
 })
 
-// const saveJsonFile = async (jsonObject) => {
-//   // Define the file name and path
-//   const fileName = 'user_data.json';
-//   const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+const saveJsonFile = async (jsonString) => {
+  const fileName = 'user_data.json';
+  const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
 
   
-//   try {
-//     // Convert object to string (with 2-space indentation for readability)
-//     const jsonString = JSON.stringify(jsonObject, null, 2);
-
-//     //console.log(jsonString);
-
-//     // Write the file
-//     // Note: The Pogodin fork handles the 'utf8' encoding similarly
-//     await RNFS.writeFile(path, jsonString, 'utf8');
+  try {
+    await RNFS.writeFile(path, jsonString, 'utf8');
     
-//     console.log(`Success! File saved at: ${path}`);
-//     return path;
-//   } catch (error) {
-//     console.error('Failed to write JSON file:', error);
-//     throw error;
-//   }
-// };
+    console.log(`Success! File saved at: ${path}`);
+    return path;
+  } catch (error) {
+    console.error('Failed to write JSON file:', error);
+    throw error;
+  }
+};
 
 
 
-// const exportTable = async () => {
-//   const { data , error } = await supabase.rpc('get_quotes_json');
+const exportTable = async () => {
+  const { data , error } = await supabase.rpc('get_quotes_json');
 
-//   if (error) {
-//     console.log(error);
-//     throw error;
-//   }
+  if (error) {
+    console.log(error);
+    throw error;
+  }
 
-//   const json = JSON.stringify(data, null, 2);
+  const json = JSON.stringify(data, null, 2);
 
-//   saveJsonFile(json);
+  saveJsonFile(json);
 
-//   return json;
-// }
+  return json;
+}
 
-// exportTable();
+exportTable();
 
 
 

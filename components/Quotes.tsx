@@ -1,10 +1,9 @@
-import * as RNFS from '@dr.pogodin/react-native-fs';
 import { Image } from "expo-image";
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { QuoteLogItem2 } from "./Interfaces";
 import QuoteButtons from "./QuoteButtons";
-import { QuoteProvider } from "./QuoteContext";
+import { useSearchContext } from './QuoteContext';
 import QuoteModal from "./QuoteModal";
 import { shuffleArray } from './methods';
 
@@ -13,6 +12,8 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;  
 
 export default function Quotes() {
+
+    const { jsonData, isLoading } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
@@ -34,38 +35,21 @@ export default function Quotes() {
     });
 
 
-    const loadJsonFile = async () => {
-        const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
-        try {
-        const exists = await RNFS.exists(filePath);
-        
-        if (exists) {
-            // 2. Read the file as a string
-            const content = await RNFS.readFile(filePath, 'utf8');
-            
-            const jsonObject = JSON.parse(JSON.parse(content));
+    useEffect(() => {
 
-            const indices = Array.from({ length: jsonObject.length }, (_, i) => i);
+        if(!isLoading && jsonData) {
+            
+            setAppData(jsonData);
+
+            const indices = Array.from({ length: jsonData.length }, (_, i) => i);
 
             const randomizedIndicies = shuffleArray(indices);
 
             setQuoteLog(randomizedIndicies);
-            
-            setAppData(jsonObject);
 
-            console.log('Data loaded successfully');
-        } else {
-            console.log('No saved file found');
         }
-        } catch (error) {
-            console.error('Error reading file:', error);
-        }
-    };
-
-
-    useEffect(() => {
-        loadJsonFile();
-    },[]);
+        
+    },[isLoading, jsonData]);
 
     
     
@@ -151,86 +135,94 @@ export default function Quotes() {
     }
 
 
-    return (
-        <QuoteProvider>
-            <View style={styles.quotes_container}>
-                {/*********************** Modal *************************/}
-                <QuoteModal 
-                    currentQuote={{
-                        name: data?.[quoteLog[displayIndex]]?.char_name,
-                        anime: data?.[quoteLog[displayIndex]]?.anime,
-                        biography: data?.[quoteLog[displayIndex]]?.biography,
-                        wiki: data?.[quoteLog[displayIndex]]?.wiki,
-                        img_links: data?.[quoteLog[displayIndex]]?.img_links || []
-                    }} 
-                    modalVisible={modalVisible} 
-                    setVisible={setVisible}
-                />
-
-                {/*************************** Title *****************************/}
-                <View style={styles.title_container}>
-                        <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
-                            <Pressable onPress={() => setModalVisible(true)}>
-                                {/* Only render the Image component if the URL is a non-empty string */}
-                                    {data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] ? (
-                                    <Image
-                                        style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={{ uri: data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] }}
-                                        cachePolicy="memory-disk"
-                                        contentFit="fill"
-                                        contentPosition={"bottom left"}
-                                        onError={cycleImages} 
-                                    />
-                                ) : (
-                            
-                                    <Image
-                                        style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={PlaceholderImage}
-                                        onError={cycleImages} 
-                                    />
-                                )}
-                            </Pressable>
-                        </View>
-
-                        <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                            <Text style={[styles.text, {fontSize: 18}]}>{data?.[quoteLog[displayIndex]]?.char_name}</Text>
-                            <Text style={[styles.text, {marginTop: '5%'} ]}>{data?.[quoteLog[displayIndex]]?.anime || ''}</Text>
-                        </View>
-                </View>
-
-                {/********************** Quotes **************************/}
-                
-                <View style={styles.quotes}>
-
-                        {/***********************************  FULL SWIPE AREA *****************************************/}
-
-                        <View
-                            style={{ flex: 1, width: '100%', height: '100%' }}
-                            pointerEvents="box-only"
-                            {...panResponder.panHandlers}
-                        >
-                            <View 
-                                style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
-                            >
-                                <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[quoteLog[displayIndex]]?.quote || ''}</Text>
-                            </View>
-                        </View>
-                </View>
-
-                {/********************** Quote Buttons ******************/}
-
-                <QuoteButtons wikiLink={data?.[quoteLog[displayIndex]]?.wiki || ''} quote={data?.[quoteLog[displayIndex]]?.quote || ''} name={data?.[quoteLog[displayIndex]]?.char_name || ''}/>
-
+    if(isLoading) {
+        return (
+            <View>
+                <Text style={{ color: 'white', fontSize: 24}}>Loading</Text>
             </View>
-        </QuoteProvider>
-    );
-}
+        )
+    } else {
+        return (
+            <>
+                <View style={styles.quotes_container}>
+                    {/*********************** Modal *************************/}
+                    <QuoteModal 
+                        currentQuote={{
+                            name: data?.[quoteLog[displayIndex]]?.char_name,
+                            anime: data?.[quoteLog[displayIndex]]?.anime,
+                            biography: data?.[quoteLog[displayIndex]]?.biography,
+                            wiki: data?.[quoteLog[displayIndex]]?.wiki,
+                            img_links: data?.[quoteLog[displayIndex]]?.img_links || []
+                        }} 
+                        modalVisible={modalVisible} 
+                        setVisible={setVisible}
+                    />
+
+                    {/*************************** Title *****************************/}
+                    <View style={styles.title_container}>
+                            <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
+                                <Pressable onPress={() => setModalVisible(true)}>
+                                    {/* Only render the Image component if the URL is a non-empty string */}
+                                        {data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] ? (
+                                            
+                                        <Image
+                                            style={{ width: 75, height: 75, borderRadius: 35 }}
+                                            source={{ uri: data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] }}
+                                            cachePolicy="memory-disk"
+                                            contentFit="fill"
+                                            contentPosition={"bottom left"}
+                                            onError={cycleImages} 
+                                        />
+                                    ) : (
+
+                                        <Image
+                                            style={{ width: 75, height: 75, borderRadius: 35 }}
+                                            source={PlaceholderImage}
+                                            onError={cycleImages} 
+                                        />
+                                    )}
+                                </Pressable>
+                            </View>
+
+                            <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
+                                <Text style={[styles.text, {fontSize: 18}]}>{data?.[quoteLog[displayIndex]]?.char_name}</Text>
+                                <Text style={[styles.text, {marginTop: '5%'} ]}>{data?.[quoteLog[displayIndex]]?.anime || ''}</Text>
+                            </View>
+                    </View>
+
+                    {/********************** Quotes **************************/}
+                    
+                    <View style={styles.quotes}>
+
+                            {/***********************************  FULL SWIPE AREA *****************************************/}
+
+                            <View
+                                style={{ flex: 1, width: '100%', height: '100%' }}
+                                pointerEvents="box-only"
+                                {...panResponder.panHandlers}
+                            >
+                                <View 
+                                    style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
+                                >
+                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[quoteLog[displayIndex]]?.quote || ''}</Text>
+                                </View>
+                            </View>
+                    </View>
+
+                    {/********************** Quote Buttons ******************/}
+
+                    <QuoteButtons wikiLink={data?.[quoteLog[displayIndex]]?.wiki || ''} quote={data?.[quoteLog[displayIndex]]?.quote || ''} name={data?.[quoteLog[displayIndex]]?.char_name || ''}/>
+
+                </View>
+            </>
+        );
+        }
+    }
+
+
+
 
 /**
- * <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '25%'}} onPress={()}> Push to front </Text>            
-    <Text style={{ color: 'white', width: '100%',fontSize: 24, position: 'absolute', top: '20%'}} onPress={() => console.log(quoteLog)}>Show Quote Log</Text>
-    <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[quoteLog[displayIndex]]?.quote || ''}</Text>
-
 
     const getSubQuote = async () => {
           
