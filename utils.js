@@ -20,11 +20,11 @@ export const supabase = createClient(
       detectSessionInUrl: false,
       lock: processLock,
     },
-})
+  })
 
-const saveJsonFile = async (jsonString) => {
-  const fileName = 'user_data.json';
-  const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+const saveJsonFile = async (filename , jsonString) => {
+  //const fileName = 'user_data.json';
+  const path = `${RNFS.DocumentDirectoryPath}/${filename}`;
 
   
   try {
@@ -39,7 +39,6 @@ const saveJsonFile = async (jsonString) => {
 };
 
 
-
 const exportTable = async () => {
   const { data , error } = await supabase.rpc('get_quotes_json');
 
@@ -50,12 +49,39 @@ const exportTable = async () => {
 
   const json = JSON.stringify(data, null, 2);
 
-  saveJsonFile(json);
+  saveJsonFile('user_data.json', json);
 
   return json;
 }
 
-exportTable();
+const exportCharTable = async () => {
+
+  const { data , error } = await supabase
+    .from('characters')
+    .select('*')
+
+    if(error) {
+      console.log(error);
+      return error;
+    }
+
+    const json = JSON.stringify(data, null, 2);
+
+    //console.log(json);
+
+    saveJsonFile('characters.json', json);
+
+    return json;
+}
+
+
+if(navigator.onLine) {
+
+  console.log("online");
+  exportTable();
+  exportCharTable();
+}
+
 
 
 

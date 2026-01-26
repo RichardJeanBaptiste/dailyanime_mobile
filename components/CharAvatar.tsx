@@ -1,7 +1,6 @@
 import { Image } from "expo-image";
 import { useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-
 import { QuoteProvider } from "./QuoteContext";
 import QuoteModal from './QuoteModal';
 

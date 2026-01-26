@@ -1,4 +1,5 @@
 import CharAvatar from '@/components/CharAvatar';
+import { QuoteProvider, useSearchContext } from '@/components/QuoteContext';
 import { supabase } from '@/utils';
 import { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
@@ -25,11 +26,24 @@ export default function Characters(){
         setAllChars(data);
     }
 
+    const GetChars = () => {
 
-    return (
-        <View style={{ flex: 1, backgroundColor: '#25292e' }}>
+        const { charJson, isCharLoading } = useSearchContext();
+
+        const [ chars, setChars ] = useState<any>([]);
+
+        useEffect(() => {
+
+            if(!isCharLoading) {
+                setChars(charJson);
+            }
+
+        },[charJson, isCharLoading]);
+
+
+        return (
             <FlatList
-                data={allChars}
+                data={chars}
                 numColumns={3}
                 contentContainerStyle={{ 
                     paddingHorizontal: 10, 
@@ -48,7 +62,39 @@ export default function Characters(){
                 }}
                 keyExtractor={(item) => item.charid}
             />
-        </View>
+        )
+    }
+
+
+    return (
+        <QuoteProvider>
+            <View style={{ flex: 1, backgroundColor: '#25292e' }}>
+                <GetChars />
+            </View>
+        </QuoteProvider> 
     )
 }
+
+/**
+ * <FlatList
+                    data={allChars}
+                    numColumns={3}
+                    contentContainerStyle={{ 
+                        paddingHorizontal: 10, 
+                        paddingBottom: 30,
+                        width: '100%', 
+                    }}
+                    columnWrapperStyle={{ 
+                        gap: 16, 
+                        justifyContent: 'space-between' 
+                    }}
+                    ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+                    renderItem={({item}) => {
+                        return (
+                            <CharAvatar name={item.name} item={item}/>
+                        )
+                    }}
+                    keyExtractor={(item) => item.charid}
+                />
+ */
 
