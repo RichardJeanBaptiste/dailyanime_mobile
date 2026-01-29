@@ -1,5 +1,6 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+//import { fetch } from "@react-native-community/netinfo";
 import { createClient, processLock } from '@supabase/supabase-js';
 import Constants from 'expo-constants';
 import 'react-native-url-polyfill/auto';
@@ -22,11 +23,20 @@ export const supabase = createClient(
     },
   })
 
-const saveJsonFile = async (filename , jsonString) => {
-  //const fileName = 'user_data.json';
-  const path = `${RNFS.DocumentDirectoryPath}/${filename}`;
+// const checkConnection = async () => {
+//   fetch().then(state => {
+//     console.log("Connection type", state.type);
+//     console.log("Is connected?", state.isConnected);
+//   });
+// }
 
-  
+// checkConnection();
+
+
+const saveJsonFile = async (filename , jsonString) => {
+ 
+  const path = `${RNFS.DocumentDirectoryPath}/${filename}`;
+ 
   try {
     await RNFS.writeFile(path, jsonString, 'utf8');
     
@@ -67,20 +77,14 @@ const exportCharTable = async () => {
 
     const json = JSON.stringify(data, null, 2);
 
-    //console.log(json);
-
     saveJsonFile('characters.json', json);
 
     return json;
 }
 
+exportTable();
+exportCharTable();
 
-if(navigator.onLine) {
-
-  console.log("online");
-  exportTable();
-  exportCharTable();
-}
 
 
 

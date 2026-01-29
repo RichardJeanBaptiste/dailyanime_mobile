@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { QuoteLogItem2 } from "./Interfaces";
@@ -34,11 +35,35 @@ export default function Quotes() {
         wiki: data?.[quoteLog[displayIndex]]?.wiki || ''
     });
 
+   
+    
+    async function setupNotifications(subQuote: any) {
+
+            console.log("Setting up notfications");
+
+            // Optional: Cancel all previous notifications to avoid duplicates
+            await Notifications.cancelAllScheduledNotificationsAsync();
+
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: subQuote.name,
+                    body: subQuote.quote,
+                },
+                trigger: {
+                    type: Notifications.SchedulableTriggerInputTypes.DAILY,
+                    hour: 11, 
+                    minute: 21,
+                },
+            });
+        }
+   
+
 
     useEffect(() => {
 
         if(!isLoading && jsonData) {
             
+            // Setup Quotes Component
             setAppData(jsonData);
 
             const indices = Array.from({ length: jsonData.length }, (_, i) => i);
@@ -47,6 +72,37 @@ export default function Quotes() {
 
             setQuoteLog(randomizedIndicies);
 
+            const randomIndex = Math.floor(Math.random() * jsonData.length);
+            
+            //  Handle Push Notifications 
+
+            let randomSubQuote = {
+                name: jsonData[randomIndex].char_name ,
+                anime: jsonData[randomIndex].anime || '',
+                img_links: jsonData[randomIndex].img_links || [],
+                quote: jsonData[randomIndex].quote || '',
+                biography: jsonData[randomIndex].biography || '',
+                wiki: jsonData[randomIndex].wiki || ''
+            }
+
+            const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+    
+                console.log("User clicked the notification!");    
+             
+                const title = response.notification.request.content.title;
+
+                if (title === randomSubQuote.name) {
+                    // Navigate to a specific screen or perform an action
+                    console.log("Navigating to Check-in screen...");
+
+                       console.log(randomSubQuote.quote);
+
+                       setQuoteLog(prevLog => [randomIndex, ...prevLog]);
+                    }
+            });
+
+            setupNotifications(randomSubQuote);
+            return () => subscription.remove();
         }
         
     },[isLoading, jsonData]);
@@ -224,65 +280,11 @@ export default function Quotes() {
 
 /**
 
-    const getSubQuote = async () => {
-          
-        //     let x = {
-        //         name: data?.[displayIndex]?.char_name ,
-        //         anime: data?.[displayIndex]?.anime || '',
-        //         img_links: data?.[displayIndex]?.img_links || [],
-        //         quote: data?.[displayIndex]?.quote || '',
-        //         biography: data?.[displayIndex]?.biography || '',
-        //         wiki: data?.[displayIndex]?.wiki || ''
-        //     }
+    
 
-        //     //setQuoteLog((prevLog) => [x, ...prevLog]);
-
-        //     return x;
-        // }
-
-        // async function setupNotifications() {
-
-        //     // Optional: Cancel all previous notifications to avoid duplicates
-        //     await Notifications.cancelAllScheduledNotificationsAsync();
-
-        //     await Notifications.scheduleNotificationAsync({
-        //         content: {
-        //             title: (await getSubQuote()).name,
-        //             body: (await getSubQuote()).quote,
-        //         },
-        //         trigger: {
-        //             type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        //             hour: 11, 
-        //             minute: 21,
-        //         },
-        //     });
-        // }
         
-        // const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-        //     // This is your "callback" logic
-        //     console.log("User clicked the notification!");            
-             
-        //     // Example: Check which notification was clicked
-        //     const title = response.notification.request.content.title;
-        //     if (title === "Daily Check-in") {
-        //         // Navigate to a specific screen or perform an action
-        //         console.log("Navigating to Check-in screen...");
-
-        //         // getSubQuote().then(quoteData => {
-        //         //     // This runs once the Supabase data is fetched
-        //         //     console.log(quoteData);
-        //         //     setCurrentQuote(quoteData); 
-                
-        //         //     // If you use navigation, you might put it here or outside
-        //         //     // navigation.navigate('QuoteDetail', { data: quoteData });
-        //         // }).catch(err => {
-        //         //     console.error("Error fetching sub quote:", err);
-        //         // });
-        //     }
-        // });
-
-        // setupNotifications();
-        // return () => subscription.remove();
+        
+        
  */
 
 
