@@ -14,7 +14,7 @@ const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 
 export default function Quotes() {
 
-    const { jsonData, isLoading } = useSearchContext();
+    const { jsonData, isLoading, subQuote, subIndex } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
@@ -24,7 +24,7 @@ export default function Quotes() {
 
     const [quoteLog, setQuoteLog] = useState<number[]>([]);
 
-    const [displayIndex, setDisplayIndex] = useState(0);
+    const [displayIndex, setDisplayIndex] = useState(-1);
 
     const [currentQuote, setCurrentQuote] = useState({
         name: data?.[quoteLog[displayIndex]]?.char_name ,
@@ -35,9 +35,10 @@ export default function Quotes() {
         wiki: data?.[quoteLog[displayIndex]]?.wiki || ''
     });
 
-   
-    
     async function setupNotifications(subQuote: any) {
+
+
+        try {   
 
             console.log("Setting up notfications");
 
@@ -55,7 +56,69 @@ export default function Quotes() {
                     minute: 21,
                 },
             });
+            
+        } catch (error) {
+            console.log("Error setting up notifications: ", error);
         }
+
+        
+    }
+
+
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+
+        try {
+            console.log("User clicked the notification!");  
+        } catch (error) {
+            console.log("Error handling subcription: ", error)
+        }
+    
+         
+        
+        //console.log(response);
+        
+        // const title = response.notification.request.content.title;
+
+        // if (title === subQuote.name) {
+        //     // Navigate to a specific screen or perform an action
+        //     console.log("Navigating to Check-in screen...");
+
+        //         //console.log(randomSubQuote.quote);
+
+        //         setQuoteLog((prevLog) => {
+        //             const newLog = [...prevLog];
+
+        //             newLog[displayIndex] = subIndex;
+        //             return newLog;
+        //         });
+
+        //         setDisplayIndex(subIndex);
+        //         //setQuoteLog();
+        //     }
+    });
+
+
+    useEffect(() => {
+        
+        if(subQuote !== undefined) {
+
+            console.log(subQuote.quote);
+            
+
+            let x = {
+                name: "test",
+                quote: 'test_quote'
+            }
+            
+            try {
+                setupNotifications(x);
+                return () => subscription.remove();
+            } catch (error) {
+                console.log(error);
+            }
+            
+        }
+    },[subQuote]);
    
 
 
@@ -72,42 +135,27 @@ export default function Quotes() {
 
             setQuoteLog(randomizedIndicies);
 
-            const randomIndex = Math.floor(Math.random() * jsonData.length);
-            
-            //  Handle Push Notifications 
-
-            let randomSubQuote = {
-                name: jsonData[randomIndex].char_name ,
-                anime: jsonData[randomIndex].anime || '',
-                img_links: jsonData[randomIndex].img_links || [],
-                quote: jsonData[randomIndex].quote || '',
-                biography: jsonData[randomIndex].biography || '',
-                wiki: jsonData[randomIndex].wiki || ''
-            }
-
-            const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-    
-                console.log("User clicked the notification!");    
-             
-                const title = response.notification.request.content.title;
-
-                if (title === randomSubQuote.name) {
-                    // Navigate to a specific screen or perform an action
-                    console.log("Navigating to Check-in screen...");
-
-                       console.log(randomSubQuote.quote);
-
-                       setQuoteLog(prevLog => [randomIndex, ...prevLog]);
-                    }
-            });
-
-            setupNotifications(randomSubQuote);
-            return () => subscription.remove();
+            setDisplayIndex(0);
         }
         
     },[isLoading, jsonData]);
 
-    
+
+    useEffect(() => {
+
+        if(data.length == 0 || data !== undefined) {
+            setCurrentQuote({
+                name: data?.[quoteLog[displayIndex]]?.char_name ,
+                anime: data?.[quoteLog[displayIndex]]?.anime || '',
+                img_links: data?.[quoteLog[displayIndex]]?.img_links || [],
+                quote: data?.[quoteLog[displayIndex]]?.quote || '',
+                biography: data?.[quoteLog[displayIndex]]?.biography || '',
+                wiki: data?.[quoteLog[displayIndex]]?.wiki || ''
+            });
+        }
+        
+    },[displayIndex]);
+
     
 
     const panResponder = useMemo(() => {
@@ -167,7 +215,6 @@ export default function Quotes() {
 
     }, [displayIndex, data]);
 
-  
 
     const cycleImages = () => {
 
@@ -260,7 +307,7 @@ export default function Quotes() {
                                 <View 
                                     style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                                 >
-                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{data?.[quoteLog[displayIndex]]?.quote || ''}</Text>
+                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{currentQuote.quote}</Text>
                                 </View>
                             </View>
                     </View>

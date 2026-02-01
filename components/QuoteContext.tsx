@@ -8,6 +8,8 @@ interface QuoteContextType {
     charJson: any;
     isLoading: boolean;
     isCharLoading: boolean;
+    subQuote: any;
+    subIndex: number;
 }
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
@@ -26,14 +28,33 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     const [ charJson, setCharJson ] = useState([]);
     const [ isCharLoading, setIsCharLoading ] = useState(true); 
 
+    const [ subQuote , setSubQuote] = useState<any>();
+    const [ subIndex, setSubIndex] = useState<number>(0);
+
     const loadJsonFile = async () => {
         const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
         try {
             const exists = await RNFS.exists(filePath);
+            
             if (exists) {
                 const content = await RNFS.readFile(filePath, 'utf8');
                 const jsonObject = JSON.parse(content);
+
+                const randomIndex = Math.floor(Math.random() * jsonObject.length);
+
+                setSubIndex(subIndex);
                 setJsonData(jsonObject);
+
+                let x = {
+                    name: jsonObject[randomIndex].char_name ,
+                    anime: jsonObject[randomIndex].anime || '',
+                    img_links: jsonObject[randomIndex].img_links || [],
+                    quote: jsonObject[randomIndex].quote || '',
+                    biography: jsonObject[randomIndex].biography || '',
+                    wiki: jsonObject[randomIndex].wiki || ''
+                }
+
+                setSubQuote(x);
             }
         } catch (error) {
             console.error('Error reading file:', error);
@@ -66,7 +87,7 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
    
     return (
-        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading }}>
+        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading, subQuote, subIndex }}>
             {children}
         </QuoteContext.Provider>
     )

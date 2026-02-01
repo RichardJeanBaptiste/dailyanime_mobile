@@ -157,6 +157,24 @@ export default function RootLayout() {
         }}
       />
 
+      <Drawer.Screen
+        name="daily"
+        options={{
+          drawerLabel: '',
+          drawerLabelStyle: {
+            color: 'white'
+          },
+          drawerItemStyle: {
+            display: 'none'
+          },
+          title: '',
+          headerStyle: {
+            backgroundColor: '#25292e'
+          },
+          headerTintColor: 'white'
+        }}
+      />
+
     </Drawer>
   )
 }
