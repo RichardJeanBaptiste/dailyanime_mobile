@@ -23,14 +23,14 @@ export const supabase = createClient(
     },
   })
 
-// const checkConnection = async () => {
-//   fetch().then(state => {
-//     console.log("Connection type", state.type);
-//     console.log("Is connected?", state.isConnected);
-//   });
-// }
+const checkConnection = async () => {
+  fetch().then(state => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+  });
+}
 
-// checkConnection();
+checkConnection();
 
 
 const saveJsonFile = async (filename , jsonString) => {

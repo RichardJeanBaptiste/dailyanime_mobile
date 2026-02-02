@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
-import { QuoteLogItem2 } from "./Interfaces";
+import { QuoteLogItem } from "./Interfaces";
 import { shuffleArray } from './methods';
 import QuoteButtons from "./QuoteButtons";
 import { useSearchContext } from './QuoteContext';
@@ -19,7 +19,7 @@ export default function Quotes() {
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [data, setAppData] = useState<QuoteLogItem2[]>([]);
+    const [data, setAppData] = useState<QuoteLogItem[]>([]);
 
     const [quoteLog, setQuoteLog] = useState<number[]>([]);
 
@@ -49,8 +49,6 @@ export default function Quotes() {
 
 
     const changeDataLog = () => {
-
-       //console.log('Searching For Quote');
 
         let x = [...quoteLog];
 

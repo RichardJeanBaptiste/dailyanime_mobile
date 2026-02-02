@@ -1,3 +1,4 @@
+import { QuoteLogItem } from '@/components/Interfaces';
 import QuoteButtons from '@/components/QuoteButtons';
 import { supabase } from '@/utils';
 import { Image } from 'expo-image';
@@ -16,7 +17,7 @@ export default function CharQuery() {
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
-    const [ quoteLog, setQuoteLog ] = useState<any>([]);
+    const [ quoteLog, setQuoteLog ] = useState<QuoteLogItem[]>([]);
 
     const [logIndex, setLogIndex] = useState(0);
 
@@ -107,7 +108,7 @@ export default function CharQuery() {
                 <Image
                     style={{ width: 100, height: 100, borderRadius: 50}}
                     source={{
-                        uri: currentQuote.img_links[0]
+                        uri: currentQuote?.img_links[0]
                     }}
                 />
 
@@ -133,8 +134,7 @@ export default function CharQuery() {
             </View>
 
             {/*********************************** Quote Buttons *********************************/}
-
-            <QuoteButtons wikiLink={currentQuote?.wiki} quote={currentQuote?.quote} name={character.toLocaleString()}/>
+            <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={character.toLocaleString()}/>
         </View>
     )
 }

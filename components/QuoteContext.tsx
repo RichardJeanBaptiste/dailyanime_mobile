@@ -47,27 +47,28 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
 
 
+
     useEffect(() => {
 
         if (!subQuote?.quote) return;
 
         const setupNotifications = async () => {
             try {
-            await Notifications.cancelAllScheduledNotificationsAsync();
+                await Notifications.cancelAllScheduledNotificationsAsync();
 
-            await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: subQuote.char_name,
-                    body: subQuote.quote,
-                    data: { quoteId: subQuote.id },
-                },
-                trigger: {
-                    hour: 11,
-                    minute: 21,
-                    repeats: true,
-                    channelId: 'daily-quotes',
-                } as Notifications.NotificationTriggerInput,
-            });
+                await Notifications.scheduleNotificationAsync({
+                    content: {
+                        title: subQuote.char_name,
+                        body: subQuote.quote,
+                        data: { quoteId: subQuote.id },
+                    },
+                    trigger: {
+                        hour: 11,
+                        minute: 21,
+                        repeats: true,
+                        channelId: 'daily-quotes',
+                    } as Notifications.NotificationTriggerInput,
+                });
 
                 //console.log("Scheduled with quote:", subQuote.quote);
             } catch (err) {
