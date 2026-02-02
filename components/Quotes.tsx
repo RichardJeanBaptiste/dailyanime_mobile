@@ -2,10 +2,10 @@ import { Image } from "expo-image";
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { QuoteLogItem2 } from "./Interfaces";
+import { shuffleArray } from './methods';
 import QuoteButtons from "./QuoteButtons";
 import { useSearchContext } from './QuoteContext';
 import QuoteModal from "./QuoteModal";
-import { shuffleArray } from './methods';
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -13,7 +13,7 @@ const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 
 export default function Quotes() {
 
-    const { jsonData, isLoading, subQuote, subIndex, isSubClicked } = useSearchContext();
+    const { jsonData, isLoading, subQuote, isSubClicked } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
@@ -25,14 +25,8 @@ export default function Quotes() {
 
     const [displayIndex, setDisplayIndex] = useState(-1);
 
-    const [currentQuote, setCurrentQuote] = useState({
-        name: data?.[quoteLog[displayIndex]]?.char_name ,
-        anime: data?.[quoteLog[displayIndex]]?.anime || '',
-        img_links: data?.[quoteLog[displayIndex]]?.img_links || [],
-        quote: data?.[quoteLog[displayIndex]]?.quote || '',
-        biography: data?.[quoteLog[displayIndex]]?.biography || '',
-        wiki: data?.[quoteLog[displayIndex]]?.wiki || ''
-    });
+    const currentIndex = quoteLog[displayIndex];
+    const currentQuote = currentIndex !== undefined ? data[currentIndex]: null; 
 
 
     // Load JSON Data
@@ -52,23 +46,6 @@ export default function Quotes() {
         }
         
     },[isLoading, jsonData]);
-
-
-    // Handle Current Quote State Changes
-    useEffect(() => {
-
-        if(data.length == 0 || data !== undefined) {
-            setCurrentQuote({
-                name: data?.[quoteLog[displayIndex]]?.char_name ,
-                anime: data?.[quoteLog[displayIndex]]?.anime || '',
-                img_links: data?.[quoteLog[displayIndex]]?.img_links || [],
-                quote: data?.[quoteLog[displayIndex]]?.quote || '',
-                biography: data?.[quoteLog[displayIndex]]?.biography || '',
-                wiki: data?.[quoteLog[displayIndex]]?.wiki || ''
-            });
-        }
-        
-    },[data, displayIndex]);
 
 
     const changeDataLog = () => {
@@ -91,7 +68,6 @@ export default function Quotes() {
                     newData[index].img_links = subQuote.img_links;
                     newData[index].biography = subQuote.biography;
                     newData[index].wiki = subQuote.wiki;
-
 
                     return newData;
                 })
@@ -116,25 +92,10 @@ export default function Quotes() {
 
     useEffect(() => {
         if(isSubClicked) {
-            
-            let x  = {
-                name: subQuote.char_name ,
-                anime: subQuote.anime || '',
-                img_links: subQuote.img_links || [],
-                quote: subQuote.quote || '',
-                biography: subQuote.biography || '',
-                wiki: subQuote.wiki || ''
-            }
-
-            //console.log("Sub Quote: ", subQuote.quote); 
-            
             changeDataLog();
         }
     },[isSubClicked]);
 
-    
-
-    
 
     const panResponder = useMemo(() => {
 
@@ -196,7 +157,7 @@ export default function Quotes() {
 
     const cycleImages = () => {
 
-        console.log(`Image Error: ${currentQuote.img_links[imageUriIndex]}`)
+        console.log(`Image Error: ${currentQuote?.img_links[imageUriIndex]}`)
 
         setImageUriIndex( imageUriIndex + 1 )
 
@@ -206,7 +167,7 @@ export default function Quotes() {
             return newIndex;
         })
 
-        if(imageUriIndex > currentQuote.img_links.length) {
+        if(imageUriIndex > currentQuote?.img_links.length) {
             console.log("No Images");
         }
     }
@@ -228,7 +189,13 @@ export default function Quotes() {
                 <View style={styles.quotes_container}>
                     {/*********************** Modal *************************/}
                     <QuoteModal 
-                        currentQuote={currentQuote} 
+                        currentQuote={{
+                            name: currentQuote?.char_name,
+                            anime: currentQuote?.anime,
+                            img_links: currentQuote?.img_links,
+                            biography: currentQuote?.biography,
+                            wiki: currentQuote?.wiki
+                        }} 
                         modalVisible={modalVisible} 
                         setVisible={setVisible}
                     />
@@ -238,7 +205,7 @@ export default function Quotes() {
                             <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
                                 <Pressable onPress={() => setModalVisible(true)}>
                                     {/* Only render the Image component if the URL is a non-empty string */}
-                                        {data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] ? (
+                                        {currentQuote?.img_links[imageUriIndex] ? (
                                             
                                         <Image
                                             style={{ width: 75, height: 75, borderRadius: 35 }}
@@ -260,8 +227,8 @@ export default function Quotes() {
                             </View>
 
                             <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                                <Text style={[styles.text, {fontSize: 18}]}>{currentQuote.name}</Text>
-                                <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote.anime || ''}</Text>
+                                <Text style={[styles.text, {fontSize: 18}]}>{currentQuote?.char_name}</Text>
+                                <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote?.anime || ''}</Text>
                             </View>
                     </View>
 
@@ -279,14 +246,14 @@ export default function Quotes() {
                                 <View 
                                     style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                                 >
-                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}} >{currentQuote.quote}</Text>
+                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}} >{currentQuote?.quote}</Text>
                                 </View>
                             </View>
                     </View>
 
                     {/********************** Quote Buttons ******************/}
 
-                    <QuoteButtons wikiLink={data?.[quoteLog[displayIndex]]?.wiki || ''} quote={data?.[quoteLog[displayIndex]]?.quote || ''} name={data?.[quoteLog[displayIndex]]?.char_name || ''}/>
+                    <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={currentQuote?.char_name || ''}/>
 
                 </View>
             </>

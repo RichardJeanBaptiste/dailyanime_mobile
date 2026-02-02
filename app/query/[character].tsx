@@ -1,9 +1,8 @@
-import { QuoteLogItem } from '@/components/Interfaces';
 import QuoteButtons from '@/components/QuoteButtons';
 import { supabase } from '@/utils';
 import { Image } from 'expo-image';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native';
 
 
@@ -21,32 +20,7 @@ export default function CharQuery() {
 
     const [logIndex, setLogIndex] = useState(0);
 
-    const [currentQuote, setCurrentQuote] = useState<QuoteLogItem>({
-        name: '',
-        anime: '',
-        img_links: [],
-        quote: '',
-        biography: '',
-        wiki: ''
-    });
-
-
-    useEffect(() => {
-
-        if(quoteLog.length != 0) {
-           
-            setCurrentQuote({
-                name: quoteLog[logIndex].name || '',
-                anime: quoteLog[logIndex].anime || '',
-                img_links: quoteLog[logIndex].img_links || 'https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg',
-                quote: quoteLog[logIndex].quote || '',
-                biography: quoteLog[logIndex].biography || '',
-                wiki: quoteLog[logIndex].wiki || ''
-            });
-        }
-        
-        
-    },[logIndex]);
+    const currentQuote = logIndex !== undefined ? quoteLog[logIndex]: null; 
 
 
     useFocusEffect(
@@ -70,17 +44,6 @@ export default function CharQuery() {
         
         //console.log(data);
         setQuoteLog(data);
-
-        if(data !== null) {
-            setCurrentQuote({
-                name: data[0].name || '',
-                anime: data[0].anime || '',
-                img_links: data[0].img_links || 'https://img.freepik.com/free-photo/anime-style-illustration-rose_23-2151548355.jpg',
-                quote: data[0].quote || '',
-                biography: data[0].biography || '',
-                wiki: data[0].wiki || ''
-            });
-        }
         
     }
 
@@ -148,7 +111,7 @@ export default function CharQuery() {
                     }}
                 />
 
-                <Text onPress={() => console.log(currentQuote)} style={styles.char_text}>{character}</Text>
+                <Text style={styles.char_text}>{character}</Text>
             </View>
             
 
@@ -164,14 +127,14 @@ export default function CharQuery() {
                         <View 
                             style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                         >
-                            <Text style={styles.quote_text}>{currentQuote.quote}</Text>
+                            <Text style={styles.quote_text}>{currentQuote?.quote}</Text>
                         </View>
                     </View>
             </View>
 
             {/*********************************** Quote Buttons *********************************/}
 
-            <QuoteButtons wikiLink={currentQuote.wiki} quote={currentQuote.quote} name={character.toLocaleString()}/>
+            <QuoteButtons wikiLink={currentQuote?.wiki} quote={currentQuote?.quote} name={character.toLocaleString()}/>
         </View>
     )
 }

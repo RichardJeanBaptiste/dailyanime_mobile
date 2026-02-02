@@ -30,7 +30,6 @@ export default function QuoteModal({currentQuote, modalVisible, setVisible}: Mod
     }
 
 
-
     return (
             <View style={styles.centeredView}>
                 <Modal
