@@ -1,5 +1,4 @@
 import { Image } from "expo-image";
-import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { QuoteLogItem2 } from "./Interfaces";
@@ -14,7 +13,7 @@ const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 
 export default function Quotes() {
 
-    const { jsonData, isLoading, subQuote, subIndex } = useSearchContext();
+    const { jsonData, isLoading, subQuote, subIndex, isSubClicked } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
@@ -35,98 +34,12 @@ export default function Quotes() {
         wiki: data?.[quoteLog[displayIndex]]?.wiki || ''
     });
 
-    async function setupNotifications(subQuote: any) {
 
-
-        try {   
-
-            console.log("Setting up notfications");
-
-            // Optional: Cancel all previous notifications to avoid duplicates
-            await Notifications.cancelAllScheduledNotificationsAsync();
-
-            await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: subQuote.name,
-                    body: subQuote.quote,
-                },
-                trigger: {
-                    type: Notifications.SchedulableTriggerInputTypes.DAILY,
-                    hour: 11, 
-                    minute: 21,
-                },
-            });
-            
-        } catch (error) {
-            console.log("Error setting up notifications: ", error);
-        }
-
-        
-    }
-
-
-    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-
-        try {
-            console.log("User clicked the notification!");  
-        } catch (error) {
-            console.log("Error handling subcription: ", error)
-        }
-    
-         
-        
-        //console.log(response);
-        
-        // const title = response.notification.request.content.title;
-
-        // if (title === subQuote.name) {
-        //     // Navigate to a specific screen or perform an action
-        //     console.log("Navigating to Check-in screen...");
-
-        //         //console.log(randomSubQuote.quote);
-
-        //         setQuoteLog((prevLog) => {
-        //             const newLog = [...prevLog];
-
-        //             newLog[displayIndex] = subIndex;
-        //             return newLog;
-        //         });
-
-        //         setDisplayIndex(subIndex);
-        //         //setQuoteLog();
-        //     }
-    });
-
-
-    useEffect(() => {
-        
-        if(subQuote !== undefined) {
-
-            console.log(subQuote.quote);
-            
-
-            let x = {
-                name: "test",
-                quote: 'test_quote'
-            }
-            
-            try {
-                setupNotifications(x);
-                return () => subscription.remove();
-            } catch (error) {
-                console.log(error);
-            }
-            
-        }
-    },[subQuote]);
-   
-
-
+    // Load JSON Data
     useEffect(() => {
 
         if(!isLoading && jsonData) {
             
-            // Setup Quotes Component
             setAppData(jsonData);
 
             const indices = Array.from({ length: jsonData.length }, (_, i) => i);
@@ -141,6 +54,7 @@ export default function Quotes() {
     },[isLoading, jsonData]);
 
 
+    // Handle Current Quote State Changes
     useEffect(() => {
 
         if(data.length == 0 || data !== undefined) {
@@ -154,7 +68,71 @@ export default function Quotes() {
             });
         }
         
-    },[displayIndex]);
+    },[data, displayIndex]);
+
+
+    const changeDataLog = () => {
+
+       //console.log('Searching For Quote');
+
+        let x = [...quoteLog];
+
+        x.map((index) => {
+            if(data[index].quote === subQuote.quote) {
+                //console.log("Current Index: ", index);
+                //console.log("Current Quote at Index: ", data[index].quote)
+
+                setAppData((prevData) => {
+
+                    let newData = [...prevData];
+
+                    newData[index].char_name = subQuote.char_name;
+                    newData[index].anime = subQuote.anime;
+                    newData[index].img_links = subQuote.img_links;
+                    newData[index].biography = subQuote.biography;
+                    newData[index].wiki = subQuote.wiki;
+
+
+                    return newData;
+                })
+
+                setQuoteLog(prevLog => {
+
+                    let x = [...prevLog];
+
+                    x[0] = index;
+
+                    return x;
+                });
+
+                return;
+            }
+        });
+
+        setDisplayIndex(prevIndex => {
+            return 0;
+        });
+    }
+
+    useEffect(() => {
+        if(isSubClicked) {
+            
+            let x  = {
+                name: subQuote.char_name ,
+                anime: subQuote.anime || '',
+                img_links: subQuote.img_links || [],
+                quote: subQuote.quote || '',
+                biography: subQuote.biography || '',
+                wiki: subQuote.wiki || ''
+            }
+
+            //console.log("Sub Quote: ", subQuote.quote); 
+            
+            changeDataLog();
+        }
+    },[isSubClicked]);
+
+    
 
     
 
@@ -250,13 +228,7 @@ export default function Quotes() {
                 <View style={styles.quotes_container}>
                     {/*********************** Modal *************************/}
                     <QuoteModal 
-                        currentQuote={{
-                            name: data?.[quoteLog[displayIndex]]?.char_name,
-                            anime: data?.[quoteLog[displayIndex]]?.anime,
-                            biography: data?.[quoteLog[displayIndex]]?.biography,
-                            wiki: data?.[quoteLog[displayIndex]]?.wiki,
-                            img_links: data?.[quoteLog[displayIndex]]?.img_links || []
-                        }} 
+                        currentQuote={currentQuote} 
                         modalVisible={modalVisible} 
                         setVisible={setVisible}
                     />
@@ -270,7 +242,7 @@ export default function Quotes() {
                                             
                                         <Image
                                             style={{ width: 75, height: 75, borderRadius: 35 }}
-                                            source={{ uri: data?.[quoteLog[displayIndex]]?.img_links[imageUriIndex] }}
+                                            source={{ uri: currentQuote?.img_links[imageUriIndex] }}
                                             cachePolicy="memory-disk"
                                             contentFit="fill"
                                             contentPosition={"bottom left"}
@@ -288,8 +260,8 @@ export default function Quotes() {
                             </View>
 
                             <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                                <Text style={[styles.text, {fontSize: 18}]}>{data?.[quoteLog[displayIndex]]?.char_name}</Text>
-                                <Text style={[styles.text, {marginTop: '5%'} ]}>{data?.[quoteLog[displayIndex]]?.anime || ''}</Text>
+                                <Text style={[styles.text, {fontSize: 18}]}>{currentQuote.name}</Text>
+                                <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote.anime || ''}</Text>
                             </View>
                     </View>
 
@@ -307,7 +279,7 @@ export default function Quotes() {
                                 <View 
                                     style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                                 >
-                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}}>{currentQuote.quote}</Text>
+                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}} >{currentQuote.quote}</Text>
                                 </View>
                             </View>
                     </View>
@@ -321,18 +293,6 @@ export default function Quotes() {
         );
         }
     }
-
-
-
-
-/**
-
-    
-
-        
-        
-        
- */
 
 
 const styles = StyleSheet.create({
