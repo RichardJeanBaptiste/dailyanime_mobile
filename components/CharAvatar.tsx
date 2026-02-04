@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { useState } from 'react';
+import React, { useState } from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { QuoteProvider } from "./QuoteContext";
 import QuoteModal from './QuoteModal';
@@ -7,7 +7,9 @@ import QuoteModal from './QuoteModal';
 
 const screenDimesions = Dimensions.get('screen').width;
 
-export default function CharAvatar({name, item} : {name: string, item: any}){
+
+
+const CharAvatar = ({name, item} : {name: string, item: any}) => {
     
     const [ modalVisible, setModalVisible ] = useState(false);
 
@@ -21,14 +23,17 @@ export default function CharAvatar({name, item} : {name: string, item: any}){
             <View>
                 <QuoteModal currentQuote={item} modalVisible={modalVisible} setVisible={setVisible}/>
                 <Pressable onPress={setVisible} style={{ width: 'auto', alignItems: 'center', justifyContent: 'center' }}>
+
                     <Image 
-                        style={{ width: screenDimesions * .20, height: screenDimesions * .20, borderRadius: 62.5 }}
+                        style={styles.avatar_image}
                         source={{
                             uri: item.img_links[0]
                         }}
                         contentFit="cover"
                         contentPosition={"center"}
+                        cachePolicy="memory-disk"
                     />
+                    
                     <Text style={{ marginTop: '10%', paddingBottom: '2%', color: 'white', width: screenDimesions * .25, textAlign: 'center'}}>{item.name}</Text>
                 </Pressable>
             </View>
@@ -43,5 +48,13 @@ const styles = StyleSheet.create({
         borderRadius: 62.5,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    avatar_image: {
+        width: screenDimesions * .20, 
+        height: screenDimesions * .20, 
+        borderRadius: 62.5
     }
 })
+
+
+export default React.memo(CharAvatar);

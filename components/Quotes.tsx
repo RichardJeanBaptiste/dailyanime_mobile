@@ -1,6 +1,9 @@
+import { setupNotificationListener } from "@/notifications";
 import { Image } from "expo-image";
-import { useEffect, useMemo, useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
+import uuid from 'react-native-uuid';
 import { QuoteLogItem } from "./Interfaces";
 import { shuffleArray } from './methods';
 import QuoteButtons from "./QuoteButtons";
@@ -13,7 +16,9 @@ const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 
 export default function Quotes() {
 
-    const { jsonData, isLoading, subQuote, isSubClicked } = useSearchContext();
+    const DAILY_QUOTE_ID = 'daily-quote';
+
+    const { jsonData, isLoading } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
@@ -26,9 +31,48 @@ export default function Quotes() {
     const [displayIndex, setDisplayIndex] = useState(-1);
 
     const currentIndex = quoteLog[displayIndex];
-    const currentQuote = currentIndex !== undefined ? data[currentIndex]: null; 
+    const currentQuote = currentIndex !== undefined ? data[currentIndex]: null;
 
+    const subscriptionRef = useRef<any>(null);
 
+    const scheduleDailyQuote = async (quote: string) => {
+        // 1. Always cancel the previous one first to prevent duplicates
+        await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
+
+        await Notifications.scheduleNotificationAsync({
+            identifier: DAILY_QUOTE_ID,
+            content: {
+                title: 'ABC',
+                body: '123' ,
+                data: {quote}
+            },
+            trigger: {
+                hour: 11,
+                minute: 52,
+                repeats: true, // 👈 THIS is the missing piece
+                type: Notifications.SchedulableTriggerInputTypes.DAILY,
+                channelId: 'daily-quotes'
+            } as Notifications.DailyTriggerInput,
+        });
+    };
+
+    useEffect(() => {
+        subscriptionRef.current = setupNotificationListener(data => {
+            try {
+                console.log("User clicked the notification: ");
+                //changeDataLog(data);
+                console.log(data);
+
+        
+            } catch (error) {
+                console.log("Error handling subcription: ", error)
+            }
+        });
+
+        scheduleDailyQuote(uuid.v4());
+    },[]);
+
+    
     // Load JSON Data
     useEffect(() => {
 
@@ -41,58 +85,25 @@ export default function Quotes() {
             const randomizedIndicies = shuffleArray(indices);
 
             setQuoteLog(randomizedIndicies);
-
+            
             setDisplayIndex(0);
+
+            const randomIndex = Math.floor(Math.random() * jsonData.length);
+
+            const sQuote = jsonData[randomIndex];
+
+           
         }
         
     },[isLoading, jsonData]);
 
 
-    const changeDataLog = () => {
-
-        let x = [...quoteLog];
-
-        x.map((index) => {
-            if(data[index].quote === subQuote.quote) {
-                //console.log("Current Index: ", index);
-                //console.log("Current Quote at Index: ", data[index].quote)
-
-                setAppData((prevData) => {
-
-                    let newData = [...prevData];
-
-                    newData[index].char_name = subQuote.char_name;
-                    newData[index].anime = subQuote.anime;
-                    newData[index].img_links = subQuote.img_links;
-                    newData[index].biography = subQuote.biography;
-                    newData[index].wiki = subQuote.wiki;
-
-                    return newData;
-                })
-
-                setQuoteLog(prevLog => {
-
-                    let x = [...prevLog];
-
-                    x[0] = index;
-
-                    return x;
-                });
-
-                return;
-            }
-        });
-
-        setDisplayIndex(prevIndex => {
-            return 0;
-        });
-    }
-
-    useEffect(() => {
-        if(isSubClicked) {
-            changeDataLog();
-        }
-    },[isSubClicked]);
+    
+    // useEffect(() => {
+    //     if(isSubClicked) {
+    //         changeDataLog();
+    //     }
+    // },[isSubClicked]);
 
 
     const panResponder = useMemo(() => {
@@ -293,4 +304,50 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
+/**
+ * 
+ * const changeDataLog = (subQuote: any) => {
+
+        console.log("Change Log")
+        //console.log(subQuote.quote);
+
+        let x = [...quoteLog];
+
+        x.map((index) => {
+            if(data[index].quote === subQuote.quote) {
+                //console.log("Current Index: ", index);
+                //console.log("Current Quote at Index: ", data[index].quote)
+
+                setAppData((prevData) => {
+
+                    let newData = [...prevData];
+
+                    newData[index].char_name = subQuote.char_name;
+                    newData[index].anime = subQuote.anime;
+                    newData[index].img_links = subQuote.img_links;
+                    newData[index].biography = subQuote.biography;
+                    newData[index].wiki = subQuote.wiki;
+
+                    return newData;
+                })
+
+                setQuoteLog(prevLog => {
+
+                    let x = [...prevLog];
+
+                    x[0] = index;
+
+                    return x;
+                });
+
+                return;
+            }
+        });
+
+        setDisplayIndex(prevIndex => {
+            return 0;
+        });
+    }
+ */
 

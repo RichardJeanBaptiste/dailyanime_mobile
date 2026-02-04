@@ -1,8 +1,9 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import { fetch } from "@react-native-community/netinfo";
+import { fetch } from "@react-native-community/netinfo";
 import { createClient, processLock } from '@supabase/supabase-js';
 import Constants from 'expo-constants';
+import { Platform } from "react-native";
 import 'react-native-url-polyfill/auto';
 
 
@@ -50,29 +51,44 @@ const saveJsonFile = async (filename , jsonString) => {
 
 
 const exportTable = async () => {
-  const { data , error } = await supabase.rpc('get_quotes_json');
 
-  if (error) {
-    console.log(error);
-    throw error;
+  try {
+    const { data , error } = await supabase.rpc('get_quotes_json');
+
+    if (error) {
+      if(error.details.startsWith("TypeError: Network request failed")) {
+        console.log("Failed to connect to supabase: Function: get_quotes_json : ", Platform.OS, " :",Platform.Version);
+      } else {
+        console.log("Error exporting table: ", error);
+      }
+    }
+
+    const json = JSON.stringify(data, null, 2);
+
+    saveJsonFile('user_data.json', json);
+
+    return json;
+  } catch (error) {
+    console.log("Error exporting table: ", error);
   }
-
-  const json = JSON.stringify(data, null, 2);
-
-  saveJsonFile('user_data.json', json);
-
-  return json;
+  
 }
 
 const exportCharTable = async () => {
 
-  const { data , error } = await supabase
+
+  try {
+
+    const { data , error } = await supabase
     .from('characters')
     .select('*')
 
-    if(error) {
-      console.log(error);
-      return error;
+    if (error) {
+      if(error.details.startsWith("TypeError: Network request failed")) {
+        console.log("Failed to connect to supabase: Function: get_chars : ", Platform.OS, " :",Platform.Version);
+      } else {
+        console.log("Error exporting table: ", error);
+      }
     }
 
     const json = JSON.stringify(data, null, 2);
@@ -80,10 +96,15 @@ const exportCharTable = async () => {
     saveJsonFile('characters.json', json);
 
     return json;
+    
+  } catch (error) {
+    console.log("Error exporting Char Table: ", error);
+  }
+  
 }
 
-exportTable();
-exportCharTable();
+//exportTable();
+//exportCharTable();
 
 
 

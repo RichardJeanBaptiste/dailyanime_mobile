@@ -23,10 +23,20 @@ export default function Index() {
     undefined
   );
 
+ 
+
   useEffect(() => {
 
     try {
+      
       registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
+     
+      
+
+      Notifications.setNotificationChannelAsync('daily-quotes', {
+        name: 'Daily Quotes',
+        importance: Notifications.AndroidImportance.HIGH,
+      });
 
       if (Platform.OS === 'android') {
         Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
@@ -39,11 +49,12 @@ export default function Index() {
         console.log(response);
       });
 
-      return () => {
-        notificationListener.remove();
-        responseListener.remove();
-      };
-      
+
+        return () => {
+            notificationListener.remove();
+            responseListener.remove();
+        };
+
     } catch (error) {
       console.error("Push Notification Error: ",error);
     }
@@ -51,13 +62,16 @@ export default function Index() {
 
   }, []);
 
-  return (
-    <QuoteProvider>
-      <View style={styles.container}>
-        <Quotes/>
-      </View>
-    </QuoteProvider>
-  );
+
+
+    return (
+      <QuoteProvider>
+        <View style={styles.container}>
+          <Quotes/>
+        </View>
+      </QuoteProvider>
+    );
+  
 }
 
 

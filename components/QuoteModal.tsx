@@ -48,7 +48,7 @@ export default function QuoteModal({currentQuote, modalVisible, setVisible}: Mod
                                     horizontal={true}
                                     contentContainerStyle={{ paddingRight: '6%'}}
                                 >
-                                    {currentQuote.img_links.map((img : any, index : any) => {
+                                    {currentQuote?.img_links?.map((img : any, index : any) => {
                                         return (
                                             <View style={{ width: 200, height: 200,  paddingRight: '1.5%', marginRight: '3%', marginLeft: '1.5%'}} key={index}>
                                                 <Image

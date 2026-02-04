@@ -1,8 +1,6 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
-import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import uuid from 'react-native-uuid';
 
 interface QuoteContextType {
     charQuery: (name: string) => void;
@@ -10,9 +8,6 @@ interface QuoteContextType {
     charJson: any;
     isLoading: boolean;
     isCharLoading: boolean;
-    subQuote: any;
-    subIndex: number;
-    isSubClicked: boolean;
 }
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
@@ -28,77 +23,10 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     const [ jsonData, setJsonData ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
 
+
     const [ charJson, setCharJson ] = useState([]);
     const [ isCharLoading, setIsCharLoading ] = useState(true); 
 
-    const [ subQuote , setSubQuote] = useState<any>({
-        char_name : '',
-        anime: '',
-        img_links: '',
-        quote: '',
-        biography: '', 
-        wiki: '',
-       id: uuid.v4()
-    });
-
-    const [ subIndex, setSubIndex] = useState<number>(0);
-
-    const [ isSubClicked, setIsSubClicked] = useState<boolean>(false);
-
-
-
-
-    useEffect(() => {
-
-        if (!subQuote?.quote) return;
-
-        const setupNotifications = async () => {
-            try {
-                await Notifications.cancelAllScheduledNotificationsAsync();
-
-                await Notifications.scheduleNotificationAsync({
-                    content: {
-                        title: subQuote.char_name,
-                        body: subQuote.quote,
-                        data: { quoteId: subQuote.id },
-                    },
-                    trigger: {
-                        hour: 11,
-                        minute: 21,
-                        repeats: true,
-                        channelId: 'daily-quotes',
-                    } as Notifications.NotificationTriggerInput,
-                });
-
-                //console.log("Scheduled with quote:", subQuote.quote);
-            } catch (err) {
-                console.log("Notification error:", err);
-            }
-        };
-
-        setupNotifications();
-
-        const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-
-            try {
-                console.log("User clicked the notification!");  
-            } catch (error) {
-                console.log("Error handling subcription: ", error)
-            }
-        
-            console.log(response);
-            
-             const { title, data } = response.notification.request.content;
-
-            if (data.quoteId === subQuote.id) { 
-                console.log("Navigating to Check-in screen...");
-                setIsSubClicked(true);
-            }
-        });
-
-        return () => subscription.remove();
-        
-    },[subQuote?.id]);
 
     const loadJsonFile = async () => {
         const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
@@ -109,9 +37,19 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
                 const content = await RNFS.readFile(filePath, 'utf8');
                 const jsonObject = JSON.parse(content);
 
-                const randomIndex = Math.floor(Math.random() * jsonObject.length);
+                if(jsonObject == null || jsonObject == undefined) {
+                    console.log("Json is null");
+                    return;
+                }
 
-                setSubIndex(randomIndex);
+                let randomIndex;
+
+                if(jsonObject) {
+                    randomIndex = Math.floor(Math.random() * jsonObject.length);
+                } else {
+                    randomIndex = Math.floor(Math.random() * 100);
+                }
+
                 setJsonData(jsonObject);
 
                 let x = {
@@ -122,8 +60,8 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
                     biography: jsonObject[randomIndex].biography || '',
                     wiki: jsonObject[randomIndex].wiki || ''
                 }
+            } else {
 
-                setSubQuote(x);
             }
         } catch (error) {
             console.error('Error reading file:', error);
@@ -150,13 +88,15 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     };
 
     useEffect(() => {
+       
         loadJsonFile();
-        loadCharJson();
+            //loadCharJson();
+        
     },[]);
 
    
     return (
-        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading, subQuote, subIndex, isSubClicked }}>
+        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading }}>
             {children}
         </QuoteContext.Provider>
     )
