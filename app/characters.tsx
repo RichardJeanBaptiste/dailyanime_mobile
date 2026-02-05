@@ -77,9 +77,7 @@ export default function Characters(){
                     renderItem={({item}) => {
                         return (
                             <CharAvatar 
-                                name={item.name} 
                                 item={item} 
-                                setVisible={setVisible}
                                 onPress={() => handleOpenModal(item)}
                             />
                         )
@@ -101,38 +99,3 @@ export default function Characters(){
 }
 
 
-
-/**
- * const GetChars = () => {
-    const [chars, setChars] = useState([]);
-    const [selectedChar, setSelectedChar] = useState(null);
-    const [modalVisible, setModalVisible] = useState(false);
-
-    const handleOpenModal = (item) => {
-        setSelectedChar(item);
-        setModalVisible(true);
-    };
-
-    return (
-        <QuoteProvider> 
-            {/* One modal to rule them all */
-//             <QuoteModal 
-//                 currentQuote={selectedChar} 
-//                 modalVisible={modalVisible} 
-//                 setVisible={() => setModalVisible(false)} 
-//             />
-            
-//             <FlatList
-//                 data={chars}
-//                 renderItem={({item}) => (
-//                     <CharAvatar 
-//                         item={item} 
-//                         onPress={() => handleOpenModal(item)} 
-//                     />
-//                 )}
-//                 // ... rest of props
-//             />
-//         </QuoteProvider>
-//     );
-// };
- 

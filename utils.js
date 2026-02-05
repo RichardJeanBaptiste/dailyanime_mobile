@@ -103,18 +103,7 @@ const exportCharTable = async () => {
   
 }
 
-exportTable();
-exportCharTable();
+//exportTable();
+//exportCharTable();
 
 
-
-
-
-
-
-
-
-
-
-
-      

@@ -6,7 +6,7 @@ import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 const screenDimesions = Dimensions.get('screen').width;
 
 
-const CharAvatar = ({name, item, img_link, onPress} : {name: string, img_link: string, item: any, setVisible: any, onPress: (item: any) => void}) => {    
+const CharAvatar = ({item, onPress} : { item: any, onPress: (item: any) => void}) => {    
    
     return (
         <View>
@@ -25,18 +25,6 @@ const CharAvatar = ({name, item, img_link, onPress} : {name: string, img_link: s
         </View> 
     )
 }
-
-/**
- * <Image 
-        style={styles.avatar_image}
-        source={{
-            uri: item.img_links[0]
-        }}
-        contentFit="cover"
-        contentPosition={"center"}
-        cachePolicy="memory-disk"
-    />
- */
 
 const styles = StyleSheet.create({
     avatar_container: {

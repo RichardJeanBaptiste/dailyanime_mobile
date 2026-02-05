@@ -1,9 +1,9 @@
-import { setupNotificationListener } from "@/notifications";
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 //import uuid from 'react-native-uuid';
+import { supabase } from "@/utils";
 import { QuoteLogItem } from "./Interfaces";
 import { shuffleArray } from './methods';
 import QuoteButtons from "./QuoteButtons";
@@ -26,6 +26,26 @@ export default function Quotes() {
 
     const [data, setAppData] = useState<QuoteLogItem[]>([]);
 
+    const [subQuote, setSubQuote] = useState<QuoteLogItem>({
+        char_name: '',
+        anime: '',
+        quote: '',
+        biography: '',
+        wiki: '',
+        img_links: []
+    });
+
+    const [testQuote, setTestQuote] = useState<QuoteLogItem>({
+        char_name: 'ABC',
+        anime: 'DEF',
+        quote: '123',
+        biography: '456',
+        wiki: 'jighk',
+        img_links: ['IMG1', 'IMG2', 'IMG3']
+    });
+
+    const [isSubLoaded, setIsSubLoaded] = useState<boolean>(false);
+
     const [quoteLog, setQuoteLog] = useState<number[]>([]);
 
     const [displayIndex, setDisplayIndex] = useState(-1);
@@ -35,15 +55,15 @@ export default function Quotes() {
 
     const subscriptionRef = useRef<any>(null);
 
-    const scheduleDailyQuote = async (quote: string) => {
+    const scheduleDailyQuote = async (quote: any) => {
         // 1. Always cancel the previous one first to prevent duplicates
         await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
 
         await Notifications.scheduleNotificationAsync({
             identifier: DAILY_QUOTE_ID,
             content: {
-                title: 'ABC',
-                body: '123' ,
+                title: quote.char_name,
+                body: quote.quote,
                 data: {quote}
             },
             trigger: {
@@ -56,55 +76,110 @@ export default function Quotes() {
         });
     };
 
-    useEffect(() => {
-        subscriptionRef.current = setupNotificationListener(data => {
-            try {
-                console.log("User clicked the notification: ");
-                //changeDataLog(data);
-                console.log(data);
+    const schedulePosts = async () => {
+        const { data , error } = await supabase.rpc('get_quotes_json');
 
-        
-            } catch (error) {
-                console.log("Error handling subcription: ", error)
-            }
+        if(error) {
+            console.log("Error getting Push Notification Post: ", error);
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * (data.length || 100));
+
+        let notificationQuote = await data[randomIndex];
+
+        //console.log("Notification Quote : ", notificationQuote.char_name, ' ', notificationQuote.quote);
+
+        scheduleDailyQuote(notificationQuote);
+    }
+
+    const changeDataLog = (subQuote: any) => {
+
+        console.log("Change Log for Quote: ", subQuote);
+ 
+        let quoteIndex = quoteLog[0];
+
+        setAppData((prev) => {
+            let newLog = [...prev];
+            newLog[quoteIndex] = subQuote;
+            //console.log(newLog[quoteIndex].quote)
+            return newLog; 
+        }); 
+
+        setDisplayIndex((prev) => {
+            return 0;
         });
+    }
 
-        scheduleDailyQuote("ABCD");
-        //scheduleDailyQuote(uuid.v4());
+
+    useEffect(() => {
+
+        if(data.length == 0) {
+            return;
+        }
+
+        console.log("Data Changed");
+    },[data]);
+
+
+    useEffect(() => {
+        try {
+
+            const response = Notifications.getLastNotificationResponse();
+
+            if (response?.notification) {
+
+                const subQuote = response.notification.request.content.data.quote as QuoteLogItem;
+
+                setSubQuote(subQuote);
+                setIsSubLoaded(true);
+                
+            }
+
+            schedulePosts();
+            
+        } catch (error) {
+            console.log("Error During Intial Mount: ", error);
+        }
     },[]);
+
+    useEffect(() => {
+        console.log("isSubLoaded: ", isSubLoaded, ' ', subQuote.quote);
+
+        if (!isSubLoaded) return;
+
+        // setAppData(prev => {
+        //     return [subQuote,...prev];
+        // });
+        
+        changeDataLog(subQuote);
+
+        }, [isSubLoaded]);
 
     
     // Load JSON Data
     useEffect(() => {
 
         if(!isLoading && jsonData) {
-            
-            setAppData(jsonData);
 
+            setAppData(jsonData)
+            
+            if(isSubLoaded) {
+                setAppData(prev => {
+                    return [subQuote, ...prev];
+                })
+            }
+            
             const indices = Array.from({ length: jsonData.length }, (_, i) => i);
 
             const randomizedIndicies = shuffleArray(indices);
 
             setQuoteLog(randomizedIndicies);
             
-            setDisplayIndex(0);
-
-            const randomIndex = Math.floor(Math.random() * jsonData.length);
-
-            const sQuote = jsonData[randomIndex];
-
-           
+            setDisplayIndex(1);
         }
         
     },[isLoading, jsonData]);
-
-
-    
-    // useEffect(() => {
-    //     if(isSubClicked) {
-    //         changeDataLog();
-    //     }
-    // },[isSubClicked]);
 
 
     const panResponder = useMemo(() => {
@@ -237,8 +312,12 @@ export default function Quotes() {
                             </View>
 
                             <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                                <Text style={[styles.text, {fontSize: 18}]}>{currentQuote?.char_name}</Text>
+                                <Text style={[styles.text, {fontSize: 18}]} onPress={() => console.log(data[0])}>{currentQuote?.char_name}</Text>
                                 <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote?.anime || ''}</Text>
+                                <Pressable onPress={() => changeDataLog(subQuote)}>
+                                     <Text style={{fontSize: 24, color: 'white', marginTop: '5%', width: 200, height: 200 }} >SET LOADED</Text>
+                                </Pressable>
+                               
                             </View>
                     </View>
 
@@ -307,47 +386,6 @@ const styles = StyleSheet.create({
 });
 
 /**
+ *   
  * 
- * const changeDataLog = (subQuote: any) => {
-
-        console.log("Change Log")
-        //console.log(subQuote.quote);
-
-        let x = [...quoteLog];
-
-        x.map((index) => {
-            if(data[index].quote === subQuote.quote) {
-                //console.log("Current Index: ", index);
-                //console.log("Current Quote at Index: ", data[index].quote)
-
-                setAppData((prevData) => {
-
-                    let newData = [...prevData];
-
-                    newData[index].char_name = subQuote.char_name;
-                    newData[index].anime = subQuote.anime;
-                    newData[index].img_links = subQuote.img_links;
-                    newData[index].biography = subQuote.biography;
-                    newData[index].wiki = subQuote.wiki;
-
-                    return newData;
-                })
-
-                setQuoteLog(prevLog => {
-
-                    let x = [...prevLog];
-
-                    x[0] = index;
-
-                    return x;
-                });
-
-                return;
-            }
-        });
-
-        setDisplayIndex(prevIndex => {
-            return 0;
-        });
-    }
  */
