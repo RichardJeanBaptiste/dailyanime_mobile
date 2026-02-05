@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
-import uuid from 'react-native-uuid';
+//import uuid from 'react-native-uuid';
 import { QuoteLogItem } from "./Interfaces";
 import { shuffleArray } from './methods';
 import QuoteButtons from "./QuoteButtons";
@@ -69,7 +69,8 @@ export default function Quotes() {
             }
         });
 
-        scheduleDailyQuote(uuid.v4());
+        scheduleDailyQuote("ABCD");
+        //scheduleDailyQuote(uuid.v4());
     },[]);
 
     
@@ -350,4 +351,3 @@ const styles = StyleSheet.create({
         });
     }
  */
-

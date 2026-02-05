@@ -1,45 +1,42 @@
 import { Image } from "expo-image";
-import React, { useState } from "react";
+import React from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-import { QuoteProvider } from "./QuoteContext";
-import QuoteModal from './QuoteModal';
 
 
 const screenDimesions = Dimensions.get('screen').width;
 
 
-
-const CharAvatar = ({name, item} : {name: string, item: any}) => {
-    
-    const [ modalVisible, setModalVisible ] = useState(false);
-
-    const setVisible = () => {
-        setModalVisible(!modalVisible)
-    }
-
-
+const CharAvatar = ({name, item, img_link, onPress} : {name: string, img_link: string, item: any, setVisible: any, onPress: (item: any) => void}) => {    
+   
     return (
-        <QuoteProvider>
-            <View>
-                <QuoteModal currentQuote={item} modalVisible={modalVisible} setVisible={setVisible}/>
-                <Pressable onPress={setVisible} style={{ width: 'auto', alignItems: 'center', justifyContent: 'center' }}>
-
-                    <Image 
-                        style={styles.avatar_image}
-                        source={{
-                            uri: item.img_links[0]
-                        }}
-                        contentFit="cover"
-                        contentPosition={"center"}
-                        cachePolicy="memory-disk"
-                    />
-                    
-                    <Text style={{ marginTop: '10%', paddingBottom: '2%', color: 'white', width: screenDimesions * .25, textAlign: 'center'}}>{item.name}</Text>
-                </Pressable>
-            </View>
-        </QuoteProvider>
+        <View>
+            <Pressable onPress={onPress} style={{ width: 'auto', alignItems: 'center', justifyContent: 'center' }}>
+                <Image 
+                    style={styles.avatar_image}
+                    source={{
+                        uri: item.img_links[0]
+                    }}
+                    contentFit="cover"
+                    contentPosition={"center"}
+                    cachePolicy="memory-disk"
+                />
+                <Text style={{ marginTop: '10%', paddingBottom: '2%', color: 'white', width: screenDimesions * .25, textAlign: 'center'}}>{item.name}</Text>
+            </Pressable>
+        </View> 
     )
 }
+
+/**
+ * <Image 
+        style={styles.avatar_image}
+        source={{
+            uri: item.img_links[0]
+        }}
+        contentFit="cover"
+        contentPosition={"center"}
+        cachePolicy="memory-disk"
+    />
+ */
 
 const styles = StyleSheet.create({
     avatar_container: {

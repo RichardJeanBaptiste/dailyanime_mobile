@@ -24,14 +24,12 @@ export default function Index() {
   );
 
  
-
   useEffect(() => {
 
     try {
       
       registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
      
-      
 
       Notifications.setNotificationChannelAsync('daily-quotes', {
         name: 'Daily Quotes',

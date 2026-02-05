@@ -1,5 +1,7 @@
 import CharAvatar from '@/components/CharAvatar';
+import { QuoteLogItem } from '@/components/Interfaces';
 import { QuoteProvider } from '@/components/QuoteContext';
+import QuoteModal from '@/components/QuoteModal';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
@@ -9,6 +11,14 @@ export default function Characters(){
     const GetChars = () => {
 
         const [ chars, setChars ] = useState<any>([]);
+
+        const [selectedChar, setSelectedChar] = useState<QuoteLogItem | {}>({});
+
+        const [ modalVisible, setModalVisible ] = useState(false);
+        
+        const setVisible = () => {
+            setModalVisible(!modalVisible)
+        }
 
         const loadCharJson = async () => {
             const filepath = `${RNFS.DocumentDirectoryPath}/characters.json`;
@@ -24,17 +34,6 @@ export default function Characters(){
                         return;
                     }
 
-                    //const chunkSize = 10;
-
-                    // for (let i = 0; i < jsonObject.length; i += chunkSize) {
-                    //     const chunk = jsonObject.slice(i, i + chunkSize);
-                    //         setChars((prev: any) => [...prev, ...chunk]);
-                    //     // Small pause to let the UI breathe
-                    //     await new Promise(resolve => setTimeout(resolve, 16)); 
-                    // }
-
-                    // await new Promise(resolve => setTimeout(resolve, 0));
-
                     setChars(jsonObject);
                 }
             } catch (error) {
@@ -46,33 +45,48 @@ export default function Characters(){
             loadCharJson();
         },[]);
 
+        const handleOpenModal = (item: any) => {
+            console.log(item.name);
+            setSelectedChar(item);
+            setModalVisible(true);
+        }
+
 
         return (
-            <FlatList
-                data={chars}
-                numColumns={3}
-                contentContainerStyle={{ 
-                    paddingHorizontal: 10, 
-                    paddingBottom: 30,
-                    width: '100%', 
-                }}
+            <QuoteProvider>
+                <QuoteModal currentQuote={selectedChar} modalVisible={modalVisible} setVisible={setVisible}/>
 
-                initialNumToRender={12}
-                maxToRenderPerBatch={9}
-                updateCellsBatchingPeriod={50}
-                windowSize={5}
-                columnWrapperStyle={{ 
-                    gap: 16, 
-                    justifyContent: 'space-between' 
-                }}
-                ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-                renderItem={({item}) => {
-                    return (
-                        <CharAvatar name={item.name} item={item}/>
-                    )
-                }}
-                keyExtractor={(item) => item.charid}
-            />
+                <FlatList
+                    data={chars}
+                    numColumns={3}
+                    contentContainerStyle={{ 
+                        paddingHorizontal: 10, 
+                        paddingBottom: 30,
+                        width: '100%', 
+                    }}
+
+                    initialNumToRender={12}
+                    maxToRenderPerBatch={9}
+                    updateCellsBatchingPeriod={50}
+                    windowSize={5}
+                    columnWrapperStyle={{ 
+                        gap: 16, 
+                        justifyContent: 'space-between' 
+                    }}
+                    ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
+                    renderItem={({item}) => {
+                        return (
+                            <CharAvatar 
+                                name={item.name} 
+                                item={item} 
+                                setVisible={setVisible}
+                                onPress={() => handleOpenModal(item)}
+                            />
+                        )
+                    }}
+                    keyExtractor={(item) => item.charid}
+                />
+            </QuoteProvider>
         )
     }
 
