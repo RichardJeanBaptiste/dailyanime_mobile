@@ -1,9 +1,9 @@
+import { supabase } from "@/utils";
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
-//import uuid from 'react-native-uuid';
-import { supabase } from "@/utils";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "./Interfaces";
 import { shuffleArray } from './methods';
 import QuoteButtons from "./QuoteButtons";
@@ -56,7 +56,7 @@ export default function Quotes() {
     const subscriptionRef = useRef<any>(null);
 
     const scheduleDailyQuote = async (quote: any) => {
-        // 1. Always cancel the previous one first to prevent duplicates
+        
         await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
 
         await Notifications.scheduleNotificationAsync({
@@ -69,7 +69,7 @@ export default function Quotes() {
             trigger: {
                 hour: 11,
                 minute: 52,
-                repeats: true, // 👈 THIS is the missing piece
+                repeats: true, 
                 type: Notifications.SchedulableTriggerInputTypes.DAILY,
                 channelId: 'daily-quotes'
             } as Notifications.DailyTriggerInput,
@@ -271,7 +271,7 @@ export default function Quotes() {
     } else {
         return (
             <>
-                <View style={styles.quotes_container}>
+                <SafeAreaView style={styles.quotes_container}>
                     {/*********************** Modal *************************/}
                     <QuoteModal 
                         currentQuote={{
@@ -344,11 +344,11 @@ export default function Quotes() {
 
                     <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={currentQuote?.char_name || ''}/>
 
-                </View>
+                </SafeAreaView>
             </>
         );
         }
-    }
+}
 
 
 const styles = StyleSheet.create({
@@ -385,7 +385,3 @@ const styles = StyleSheet.create({
     },
 });
 
-/**
- *   
- * 
- */

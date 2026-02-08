@@ -24,9 +24,7 @@ export default function QuoteModal({currentQuote, modalVisible, setVisible}: Mod
 
     const openQuotes = (name: string) => {
         setVisible();
-
         charQuery(name);
-
     }
 
 
@@ -44,13 +42,18 @@ export default function QuoteModal({currentQuote, modalVisible, setVisible}: Mod
                         <View style={styles.modalView}>
                             <View style={{ width: '100%', height: '40%', alignItems: 'center', justifyContent: 'center' }}>
                                 <ScrollView
-                                    style={{ width: '100%'}}
+                                    style={{ flex : 1 }}
                                     horizontal={true}
-                                    contentContainerStyle={{ paddingRight: '6%'}}
+                                    contentContainerStyle={{ 
+                                        //paddingHorizontal: 20,
+                                        alignItems: 'center'
+                                    }}
+                                    showsVerticalScrollIndicator={false}
+                                    snapToInterval={250}
                                 >
                                     {currentQuote?.img_links?.map((img : any, index : any) => {
                                         return (
-                                            <View style={{ width: 200, height: 200,  paddingRight: '1.5%', marginRight: '3%', marginLeft: '1.5%'}} key={index}>
+                                            <View style={{ width: 200, height: 200, marginRight: '3%', }} key={index}>
                                                 <Image
                                                     style= {{ width: '95%', height: "95%"}}
                                                     source={{
@@ -75,7 +78,7 @@ export default function QuoteModal({currentQuote, modalVisible, setVisible}: Mod
                             </ScrollView>          
                                 
                                     
-                            <View style={{ width: '100%', marginTop: '2%',justifyContent: 'center', alignItems: 'center', gap: 30 , display: 'flex' , flexDirection: 'row'}}>
+                            <View style={styles.button_container}>
                                 <IconButton icon={<FontAwesome name="wikipedia-w" size={24} color="white"/>} onPress={linkToWiki}/>
                                 <IconButton icon={<FontAwesome name="quote-right" size={24} color="white"/>} onPress={() => openQuotes(currentQuote.name)}/>
                                 <IconButton icon={<FontAwesome name="close" size={24} color="red" />} onPress={() => setVisible()}/>
@@ -87,6 +90,7 @@ export default function QuoteModal({currentQuote, modalVisible, setVisible}: Mod
             </View>
     )
 }
+
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -110,6 +114,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
+    },
+    button_container: { 
+        width: '100%', 
+        marginTop: '2%',
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        gap: 30 , 
+        display: 'flex' , 
+        flexDirection: 'row'
     },
     button: {
         borderRadius: 20,

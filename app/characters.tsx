@@ -1,16 +1,19 @@
 import CharAvatar from '@/components/CharAvatar';
 import { QuoteLogItem } from '@/components/Interfaces';
-import { QuoteProvider } from '@/components/QuoteContext';
+import { QuoteProvider, useSearchContext } from '@/components/QuoteContext';
 import QuoteModal from '@/components/QuoteModal';
-import * as RNFS from '@dr.pogodin/react-native-fs';
-import { useEffect, useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { useState } from 'react';
+import { FlatList, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 export default function Characters(){
 
     const GetChars = () => {
 
-        const [ chars, setChars ] = useState<any>([]);
+        //const [ chars, setChars ] = useState<any>([]);
+
+        const {charJson, isCharLoading} = useSearchContext();
 
         const [selectedChar, setSelectedChar] = useState<QuoteLogItem | {}>({});
 
@@ -20,31 +23,6 @@ export default function Characters(){
             setModalVisible(!modalVisible)
         }
 
-        const loadCharJson = async () => {
-            const filepath = `${RNFS.DocumentDirectoryPath}/characters.json`;
-    
-            try {
-                const exists = await RNFS.exists(filepath);
-                if(exists) {
-                    const content = await RNFS.readFile(filepath, 'utf8');
-                    const jsonObject = JSON.parse(content);
-
-                    if(jsonObject == null || jsonObject == undefined) {
-                        console.log("CharJson is null");
-                        return;
-                    }
-
-                    setChars(jsonObject);
-                }
-            } catch (error) {
-                console.error('Error reading characters.json', error);
-            } 
-        };
-
-        useEffect(() => {
-            loadCharJson();
-        },[]);
-
         const handleOpenModal = (item: any) => {
             console.log(item.name);
             setSelectedChar(item);
@@ -52,12 +30,13 @@ export default function Characters(){
         }
 
 
+        
         return (
-            <QuoteProvider>
+            <SafeAreaView style={{ flex: 1 }}>
                 <QuoteModal currentQuote={selectedChar} modalVisible={modalVisible} setVisible={setVisible}/>
 
                 <FlatList
-                    data={chars}
+                    data={charJson}
                     numColumns={3}
                     contentContainerStyle={{ 
                         paddingHorizontal: 10, 
@@ -83,9 +62,11 @@ export default function Characters(){
                         )
                     }}
                     keyExtractor={(item) => item.charid}
+                    ListEmptyComponent={<Text style={{ color: 'white', fontSize: 24 }}>Characters Loading</Text>}
                 />
-            </QuoteProvider>
+            </SafeAreaView>
         )
+        
     }
 
 

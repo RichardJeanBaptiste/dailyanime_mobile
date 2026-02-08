@@ -71,11 +71,10 @@ const exportTable = async () => {
   } catch (error) {
     console.log("Error exporting table: ", error);
   }
-  
+
 }
 
 const exportCharTable = async () => {
-
 
   try {
 

@@ -60,8 +60,6 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
                     biography: jsonObject[randomIndex].biography || '',
                     wiki: jsonObject[randomIndex].wiki || ''
                 }
-            } else {
-
             }
         } catch (error) {
             console.error('Error reading file:', error);
@@ -78,6 +76,8 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
             if(exists) {
                 const content = await RNFS.readFile(filepath, 'utf8');
                 const jsonObject = JSON.parse(content);
+
+                console.log("Character Json: ", charJson);
                 setCharJson(jsonObject);
             }
         } catch (error) {
@@ -88,10 +88,8 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     };
 
     useEffect(() => {
-       
         loadJsonFile();
-            //loadCharJson();
-        
+        loadCharJson();
     },[]);
 
    

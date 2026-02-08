@@ -5,6 +5,7 @@ import { Image } from 'expo-image';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
@@ -100,7 +101,7 @@ export default function CharQuery() {
 
 
     return (
-        <View style={styles.quotes_container}>
+        <SafeAreaView style={styles.quotes_container}>
             
             {/*********************** Title *************************/}
 
@@ -135,7 +136,7 @@ export default function CharQuery() {
 
             {/*********************************** Quote Buttons *********************************/}
             <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={character.toLocaleString()}/>
-        </View>
+        </SafeAreaView>
     )
 }
 

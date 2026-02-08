@@ -4,7 +4,8 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -27,10 +28,9 @@ export default function Index() {
   useEffect(() => {
 
     try {
-      
-      registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
-     
 
+      registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
+    
       Notifications.setNotificationChannelAsync('daily-quotes', {
         name: 'Daily Quotes',
         importance: Notifications.AndroidImportance.HIGH,
@@ -47,27 +47,27 @@ export default function Index() {
         console.log(response);
       });
 
-
-        return () => {
-            notificationListener.remove();
-            responseListener.remove();
-        };
+      return () => {
+          notificationListener.remove();
+          responseListener.remove();
+      }; 
 
     } catch (error) {
       console.error("Push Notification Error: ",error);
     }
     
-
   }, []);
 
 
 
     return (
-      <QuoteProvider>
-        <View style={styles.container}>
-          <Quotes/>
-        </View>
-      </QuoteProvider>
+      <SafeAreaProvider>
+        <QuoteProvider>
+            <View style={styles.container}>
+              <Quotes/>
+            </View>
+        </QuoteProvider>
+      </SafeAreaProvider>
     );
   
 }
