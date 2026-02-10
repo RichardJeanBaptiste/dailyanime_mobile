@@ -18,7 +18,7 @@ export default function Bookmarks(){
         useCallback(() => {
             getSavedQuotes();
         },[])
-    )
+    );
 
     const getSavedQuotes = async () => {
         let value = await AsyncStorage.getItem('quotes');

@@ -1,7 +1,7 @@
 import { supabase } from "@/utils";
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "./Interfaces";
@@ -35,14 +35,14 @@ export default function Quotes() {
         img_links: []
     });
 
-    const [testQuote, setTestQuote] = useState<QuoteLogItem>({
-        char_name: 'ABC',
-        anime: 'DEF',
-        quote: '123',
-        biography: '456',
-        wiki: 'jighk',
-        img_links: ['IMG1', 'IMG2', 'IMG3']
-    });
+    // const [testQuote, setTestQuote] = useState<QuoteLogItem>({
+    //     char_name: 'ABC',
+    //     anime: 'DEF',
+    //     quote: '123',
+    //     biography: '456',
+    //     wiki: 'jighk',
+    //     img_links: ['IMG1', 'IMG2', 'IMG3']
+    // });
 
     const [isSubLoaded, setIsSubLoaded] = useState<boolean>(false);
 
@@ -55,7 +55,7 @@ export default function Quotes() {
 
     const subReady = isSubLoaded && subQuote && quoteLog?.length && data?.length;
 
-    const subscriptionRef = useRef<any>(null);
+    //const subscriptionRef = useRef<any>(null);
 
     const scheduleDailyQuote = async (quote: any) => {
         
@@ -93,9 +93,11 @@ export default function Quotes() {
         scheduleDailyQuote(notificationQuote);
     }
 
+
+    // Add quote to the front of appData array
     const changeDataLog = (subQuote: any) => {
 
-        console.log("Change Log for Quote: ", subQuote.quote);
+        //console.log("Change Log for Quote: ", subQuote.quote);
  
         let quoteIndex = quoteLog[0];
 
@@ -113,9 +115,6 @@ export default function Quotes() {
 
     useEffect(() => {
         try {
-
-            console.log("Notification")
-
             const response = Notifications.getLastNotificationResponse();
 
             if (response?.notification) {
@@ -135,8 +134,6 @@ export default function Quotes() {
     
     // Load JSON Data
     useEffect(() => {
-
-        console.log("load")
 
         if(!isLoading && jsonData) {
 
@@ -260,9 +257,9 @@ export default function Quotes() {
 
     if(isLoading) {
         return (
-            <View>
+            <SafeAreaView style={{ flex: 1 }}>
                 <Text style={{ color: 'white', fontSize: 24}}>Loading</Text>
-            </View>
+            </SafeAreaView>
         )
     } else {
         return (
@@ -283,67 +280,62 @@ export default function Quotes() {
 
                     {/*************************** Title *****************************/}
                     <View style={styles.title_container}>
-                            <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
-                                <Pressable onPress={() => setModalVisible(true)}>
-                                    {/* Only render the Image component if the URL is a non-empty string */}
-                                        {currentQuote?.img_links[imageUriIndex] ? (
-                                            
-                                        <Image
-                                            style={{ width: 75, height: 75, borderRadius: 35 }}
-                                            source={{ uri: currentQuote?.img_links[imageUriIndex] }}
-                                            cachePolicy="memory-disk"
-                                            contentFit="fill"
-                                            contentPosition={"bottom left"}
-                                            onError={cycleImages} 
-                                        />
-                                    ) : (
+                        <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
+                            <Pressable onPress={() => setModalVisible(true)}>
+                                {/* Only render the Image component if the URL is a non-empty string */}
+                                    {currentQuote?.img_links[imageUriIndex] ? (
+                                        
+                                    <Image
+                                        style={{ width: 75, height: 75, borderRadius: 35 }}
+                                        source={{ uri: currentQuote?.img_links[imageUriIndex] }}
+                                        cachePolicy="memory-disk"
+                                        contentFit="fill"
+                                        contentPosition={"bottom left"}
+                                        onError={cycleImages} 
+                                    />
+                                ) : (
 
-                                        <Image
-                                            style={{ width: 75, height: 75, borderRadius: 35 }}
-                                            source={PlaceholderImage}
-                                            onError={cycleImages} 
-                                        />
-                                    )}
-                                </Pressable>
-                            </View>
+                                    <Image
+                                        style={{ width: 75, height: 75, borderRadius: 35 }}
+                                        source={PlaceholderImage}
+                                        onError={cycleImages} 
+                                    />
+                                )}
+                            </Pressable>
+                        </View>
 
-                            <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                                <Text style={[styles.text, {fontSize: 18}]} onPress={() => console.log(data[0])}>{currentQuote?.char_name}</Text>
-                                <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote?.anime || ''}</Text>
-                                <Pressable onPress={() => changeDataLog(subQuote)}>
-                                     <Text style={{fontSize: 24, color: 'white', marginTop: '5%', width: 200, height: 200 }} >SET LOADED</Text>
-                                </Pressable>
-                               
-                            </View>
+                        <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
+                            <Text style={[styles.text, {fontSize: 18}]} onPress={() => console.log(data[0])}>{currentQuote?.char_name}</Text>
+                            <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote?.anime || ''}</Text>       
+                        </View>
                     </View>
 
                     {/********************** Quotes **************************/}
                     
                     <View style={styles.quotes}>
 
-                            {/***********************************  FULL SWIPE AREA *****************************************/}
+                        {/***********************************  FULL SWIPE AREA *****************************************/}
 
-                            <View
-                                style={{ flex: 1, width: '100%', height: '100%' }}
-                                pointerEvents="box-only"
-                                {...panResponder.panHandlers}
+                        <View
+                            style={{ flex: 1, width: '100%', height: '100%' }}
+                            pointerEvents="box-only"
+                            {...panResponder.panHandlers}
+                        >
+                            <View 
+                                style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                             >
-                                <View 
-                                    style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
-                                >
-                                    <Text style={{ color: 'white', width: '100%', fontSize: 24}} >{currentQuote?.quote}</Text>
-                                </View>
+                                <Text style={{ color: 'white', width: '100%', fontSize: 24}} >{currentQuote?.quote}</Text>
                             </View>
+                        </View>
                     </View>
 
                     {/********************** Quote Buttons ******************/}
-
                     <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={currentQuote?.char_name || ''}/>
 
                 </SafeAreaView>
             </>
         );
-        }
+    }
 }
 
 

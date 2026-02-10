@@ -1,7 +1,21 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import { useRouter } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
+import { Pressable } from 'react-native';
 
 export default function RootLayout() {
+
+  const ReturnButton = () => {
+
+    const router = useRouter();
+
+    return (
+      <Pressable onPress={() => router.back()}>
+        <MaterialDesignIcons name="arrow-left-top-bold" color="white" size={15} />
+      </Pressable>
+    )
+  }
 
   return (
     <Drawer
@@ -44,7 +58,12 @@ export default function RootLayout() {
           headerStyle: {
             backgroundColor: '#25292e'
           },
-          headerTintColor: 'white'
+          headerTintColor: 'white',
+          headerRight: () => {
+            return (
+              <ReturnButton/>
+            )
+          }
         }}
       />
 
