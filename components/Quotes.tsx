@@ -88,8 +88,6 @@ export default function Quotes() {
 
         let notificationQuote = await data[randomIndex];
 
-        //console.log("Notification Quote : ", notificationQuote.char_name, ' ', notificationQuote.quote);
-
         scheduleDailyQuote(notificationQuote);
     }
 
@@ -335,7 +333,7 @@ export default function Quotes() {
                                 <View 
                                     style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
                                 >
-                                    <Text style={{ color: 'white', width: '100%',fontSize: 24}} >{currentQuote?.quote}</Text>
+                                    <Text style={{ color: 'white', width: '100%', fontSize: 24}} >{currentQuote?.quote}</Text>
                                 </View>
                             </View>
                     </View>

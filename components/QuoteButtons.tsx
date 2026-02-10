@@ -22,7 +22,7 @@ export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) 
 
             x.map((storedQuote: any) => {
                 if(storedQuote.quote === quote) {
-                    console.log(`Quote Exists - ${quote}`)
+                    //console.log(`Quote Exists - ${quote}`)
                     setQuoteExists(true);
                 }
             })
@@ -69,7 +69,6 @@ export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) 
 
                 }
             } 
-
         } catch (error) {
             console.log(error)
         }
@@ -80,7 +79,7 @@ export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) 
     }
 
     const shareQuote = async () => {
-        console.log("Share Quote")
+        //console.log("Share Quote")
         try {
             const result = await Share.share({
                 message: `${quote} - ${name}`,
@@ -122,7 +121,7 @@ export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) 
 const styles = StyleSheet.create({
     btnGroup : {
         position: 'absolute',
-        top: '80%',
+        top: '90%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '100%',

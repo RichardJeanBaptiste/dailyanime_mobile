@@ -127,7 +127,7 @@ export default function CharQuery() {
                         {...panResponder.panHandlers}
                     >
                         <View 
-                            style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
+                            style={{ width: '80%', height: '130%', marginTop: '6%', alignSelf: 'center', justifyContent: 'center' }}
                         >
                             <Text style={styles.quote_text}>{currentQuote?.quote}</Text>
                         </View>
@@ -178,6 +178,8 @@ const styles = StyleSheet.create({
     quote_text: {
         color: 'white',
         width: '100%',
+        height: '100%',
+        textAlign: 'center',
         fontSize: 24
     }
 

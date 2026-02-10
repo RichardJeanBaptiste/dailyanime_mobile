@@ -11,8 +11,6 @@ export default function Characters(){
 
     const GetChars = () => {
 
-        //const [ chars, setChars ] = useState<any>([]);
-
         const {charJson, isCharLoading} = useSearchContext();
 
         const [selectedChar, setSelectedChar] = useState<QuoteLogItem | {}>({});
@@ -28,7 +26,6 @@ export default function Characters(){
             setSelectedChar(item);
             setModalVisible(true);
         }
-
 
         
         return (
