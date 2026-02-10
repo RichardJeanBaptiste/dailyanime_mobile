@@ -53,6 +53,8 @@ export default function Quotes() {
     const currentIndex = quoteLog[displayIndex];
     const currentQuote = currentIndex !== undefined ? data[currentIndex]: null;
 
+    const subReady = isSubLoaded && subQuote && quoteLog?.length && data?.length;
+
     const subscriptionRef = useRef<any>(null);
 
     const scheduleDailyQuote = async (quote: any) => {
@@ -93,14 +95,13 @@ export default function Quotes() {
 
     const changeDataLog = (subQuote: any) => {
 
-        console.log("Change Log for Quote: ", subQuote);
+        console.log("Change Log for Quote: ", subQuote.quote);
  
         let quoteIndex = quoteLog[0];
 
         setAppData((prev) => {
             let newLog = [...prev];
             newLog[quoteIndex] = subQuote;
-            //console.log(newLog[quoteIndex].quote)
             return newLog; 
         }); 
 
@@ -111,17 +112,9 @@ export default function Quotes() {
 
 
     useEffect(() => {
-
-        if(data.length == 0) {
-            return;
-        }
-
-        console.log("Data Changed");
-    },[data]);
-
-
-    useEffect(() => {
         try {
+
+            console.log("Notification")
 
             const response = Notifications.getLastNotificationResponse();
 
@@ -131,7 +124,6 @@ export default function Quotes() {
 
                 setSubQuote(subQuote);
                 setIsSubLoaded(true);
-                
             }
 
             schedulePosts();
@@ -140,23 +132,11 @@ export default function Quotes() {
             console.log("Error During Intial Mount: ", error);
         }
     },[]);
-
-    useEffect(() => {
-        console.log("isSubLoaded: ", isSubLoaded, ' ', subQuote.quote);
-
-        if (!isSubLoaded) return;
-
-        // setAppData(prev => {
-        //     return [subQuote,...prev];
-        // });
-        
-        changeDataLog(subQuote);
-
-        }, [isSubLoaded]);
-
     
     // Load JSON Data
     useEffect(() => {
+
+        console.log("load")
 
         if(!isLoading && jsonData) {
 
@@ -174,10 +154,28 @@ export default function Quotes() {
 
             setQuoteLog(randomizedIndicies);
             
-            setDisplayIndex(1);
+            setDisplayIndex(0);
         }
         
     },[isLoading, jsonData]);
+
+
+    useEffect(() => {
+
+        if (!subReady) return;  
+
+        changeDataLog(subQuote);
+
+    }, [subReady]);
+
+    useEffect(() => {
+
+        if(data.length == 0) {
+            return;
+        }
+
+        console.log("Data Changed");
+    },[data]);
 
 
     const panResponder = useMemo(() => {
