@@ -22,17 +22,7 @@ export const supabase = createClient(
       detectSessionInUrl: false,
       lock: processLock,
     },
-  })
-
-const checkConnection = async () => {
-  fetch().then(state => {
-    console.log("Connection type", state.type);
-    console.log("Is connected?", state.isConnected);
-  });
-}
-
-checkConnection();
-
+})
 
 const saveJsonFile = async (filename , jsonString) => {
  
@@ -99,10 +89,35 @@ const exportCharTable = async () => {
   } catch (error) {
     console.log("Error exporting Char Table: ", error);
   }
-  
 }
 
-exportTable();
-exportCharTable();
+
+const checkConnection = async () => {
+  fetch().then(state => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+  });
+
+  const { data, error } = await supabase.from('quotes').select('*').limit(1);
+
+  if(error) {
+    console.log("Error connecting to supabase: ", error);
+  }
+
+  return true;
+}
+
+//checkConnection();
+
+
+if(checkConnection()) {
+  exportTable();
+  exportCharTable();
+}
+
+
+
+
+
 
 
