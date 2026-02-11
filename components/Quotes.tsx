@@ -311,7 +311,6 @@ export default function Quotes() {
                     </View>
 
                     {/********************** Quotes **************************/}
-                    
                     <View style={styles.quotes}>
 
                         {/***********************************  FULL SWIPE AREA *****************************************/}
