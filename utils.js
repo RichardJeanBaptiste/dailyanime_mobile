@@ -6,10 +6,8 @@ import Constants from 'expo-constants';
 import { Platform } from "react-native";
 import 'react-native-url-polyfill/auto';
 
-
 const supabaseUrl = Constants.expoConfig.extra.supabaseUrl ?? '';
 const supabaseKey = Constants.expoConfig.extra.supabaseAnonKey ?? '';
-
 
 export const supabase = createClient(
   supabaseUrl,
@@ -67,7 +65,6 @@ const exportTable = async () => {
 const exportCharTable = async () => {
 
   try {
-
     const { data , error } = await supabase
     .from('characters')
     .select('*')
@@ -102,22 +99,17 @@ const checkConnection = async () => {
 
   if(error) {
     console.log("Error connecting to supabase: ", error);
+    return false;
   }
 
   return true;
 }
 
-//checkConnection();
-
 
 if(checkConnection()) {
+  console.log("User Connected to Wifi");
   exportTable();
   exportCharTable();
 }
-
-
-
-
-
 
 

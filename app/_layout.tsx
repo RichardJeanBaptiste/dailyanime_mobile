@@ -175,12 +175,12 @@ export default function RootLayout() {
       <Drawer.Screen
         name="daily"
         options={{
-          drawerLabel: '',
+          drawerLabel: 'Daily',
+          drawerIcon: () => (
+            <FontAwesome name="user" size={15} color="white" />
+          ),
           drawerLabelStyle: {
             color: 'white'
-          },
-          drawerItemStyle: {
-            display: 'none'
           },
           title: '',
           headerStyle: {

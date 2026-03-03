@@ -1,17 +1,31 @@
+/**
+ *  TODO LIST
+ * 
+ *  Fix background sync 
+ *  Better Swiping Animation on the Quote Component
+ *  Create Settings Component Functionality
+ *  Create/Restore from Local Backup 
+ *  Create App Tutorial Functionality
+ *  Add Advertising 
+ */
+
 import { supabase } from "@/utils";
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
-import { useEffect, useMemo, useState } from 'react';
-import { Dimensions, PanResponder, Pressable, StyleSheet, Text, View } from "react-native";
+import { MotiView } from 'moti';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "./Interfaces";
-import { shuffleArray } from './methods';
+import { shuffleArray } from "./methods";
 import QuoteButtons from "./QuoteButtons";
 import { useSearchContext } from './QuoteContext';
 import QuoteModal from "./QuoteModal";
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;  
 
 export default function Quotes() {
@@ -35,27 +49,17 @@ export default function Quotes() {
         img_links: []
     });
 
-    // const [testQuote, setTestQuote] = useState<QuoteLogItem>({
-    //     char_name: 'ABC',
-    //     anime: 'DEF',
-    //     quote: '123',
-    //     biography: '456',
-    //     wiki: 'jighk',
-    //     img_links: ['IMG1', 'IMG2', 'IMG3']
-    // });
-
     const [isSubLoaded, setIsSubLoaded] = useState<boolean>(false);
 
     const [quoteLog, setQuoteLog] = useState<number[]>([]);
 
     const [displayIndex, setDisplayIndex] = useState(-1);
 
-    const currentIndex = quoteLog[displayIndex];
-    const currentQuote = currentIndex !== undefined ? data[currentIndex]: null;
+    const windowSize = 5;
+
+    const halfWindow = Math.floor(windowSize / 2);
 
     const subReady = isSubLoaded && subQuote && quoteLog?.length && data?.length;
-
-    //const subscriptionRef = useRef<any>(null);
 
     const scheduleDailyQuote = async (quote: any) => {
         
@@ -97,8 +101,6 @@ export default function Quotes() {
     // Add quote to the front of appData array
     const changeDataLog = (subQuote: any) => {
 
-        //console.log("Change Log for Quote: ", subQuote.quote);
- 
         let quoteIndex = quoteLog[0];
 
         setAppData((prev) => {
@@ -165,17 +167,225 @@ export default function Quotes() {
 
     }, [subReady]);
 
-    useEffect(() => {
 
-        if(data.length == 0) {
-            return;
+    
+
+    const [ activeQuote, setActiveQuote ] = useState({
+        name: '',
+        anime: '',
+        biography: '',
+        img_links: []
+    });
+
+    const setVisible = () => {
+        setModalVisible(!modalVisible)
+    }
+
+    const setActive = useCallback((item: any) => {
+        let x = {
+            name: item?.char_name,
+            anime: item?.anime,
+            biography: item?.biography,
+            img_links: item?.img_links,
+            wiki: item?.wiki
         }
 
-        console.log("Data Changed");
-    },[data]);
+        setActiveQuote(x);
+        setModalVisible(!modalVisible);
+
+    },[]);
+
+    const listRef = useRef<FlatList>(null);
+
+    const scrollX = useSharedValue(0);
+
+    const onScroll = (event: any) => {
+        scrollX.value = event.nativeEvent.contentOffset.x;
+    }
+
+    const QuoteItem = memo(({item, index, scrollX, setActive}: {item: QuoteLogItem, index: number, scrollX: any, setActive: any}) => {
+
+        const animatedStyle = useAnimatedStyle(() => {
+        
+            const inputRange = [
+                (index - 1) * SCREEN_WIDTH,
+                index * SCREEN_WIDTH,
+                (index + 1) * SCREEN_WIDTH
+            ];
+
+            const rotateY = interpolate(
+                scrollX.value,
+                inputRange,
+                [45, 0 , -45]
+            );
+
+            const scale = interpolate(
+                scrollX.value, 
+                inputRange,
+                [0.8, 1, 0.8]
+            );
+
+            return {
+                transform: [
+                    { perspective: 1000 },
+                    { rotateY: `${rotateY}deg` },
+                    { scale }
+                ],
+            };
+        });
+        
+        return (
+            <MotiView 
+                from={{ opacity: 0, scale: 0.9, translateX: 50 }}
+                animate={{ opacity: 1, scale: 1, translateX: 0 }}
+                transition={{ type: 'spring', delay: index * 100}}
+                style={[
+                    { width: SCREEN_WIDTH, height: SCREEN_HEIGHT, position: 'relative'},
+                    animatedStyle
+                ]}
+            >
+                {/*************************** Title *****************************/}
+                    <View style={{ width: '100%', height: '30%',position: 'absolute', top: '2%', display: 'flex', flexDirection: 'row', }}>
+                        <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
+                            <Pressable onPress={setActive}>
+                                {/* Only render the Image component if the URL is a non-empty string */}
+                                    {item?.img_links[imageUriIndex] ? (
+                                        
+                                    <Image
+                                        style={{ width: 75, height: 75, borderRadius: 35 }}
+                                        source={{ uri: item?.img_links[imageUriIndex] }}
+                                        cachePolicy="memory-disk"
+                                        contentFit="fill"
+                                        contentPosition={"bottom left"}
+                                    />
+                                ) : (
+
+                                    <Image
+                                        style={{ width: 75, height: 75, borderRadius: 35 }}
+                                        source={PlaceholderImage}
+                                    />
+                                )}
+                            </Pressable>
+                        </View>
+
+                        <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
+                            <Text style={[styles.text, {fontSize: 18}]} onPress={() => console.log(data[0])}>{item?.char_name}</Text>
+                            <Text style={[styles.text, {marginTop: '5%'} ]}>{item?.anime || ''}</Text>       
+                        </View>
+                    </View>
+                
+                <View style={{ position: 'absolute', top: '25%',  width: '100%', height: '40%', alignItems: 'center', justifyContent: 'center',}}>
+                    <Text style={{ color: 'white', fontSize: 24, textAlign: 'center', width:'75%'}}>{item?.quote}</Text>
+                </View>
+
+                {/********************** Quote Buttons ******************/}
+                <View style={{ position: 'absolute', top: '65%', height: '10%', width: '100%'}}>
+                    <QuoteButtons wikiLink={item?.wiki || ''} quote={item?.quote || ''} name={item?.char_name || ''}/>
+                </View>
+                
+            </MotiView>
+        )
+    });
 
 
-    const panResponder = useMemo(() => {
+    if(isLoading) {
+        return (
+            <SafeAreaView style={{ flex: 1 }}>
+                <Text style={{ color: 'white', fontSize: 24}}>Loading</Text>
+            </SafeAreaView>
+        )
+    } else {
+        return (
+            <>
+                <SafeAreaView style={styles.quotes_container}>
+                    {/*********************** Modal *************************/}
+                    <QuoteModal currentQuote={activeQuote} modalVisible={modalVisible} setVisible={setVisible} />
+
+                    {/****************************************** Quotes *******************************************/}
+                    <FlatList
+                        ref={listRef}
+                        data={quoteLog}
+                        pagingEnabled
+                        horizontal
+                        windowSize={10}
+                        maxToRenderPerBatch={10}
+                        removeClippedSubviews
+                        onScroll={onScroll}
+                        scrollEventThrottle={16}
+                        initialNumToRender={3}
+                        //onMomentumScrollEnd={handleMomentumScrollEnd}
+                        showsHorizontalScrollIndicator={false}
+                        getItemLayout={(data, index) => ({
+                            length: SCREEN_WIDTH,
+                            offset: SCREEN_WIDTH * index,
+                            index,
+                        })} 
+                        renderItem={({item, index}) => <QuoteItem item={jsonData[item]} index={index} scrollX={scrollX} setActive={() => setActive(jsonData[item])}/>} 
+                        keyExtractor={(item, index) => `${item}-${index}`}
+                        ListEmptyComponent={<Text>Empty List</Text>}      
+                    />
+                </SafeAreaView>
+            </>
+        );
+    }
+}
+
+
+const styles = StyleSheet.create({
+    quotes_container: {
+        position: 'relative',
+        flex: 1
+    },
+    title_container: {
+        position: 'absolute',
+        top: '0%',
+        left: '0%',
+        width: '100%',
+        height: '20%',
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    divider: {
+        width: 'auto',
+        height: '1%',
+        backgroundColor: 'white'
+    },
+    text: {
+        color: 'white'
+    },
+    quotes: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '100%',
+        height: '60%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
+
+/**
+ * 
+ * Full Swipe Area
+ * <View style={styles.quotes}>
+        <View
+            style={{ flex: 1, width: '100%', height: '100%' }}
+            pointerEvents="box-only"
+            {...panResponder.panHandlers}
+        >
+            <View 
+                style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
+            >
+                <Text style={{ color: 'white', width: '100%', fontSize: 24}} >{currentQuote?.quote}</Text>
+            </View>
+        </View>
+    </View>
+
+
+
+    
+      const panResponder = useMemo(() => {
 
         const nextQuote = () => {
 
@@ -233,142 +443,20 @@ export default function Quotes() {
     }, [displayIndex, data]);
 
 
-    const cycleImages = () => {
+    // const cycleImages = () => {
 
-        console.log(`Image Error: ${currentQuote?.img_links[imageUriIndex]}`)
+    //     console.log(`Image Error: ${currentQuote?.img_links[imageUriIndex]}`)
 
-        setImageUriIndex( imageUriIndex + 1 )
+    //     setImageUriIndex( imageUriIndex + 1 )
 
-        setImageUriIndex( prevIndex => {
-            const newIndex = prevIndex + 1;
+    //     setImageUriIndex( prevIndex => {
+    //         const newIndex = prevIndex + 1;
 
-            return newIndex;
-        })
+    //         return newIndex;
+    //     })
 
-        if(imageUriIndex > currentQuote?.img_links.length) {
-            console.log("No Images");
-        }
-    }
-
-    const setVisible = () => {
-        setModalVisible(!modalVisible)
-    }
-
-
-    if(isLoading) {
-        return (
-            <SafeAreaView style={{ flex: 1 }}>
-                <Text style={{ color: 'white', fontSize: 24}}>Loading</Text>
-            </SafeAreaView>
-        )
-    } else {
-        return (
-            <>
-                <SafeAreaView style={styles.quotes_container}>
-                    {/*********************** Modal *************************/}
-                    <QuoteModal 
-                        currentQuote={{
-                            name: currentQuote?.char_name,
-                            anime: currentQuote?.anime,
-                            img_links: currentQuote?.img_links,
-                            biography: currentQuote?.biography,
-                            wiki: currentQuote?.wiki
-                        }} 
-                        modalVisible={modalVisible} 
-                        setVisible={setVisible}
-                    />
-
-                    {/*************************** Title *****************************/}
-                    <View style={styles.title_container}>
-                        <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
-                            <Pressable onPress={() => setModalVisible(true)}>
-                                {/* Only render the Image component if the URL is a non-empty string */}
-                                    {currentQuote?.img_links[imageUriIndex] ? (
-                                        
-                                    <Image
-                                        style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={{ uri: currentQuote?.img_links[imageUriIndex] }}
-                                        cachePolicy="memory-disk"
-                                        contentFit="fill"
-                                        contentPosition={"bottom left"}
-                                        onError={cycleImages} 
-                                    />
-                                ) : (
-
-                                    <Image
-                                        style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={PlaceholderImage}
-                                        onError={cycleImages} 
-                                    />
-                                )}
-                            </Pressable>
-                        </View>
-
-                        <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                            <Text style={[styles.text, {fontSize: 18}]} onPress={() => console.log(data[0])}>{currentQuote?.char_name}</Text>
-                            <Text style={[styles.text, {marginTop: '5%'} ]}>{currentQuote?.anime || ''}</Text>       
-                        </View>
-                    </View>
-
-                    {/********************** Quotes **************************/}
-                    <View style={styles.quotes}>
-
-                        {/***********************************  FULL SWIPE AREA *****************************************/}
-
-                        <View
-                            style={{ flex: 1, width: '100%', height: '100%' }}
-                            pointerEvents="box-only"
-                            {...panResponder.panHandlers}
-                        >
-                            <View 
-                                style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
-                            >
-                                <Text style={{ color: 'white', width: '100%', fontSize: 24}} >{currentQuote?.quote}</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    {/********************** Quote Buttons ******************/}
-                    <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={currentQuote?.char_name || ''}/>
-
-                </SafeAreaView>
-            </>
-        );
-    }
-}
-
-
-const styles = StyleSheet.create({
-    quotes_container: {
-        position: 'relative',
-        flex: 1
-    },
-    title_container: {
-        position: 'absolute',
-        top: '0%',
-        left: '0%',
-        width: '100%',
-        height: '20%',
-        display: 'flex',
-        flexDirection: 'row',
-    },
-    divider: {
-        width: 'auto',
-        height: '1%',
-        backgroundColor: 'white'
-    },
-    text: {
-        color: 'white'
-    },
-    quotes: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '100%',
-        height: '60%',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-});
-
+    //     if(imageUriIndex > currentQuote?.img_links.length) {
+    //         console.log("No Images");
+    //     }
+    // }
+ */

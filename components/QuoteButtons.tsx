@@ -121,11 +121,11 @@ export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) 
 const styles = StyleSheet.create({
     btnGroup : {
         position: 'absolute',
-        top: '90%',
+        top: '85%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '100%',
-        height: '20%',
+        height: '30%',
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
