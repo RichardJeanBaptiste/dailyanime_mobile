@@ -7,7 +7,6 @@ import { Pressable } from 'react-native';
 export default function RootLayout() {
 
   const ReturnButton = () => {
-
     const router = useRouter();
 
     return (
@@ -189,9 +188,7 @@ export default function RootLayout() {
           headerTintColor: 'white'
         }}
       />
-
     </Drawer>
   )
 }
-
 

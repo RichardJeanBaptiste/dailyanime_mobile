@@ -7,8 +7,8 @@ export interface QuoteLogItem {
     wiki: string;
 }
 
-export interface QuoteButtonItem {
-    wikiLink: string,
-    quote: string,
-    name: string
+export interface ModalInfo {
+    currentQuote: any,
+    modalVisible: boolean,
+    setVisible: () => void
 }

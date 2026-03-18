@@ -168,8 +168,6 @@ export default function Quotes() {
     }, [subReady]);
 
 
-    
-
     const [ activeQuote, setActiveQuote ] = useState({
         name: '',
         anime: '',
@@ -192,7 +190,6 @@ export default function Quotes() {
 
         setActiveQuote(x);
         setModalVisible(!modalVisible);
-
     },[]);
 
     const listRef = useRef<FlatList>(null);
@@ -282,7 +279,6 @@ export default function Quotes() {
                 <View style={{ position: 'absolute', top: '65%', height: '10%', width: '100%'}}>
                     <QuoteButtons wikiLink={item?.wiki || ''} quote={item?.quote || ''} name={item?.char_name || ''}/>
                 </View>
-                
             </MotiView>
         )
     });
@@ -364,99 +360,3 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
-
-/**
- * 
- * Full Swipe Area
- * <View style={styles.quotes}>
-        <View
-            style={{ flex: 1, width: '100%', height: '100%' }}
-            pointerEvents="box-only"
-            {...panResponder.panHandlers}
-        >
-            <View 
-                style={{ width: '80%', height: '100%', alignSelf: 'center', justifyContent: 'center' }}
-            >
-                <Text style={{ color: 'white', width: '100%', fontSize: 24}} >{currentQuote?.quote}</Text>
-            </View>
-        </View>
-    </View>
-
-
-
-    
-      const panResponder = useMemo(() => {
-
-        const nextQuote = () => {
-
-            setDisplayIndex(prevIndex => {
-                const nextIndex = prevIndex + 1;
-
-                if(nextIndex >= data.length) {
-                    //console.log("End of array");
-                    return prevIndex;
-                }
-
-                return nextIndex;
-            });
-        }
-
-        const previousQuote = () => {
-
-            setDisplayIndex(prevIndex => {
-                
-                const nextIndex = prevIndex - 1;
-
-                if( nextIndex < 0) {
-                    //console.log("Start");
-                    return prevIndex;
-                }
-
-                return nextIndex;
-            });
-
-        }
-
-        return PanResponder.create({
-            onStartShouldSetPanResponder: () => false,
-
-            onMoveShouldSetPanResponder: (evt, gesture) => {
-                const { dx, dy } = gesture;
-                return Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy);
-            },
-
-            onPanResponderRelease: (evt, gesture) => {
-                const { dx } = gesture;
-
-                if (Math.abs(dx) >= SWIPE_THRESHOLD) {
-                    if (dx > 0) {
-                        //console.log("Left Swipe");
-                        previousQuote();
-                    } else {
-                        //console.log("Right Swipe");
-                        nextQuote();
-                    }
-                }
-            }
-        });
-
-    }, [displayIndex, data]);
-
-
-    // const cycleImages = () => {
-
-    //     console.log(`Image Error: ${currentQuote?.img_links[imageUriIndex]}`)
-
-    //     setImageUriIndex( imageUriIndex + 1 )
-
-    //     setImageUriIndex( prevIndex => {
-    //         const newIndex = prevIndex + 1;
-
-    //         return newIndex;
-    //     })
-
-    //     if(imageUriIndex > currentQuote?.img_links.length) {
-    //         console.log("No Images");
-    //     }
-    // }
- */

@@ -4,9 +4,15 @@ import * as Linking from 'expo-linking';
 import { useEffect, useState } from 'react';
 import { Share, StyleSheet, View } from 'react-native';
 import IconButton from './IconButton';
-import { QuoteButtonItem } from './Interfaces';
 
-export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) {
+interface QuoteButtonItem {
+    wikiLink: string,
+    quote: string,
+    name: string,
+    style?: any
+}
+
+export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButtonItem) {
 
     const [ quoteExists, setQuoteExists ] = useState(false);
 
@@ -106,7 +112,7 @@ export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) 
     }
 
     return (
-        <View style={styles.btnGroup}>
+        <View style={[styles.btnGroup, style]}>
 
             <IconButton icon={<BookmarkItem/>} onPress={storeQuote}/>
 
@@ -120,10 +126,10 @@ export default function QuoteButtons({wikiLink, quote, name} : QuoteButtonItem) 
 
 const styles = StyleSheet.create({
     btnGroup : {
-        position: 'absolute',
-        top: '85%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
+        // position: 'absolute',
+        // top: '85%',
+        // left: '50%',
+        // transform: 'translate(-50%, -50%)',
         width: '100%',
         height: '30%',
         justifyContent: 'center',

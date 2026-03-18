@@ -3,13 +3,16 @@ import QuoteButtons from '@/components/QuoteButtons';
 import { supabase } from '@/utils';
 import { Image } from 'expo-image';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
-import { Dimensions, PanResponder, StyleSheet, Text, View } from 'react-native';
+import { MotiView } from 'moti';
+import { useCallback, useRef, useState } from 'react';
+import { Dimensions, FlatList, StyleSheet, Text } from 'react-native';
+import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH; 
 
 export default function CharQuery() {
@@ -44,12 +47,150 @@ export default function CharQuery() {
             console.error(error);
         }
         
-        //console.log(data);
         setQuoteLog(data);
-        
     }
 
-    const panResponder = useMemo(() => {
+    const listRef = useRef<FlatList>(null);
+
+    const scrollX = useSharedValue(0);
+    
+    const onScroll = (event: any) => {
+        scrollX.value = event.nativeEvent.contentOffset.x;
+    }
+
+    const CharItem = ({item, index}: {item: any, index: any}) => {
+
+        const animatedStyle = useAnimatedStyle(() => {
+                
+            const inputRange = [
+                (index - 1) * SCREEN_WIDTH,
+                index * SCREEN_WIDTH,
+                (index + 1) * SCREEN_WIDTH
+            ];
+
+            const rotateY = interpolate(
+                scrollX.value,
+                inputRange,
+                [45, 0 , -45]
+            );
+
+            const scale = interpolate(
+                scrollX.value, 
+                inputRange,
+                [0.8, 1, 0.8]
+            );
+
+            return {
+                transform: [
+                    { perspective: 1000 },
+                    { rotateY: `${rotateY}deg` },
+                    { scale }
+                ],
+            };
+        });
+
+        return (
+            <MotiView
+                from={{ opacity: 0, scale: 0.9, translateX: 50 }}
+                animate={{ opacity: 1, scale: 1, translateX: 0 }}
+                transition={{ type: 'spring', delay: index * 90}}
+                style={[
+                    { display: 'flex', flexDirection: 'column', width: SCREEN_WIDTH, height: SCREEN_HEIGHT, alignItems: 'center',},
+                    animatedStyle
+                ]}
+            >
+                <Image
+                    style={{ width: 130, height: 130, borderRadius: 65 }}
+                    source={{ uri: item?.img_links[imageUriIndex] }}
+                    cachePolicy="memory-disk"
+                    contentFit="fill"
+                    contentPosition={"bottom left"}
+                />
+                <Text style={{ color: 'white', fontSize: 32, marginTop: '8%'}}>{character}</Text>
+                <Text style={{ color: 'white', fontSize: 22, textAlign: 'center', marginTop: '4%', width: '80%'}}>{item.quote}</Text>
+                
+                <QuoteButtons wikiLink={item?.wiki || ''} quote={item?.quote || ''} name={character.toString()} style={{marginTop: '4%'}}/>
+            </MotiView> 
+        )
+    }
+
+    
+    return (
+        <SafeAreaView style={styles.quotes_container}>
+            <FlatList
+                ref={listRef}
+                data={quoteLog}
+                pagingEnabled
+                horizontal
+                windowSize={10}
+                maxToRenderPerBatch={10}
+                removeClippedSubviews
+                onScroll={onScroll}
+                scrollEventThrottle={16}
+                initialNumToRender={3}
+                //onMomentumScrollEnd={handleMomentumScrollEnd}
+                showsHorizontalScrollIndicator={false}
+                getItemLayout={(data, index) => ({
+                    length: SCREEN_WIDTH,
+                    offset: SCREEN_WIDTH * index,
+                    index,
+                })} 
+                renderItem={({item, index}) => <CharItem item={item} index={index}/>} 
+                keyExtractor={(item, index) => `${item}-${index}`}
+                ListEmptyComponent={<Text>Empty List</Text>}      
+            />
+        </SafeAreaView>
+    )
+}
+
+const styles = StyleSheet.create({
+    quotes_container: {
+        position: 'relative',
+        flex: 1,
+        backgroundColor: '#25292e'
+    },
+    quotes: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '100%',
+        height: '40%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    title_container: {
+        position: 'absolute',
+        top: '15%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '100%',
+        height: '25%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    char_text: {
+        color: 'white',
+        fontSize: 28,
+        marginTop: '2%',
+        textDecorationStyle: 'solid',
+        textDecorationLine: 'underline'
+    },
+    quote_text: {
+        color: 'white',
+        width: '100%',
+        height: '100%',
+        textAlign: 'center',
+        fontSize: 24
+    }
+})
+
+/**
+ * 
+ * 
+ *  const panResponder = useMemo(() => {
     
             const nextQuote = () => {
                 let index = logIndex + 1;
@@ -97,91 +238,39 @@ export default function CharQuery() {
             });
     
         }, [logIndex, quoteLog]);
+ * 
+ * {/*********************** Title *************************///}
 
+            // <View style={styles.title_container}>
+            //     <Image
+            //         style={{ width: 100, height: 100, borderRadius: 50}}
+            //         source={{
+            //             uri: currentQuote?.img_links[0]
+            //         }}
+            //     />
 
-
-    return (
-        <SafeAreaView style={styles.quotes_container}>
-            
-            {/*********************** Title *************************/}
-
-            <View style={styles.title_container}>
-                <Image
-                    style={{ width: 100, height: 100, borderRadius: 50}}
-                    source={{
-                        uri: currentQuote?.img_links[0]
-                    }}
-                />
-
-                <Text style={styles.char_text}>{character}</Text>
-            </View>
+            //     <Text style={styles.char_text}>{character}</Text>
+            // </View>
             
 
-            {/********************************** Quotes *****************************************/}
+            //{/********************************** Quotes *****************************************/}
 
-           <View style={styles.quotes}>
-                {/* FULL SWIPE AREA */}
-                    <View
-                        style={{ flex: 1, width: '100%', height: '100%' }}
-                        pointerEvents="box-only"
-                        {...panResponder.panHandlers}
-                    >
-                        <View 
-                            style={{ width: '80%', height: '130%', marginTop: '6%', alignSelf: 'center', justifyContent: 'center' }}
-                        >
-                            <Text style={styles.quote_text}>{currentQuote?.quote}</Text>
-                        </View>
-                    </View>
-            </View>
+        //    <View style={styles.quotes}>
+        //         {/* FULL SWIPE AREA */}
+        //             <View
+        //                 style={{ flex: 1, width: '100%', height: '100%' }}
+        //                 pointerEvents="box-only"
+        //                 {...panResponder.panHandlers}
+        //             >
+        //                 <View 
+        //                     style={{ width: '80%', height: '130%', marginTop: '6%', alignSelf: 'center', justifyContent: 'center' }}
+        //                 >
+        //                     <Text style={styles.quote_text}>{currentQuote?.quote}</Text>
+        //                 </View>
+        //             </View>
+        //     </View>
 
-            {/*********************************** Quote Buttons *********************************/}
-            <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={character.toLocaleString()}/>
-        </SafeAreaView>
-    )
-}
+            //{/*********************************** Quote Buttons *********************************/}
+            // <QuoteButtons wikiLink={currentQuote?.wiki || ''} quote={currentQuote?.quote || ''} name={character.toLocaleString()}/>
 
-const styles = StyleSheet.create({
-    quotes_container: {
-        position: 'relative',
-        flex: 1,
-        backgroundColor: '#25292e'
-    },
-    quotes: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '100%',
-        height: '40%',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    title_container: {
-        position: 'absolute',
-        top: '15%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '100%',
-        height: '25%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    char_text: {
-        color: 'white',
-        fontSize: 28,
-        marginTop: '2%',
-        textDecorationStyle: 'solid',
-        textDecorationLine: 'underline'
-    },
-    quote_text: {
-        color: 'white',
-        width: '100%',
-        height: '100%',
-        textAlign: 'center',
-        fontSize: 24
-    }
-
-})
 

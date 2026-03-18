@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from 'react-native-webview';
 
 const policy = `
@@ -22,12 +22,12 @@ const policy = `
 
 export default function PrivacyPolicy() {
     return (
-        <View style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
             <WebView
                 originWhitelist={['*']}
                 source={{ html: policy }}
                 style={{ flex: 1 }}
             />
-        </View>
+        </SafeAreaView>
     )
 }

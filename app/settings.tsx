@@ -1,7 +1,13 @@
+import BackupModel from '@/components/Settings/BackupModel';
+import NotificationModel from '@/components/Settings/NotificationModel';
+import RestoreModel from '@/components/Settings/RestoreModal';
+import TutorialModel from '@/components/Settings/TutorialModal';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Image } from 'expo-image';
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
@@ -11,6 +17,30 @@ const screenHeight = Dimensions.get('screen').height;
 
 
 export default function Settings() {
+
+    const [ tutorialModal, setTutorialModal ] = useState(false);
+
+    const [ notificationModal, setNotificationModal ] = useState(false);
+
+    const [ backupModal, setBackupModal ] = useState(false);
+
+    const [ restoreModal, setRestoreModal ] = useState(false);
+
+    const setTModal = () => {
+        setTutorialModal(!tutorialModal);
+    }
+
+    const setNModel = () => {
+        setNotificationModal(!notificationModal);
+    }
+
+    const setBModal = () => {
+        setBackupModal(!backupModal);
+    }
+
+    const setRModal = () => {
+        setRestoreModal(!restoreModal);
+    }
 
     const SettingItem = ({icon, title, info}: {icon: any, title: string, info: string}) => {
         return (
@@ -46,7 +76,16 @@ export default function Settings() {
 
 
     return (
-        <View style={styles.settings_root}>
+        <SafeAreaView style={styles.settings_root}>
+            
+            <TutorialModel modalVisible={tutorialModal} setVisible={setTModal}/>
+
+            <NotificationModel modalVisible={notificationModal} setVisible={setNModel}/>
+
+            <BackupModel modalVisible={backupModal} setVisible={setBModal}/>
+
+            <RestoreModel modalVisible={restoreModal} setVisible={setRModal}/>
+
             <ScrollView
                 contentContainerStyle= {
                     styles.sc_container
@@ -57,33 +96,44 @@ export default function Settings() {
                     title="Daily Anime" 
                     info="A showcase of all the wisdom shared by animated characters"
                 />
-            
-                <SettingItem 
-                    icon={<FontAwesome6 name="chalkboard" size={22} color="white" />}
-                    title="Tutorial" 
-                    info="Learn all the features of the app again"
-                />
 
-                <SettingItem 
-                    icon={<FontAwesome6 name="clock" size={22} color="white" />}
-                    title="Notifications" 
-                    info="Configure your daily notification schedule"
-                />
+                <Pressable onPress={() => setTModal()}>
+                    <SettingItem 
+                        icon={<FontAwesome6 name="chalkboard" size={22} color="white" />}
+                        title="Tutorial" 
+                        info="Learn all the features of the app again"
+                    />
+                </Pressable>
+                
+                <Pressable onPress={() => setNModel()}>
+                    <SettingItem 
+                        icon={<FontAwesome6 name="clock" size={22} color="white" />}
+                        title="Notifications" 
+                        info="Configure your daily notification schedule"
+                    />
+                </Pressable>
+                
 
-                <SettingItem 
-                    icon={<FontAwesome name="save" size={22} color="white" />}
-                    title="Backup" 
-                    info="Backup your saved bookmarks and settings"
-                />
+                <Pressable onPress={() => setBModal()}>
+                    <SettingItem 
+                        icon={<FontAwesome name="save" size={22} color="white" />}
+                        title="Backup" 
+                        info="Backup your saved bookmarks and settings"
+                    />
+                </Pressable>
+                
 
-                <SettingItem 
-                    icon={<FontAwesome name="repeat" size={22} color="white" />} 
-                    title="Restore" 
-                    info="Restore your bookmarks and settings"
-                />
+                <Pressable onPress={() => setRModal()}>
+                    <SettingItem 
+                        icon={<FontAwesome name="repeat" size={22} color="white" />} 
+                        title="Restore" 
+                        info="Restore your bookmarks and settings"
+                    />
+                </Pressable>
+                
 
             </ScrollView>
-        </View>
+        </SafeAreaView>
     )
 }
 

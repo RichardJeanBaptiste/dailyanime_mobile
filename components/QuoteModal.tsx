@@ -3,14 +3,8 @@ import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
 import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import IconButton from './IconButton';
+import { ModalInfo } from './Interfaces';
 import { useSearchContext } from './QuoteContext';
-
-
-interface ModalInfo {
-    currentQuote: any,
-    modalVisible: boolean,
-    setVisible: () => void
-}
 
 
 export default function QuoteModal({currentQuote, modalVisible, setVisible}: ModalInfo) {
