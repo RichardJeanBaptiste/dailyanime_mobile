@@ -1,13 +1,15 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+//import DateTimePicker from '@react-native-community/datetimepicker';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function Notifications() {
 
     const [ dailySelected, setDailySelected] = useState(false);
     const [ modalVisible, setModalVisible] = useState(false);
+    const [date, setDate] = useState(new Date(1598051730000));
 
     useEffect(() => {
        getUserSettings();
@@ -82,6 +84,19 @@ export default function Notifications() {
         )
     }
 
+    const showMode = (currentMode: any) => {
+        DateTimePickerAndroid.open({
+            value: date,
+            //onValueChange: (event: any, selectedDate: any) => setDate(selectedDate),
+            mode: currentMode,
+            is24Hour: true,
+        });
+    };
+
+    const showTimepicker = () => {
+        showMode('time');
+    };
+
     return (
         <View
             style={{
@@ -106,11 +121,8 @@ export default function Notifications() {
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
 
-                    {DateTimePickerAndroid.open({
-                        value: new Date(),
-                        mode: 'time', // 'date' | 'time'
-                    })}
-    
+                    <Button onPress={showTimepicker} title="Show time picker!" />
+
                     <Pressable
                         style={[styles.button, styles.buttonClose]}
                         onPress={() => setModalVisible(!modalVisible)}>

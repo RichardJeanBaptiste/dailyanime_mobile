@@ -1,7 +1,6 @@
 import 'dotenv/config';
 
 export default {
-    
     expo: {
         name: "dailyanime",
         slug: "dailyanime",
