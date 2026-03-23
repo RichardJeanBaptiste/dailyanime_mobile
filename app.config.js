@@ -35,6 +35,7 @@ export default {
             googleServicesFile: process.env.GOOGLE_SERVICES_FILE ?? './google-services.json'
         },
         plugins: [
+            "@react-native-community/datetimepicker",
             "expo-router",
             "expo-notifications",
             [
@@ -62,7 +63,7 @@ export default {
                         "backgroundColor": "#000000"
                     }
                 }
-            ]
+            ],
         ],
         extra: {
             supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,

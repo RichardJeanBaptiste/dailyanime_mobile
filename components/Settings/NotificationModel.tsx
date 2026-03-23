@@ -1,4 +1,7 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button, Dimensions, Modal, StyleSheet, Text, View } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('screen').width;
+const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 export default function NotificationModel({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
     return (
@@ -12,12 +15,17 @@ export default function NotificationModel({modalVisible, setVisible}: {modalVisi
             }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Notification Modal</Text>
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setVisible()}>
-                        <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
+                      <Text style={styles.modalText}>Notification Settings</Text>
+                      <View style={{ backgroundColor: 'lightblue',display: 'flex', flexDirection: 'row', width: '100%', height: '100%'}}>
+                        <View style={{ display: 'flex', flexDirection: 'column', flex: .7}}>
+                          <Text>Daily</Text>
+                          <Text>If checked you will </Text>
+                        </View>
+
+                        <Button
+                          title="Select"
+                        />
+                      </View>
                     </View>
                 </View>
             </Modal>
@@ -36,6 +44,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
+    width: SCREEN_WIDTH * .85,
+    height: SCREEN_HEIGHT * .6,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {

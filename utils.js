@@ -22,6 +22,45 @@ export const supabase = createClient(
     },
 })
 
+// Check Async Storage For Settings
+/** Single Nested Settings Object
+ * 
+ *  Settings : {
+ *    "Tutorial": Boolean,
+ *    "isNotificationsOn": Boolean,
+ *    "NotificationTime": TimeString,
+ * }
+ */
+
+const loadUserSettings = async () => {
+
+  try {
+
+    let settings = await AsyncStorage.getItem("Settings");
+
+    if (settings == null){
+      console.log("Empty Settings.\nCreating New Settings Object With Default Values");
+
+      let defaultSettings = {
+        showTutorial: false,
+        isNotificationsOn: true,
+        NotificationTime: "9:00 AM"
+      }
+
+      await AsyncStorage.setItem('Settings', JSON.stringify(defaultSettings));
+      return 
+    }  
+
+    console.log(settings);
+    return;
+
+  } catch(error) {
+    console.error("Failed to load user settings")
+  }
+}
+
+loadUserSettings();
+
 const saveJsonFile = async (filename , jsonString) => {
  
   const path = `${RNFS.DocumentDirectoryPath}/${filename}`;

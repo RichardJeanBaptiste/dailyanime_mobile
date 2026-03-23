@@ -1,5 +1,6 @@
 import BackupModel from '@/components/Settings/BackupModel';
 import NotificationModel from '@/components/Settings/NotificationModel';
+import Notifications from '@/components/Settings/Notifications';
 import RestoreModel from '@/components/Settings/RestoreModal';
 import TutorialModel from '@/components/Settings/TutorialModal';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -105,14 +106,9 @@ export default function Settings() {
                     />
                 </Pressable>
                 
-                <Pressable onPress={() => setNModel()}>
-                    <SettingItem 
-                        icon={<FontAwesome6 name="clock" size={22} color="white" />}
-                        title="Notifications" 
-                        info="Configure your daily notification schedule"
-                    />
-                </Pressable>
                 
+                <Notifications/>
+               
 
                 <Pressable onPress={() => setBModal()}>
                     <SettingItem 
@@ -130,8 +126,6 @@ export default function Settings() {
                         info="Restore your bookmarks and settings"
                     />
                 </Pressable>
-                
-
             </ScrollView>
         </SafeAreaView>
     )
