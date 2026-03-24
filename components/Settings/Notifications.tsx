@@ -1,15 +1,18 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import DateTimePicker from '@react-native-community/datetimepicker';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useEffect, useState } from 'react';
-import { Button, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import useUserSettings from '../useUserSettings';
 
 export default function Notifications() {
 
     const [ dailySelected, setDailySelected] = useState(false);
     const [ modalVisible, setModalVisible] = useState(false);
-    const [date, setDate] = useState(new Date(1598051730000));
+    const [date, setDate] = useState(new Date());
+    const [show, setShow] = useState(false);
+
+    const { userSettings, setNotifications } = useUserSettings();
 
     useEffect(() => {
        getUserSettings();
@@ -28,7 +31,7 @@ export default function Notifications() {
             return
         }
 
-        console.log(items);
+        //console.log(items);
 
         if(items.isNotifications == true){
             setDailySelected(true);
@@ -51,7 +54,6 @@ export default function Notifications() {
             items.isNotifications = true;
             await AsyncStorage.setItem("Settings", JSON.stringify(items));
         }
-
 
         const stopNotifications = async () => {
 
@@ -84,17 +86,17 @@ export default function Notifications() {
         )
     }
 
-    const showMode = (currentMode: any) => {
-        DateTimePickerAndroid.open({
-            value: date,
-            //onValueChange: (event: any, selectedDate: any) => setDate(selectedDate),
-            mode: currentMode,
-            is24Hour: true,
-        });
-    };
+   
+    const timeChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        // event.type will be 'set' (user pressed OK) or 'dismissed' (user cancelled)
+        if (event.type === 'set' && selectedDate) {
+            setDate(selectedDate);
+        }
 
-    const showTimepicker = () => {
-        showMode('time');
+        console.log(selectedDate?.toLocaleTimeString('en-US'));
+        
+        // On Android, the picker doesn't close itself automatically
+        setShow(false); 
     };
 
     return (
@@ -111,27 +113,6 @@ export default function Notifications() {
             }}
         >
 
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-            }}>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-
-                    <Button onPress={showTimepicker} title="Show time picker!" />
-
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setModalVisible(!modalVisible)}>
-                        <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
-                    </View>
-                </View>
-            </Modal>
-
             <Text style={[styles.sText, {color: 'orange', fontSize: 18, marginLeft: '1%'}]}>Notifications</Text>
 
             <View style={[ styles.sContainer,{ display: 'flex', flexDirection: 'row'} ]}>
@@ -145,9 +126,33 @@ export default function Notifications() {
                 </View>
             </View>
 
-            <Pressable style={[ styles.sContainer , { display: 'flex', flexDirection: 'column'} ]} onPress={() => setModalVisible(!modalVisible)}>
+            {show && (
+                <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode="time"
+                    is24Hour={false}
+                    onChange={timeChange}
+                    //onDismiss={() => setShow(false)}
+                />
+            )}
+
+            <Pressable onPress={() => console.log(userSettings)}>
+                <Text style={{ color: 'white', fontSize: 22}}>Show User Settings</Text>
+            </Pressable>
+
+            <Pressable onPress={() => setNotifications(true)}>
+                <Text style={{ color: 'white', fontSize: 22}}>Set True</Text>
+            </Pressable>
+
+            <Pressable onPress={() => setNotifications(false)}>
+                <Text style={{ color: 'white', fontSize: 22}}>Set False</Text>
+            </Pressable>
+
+            <Pressable style={[ styles.sContainer , { display: 'flex', flexDirection: 'column'} ]} onPress={() => setShow(!show)}>
                 <Text style={[ styles.sText ]}>Delivery Time</Text>
                 <Text style={[ styles.sText ]}>What time do you want your daily notification?</Text>
+                <Text style={[ styles.sText ]}>Current Delivery Time: {date.toLocaleTimeString('en-US')}</Text>
             </Pressable>        
         </View>
     )
@@ -202,3 +207,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   }
 })
+
+/**
+ * <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+            setModalVisible(!modalVisible);
+    }}>
+        <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+
+            <Button onPress={showTimepicker} title="Show time picker!" />
+
+            <Button onPress={() => setShow(true)} title="Show time picker"/>
+
+                
+
+            <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.textStyle}>Hide Modal</Text>
+            </Pressable>
+            </View>
+        </View>
+    </Modal>
+ */
