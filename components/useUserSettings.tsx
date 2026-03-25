@@ -49,7 +49,7 @@ export default function useUserSettings() {
         console.log("Save New Settings");
     }
 
-    const setNotifications = async (setNotifications: boolean) => {
+    const setNotifications = (setNotifications: boolean) => {
 
         setUserSettings((prev) => {
             let x = setNotifications ? true : false; 
@@ -58,12 +58,55 @@ export default function useUserSettings() {
                 ...prev,         
                 isNotifications: x 
             };
-        });
-        
+        }); 
     } 
+
+    const setNotificationTime = (newTimeObject: Date) => {
+
+        let newTime = newTimeObject.toLocaleTimeString('en-US');
+
+        setUserSettings((prev) => {
+            return {
+                ...prev,
+                NotificationTime: newTime
+            }
+        })
+    }
+
+    const createBackup = async () => {
+
+        let currentBookmarks = await AsyncStorage.getItem('quotes')
+
+        if(currentBookmarks == null) {
+            return;
+        }
+
+        //console.log(currentBookmarks);
+
+        let x = {
+            quotes: currentBookmarks,
+            settings: userSettings
+        }
+
+        await AsyncStorage.setItem('Backup', JSON.stringify(x));
+    }
+
+    const showBackup = async () => {
+
+        let backup = await AsyncStorage.getItem('Backup');
+        
+        if(backup == null) {
+            console.log("Backup empty");
+            return
+        }
+        console.log(backup);
+    }
 
     return {
         userSettings,
         setNotifications,
+        setNotificationTime,
+        createBackup,
+        showBackup
     };
 }
