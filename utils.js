@@ -43,7 +43,7 @@ const loadUserSettings = async () => {
 
       let defaultSettings = {
         showTutorial: false,
-        isNotificationsOn: true,
+        isNotifications: true,
         NotificationTime: "9:00 AM"
       }
 

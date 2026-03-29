@@ -25,13 +25,19 @@ export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButto
             }
 
             let x  = JSON.parse(value);
+            
+            if(x === undefined) {
+                return;
+            }
 
-            x.map((storedQuote: any) => {
-                if(storedQuote.quote === quote) {
-                    //console.log(`Quote Exists - ${quote}`)
-                    setQuoteExists(true);
-                }
-            })
+            if (x && Array.isArray(x)) {
+                x.map((storedQuote: any) => {
+                    if(storedQuote.quote === quote) {
+                        //console.log(`Quote Exists - ${quote}`)
+                        setQuoteExists(true);
+                    }
+                })
+            }
         } 
 
         setQuoteExists(false);
@@ -63,7 +69,7 @@ export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButto
             } else {
                 
                 if (value == null) {
-                    await AsyncStorage.setItem("quotes", JSON.stringify([ {author: name, quote: quote}]))
+                    await AsyncStorage.setItem("quotes", JSON.stringify([{author: name, quote: quote}]))
                 } else {
 
                     x.push({author: name, quote: quote});
@@ -72,7 +78,6 @@ export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButto
 
                     setQuoteExists(true);
                     console.log("Bookmark Added")
-
                 }
             } 
         } catch (error) {
@@ -85,7 +90,6 @@ export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButto
     }
 
     const shareQuote = async () => {
-        //console.log("Share Quote")
         try {
             const result = await Share.share({
                 message: `${quote} - ${name}`,

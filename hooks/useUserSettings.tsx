@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 
 interface UserSettings {
     NotificationTime: string,
     isNotifications: boolean,
     showTutorial: boolean
 }
-
 
 
 export default function useUserSettings() {
@@ -81,14 +81,13 @@ export default function useUserSettings() {
             return;
         }
 
-        //console.log(currentBookmarks);
-
         let x = {
             quotes: currentBookmarks,
             settings: userSettings
         }
 
         await AsyncStorage.setItem('Backup', JSON.stringify(x));
+        console.log("Backup Created");
     }
 
     const showBackup = async () => {
@@ -102,11 +101,59 @@ export default function useUserSettings() {
         console.log(backup);
     }
 
+    const resetSettings = async () => {
+        
+        await AsyncStorage.removeItem('Backup');
+        await AsyncStorage.removeItem('quotes');
+
+        let defaults = {
+            NotificationTime: "08:00",
+            isNotifications: false,
+            showTutorial: true
+        }
+
+        await AsyncStorage.setItem('Settings', JSON.stringify(defaults));
+    }
+
+    const clearQuotes = async () => {
+
+        await AsyncStorage.removeItem('quotes');
+
+        console.log("Quotes Cleared");
+    }
+
+    const restoreFromBackup = async () => {
+        try {
+
+            let backup = await AsyncStorage.getItem('Backup');
+
+            let data;
+            
+            if(backup) {
+                data = JSON.parse(backup);
+            }
+
+            if(data) {
+                await AsyncStorage.setItem("quotes", data.quotes);
+                await AsyncStorage.setItem('Settings', JSON.stringify(data.settings));
+            }
+            return 
+            
+        } catch (error) {
+            
+            Alert.alert("Failed to create backup");
+            console.error(error);
+        }
+    }
+
     return {
         userSettings,
         setNotifications,
         setNotificationTime,
         createBackup,
-        showBackup
+        showBackup,
+        resetSettings,
+        clearQuotes,
+        restoreFromBackup
     };
 }

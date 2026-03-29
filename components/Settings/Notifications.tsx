@@ -2,7 +2,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import useUserSettings from '../useUserSettings';
+import useUserSettings from '../../hooks/useUserSettings';
 
 export default function Notifications() {
 
@@ -12,7 +12,6 @@ export default function Notifications() {
     const { userSettings, setNotifications, setNotificationTime } = useUserSettings();
     
     const CheckMarkButton = () => {
-
         return (
             <View>
                 {userSettings.isNotifications ? 
@@ -77,21 +76,8 @@ export default function Notifications() {
                     mode="time"
                     is24Hour={false}
                     onChange={timeChange}
-                    //onDismiss={() => setShow(false)}
                 />
             )}
-
-            <Pressable onPress={() => console.log(userSettings)}>
-                <Text style={{ color: 'white', fontSize: 22}}>Show User Settings</Text>
-            </Pressable>
-
-            <Pressable onPress={() => setNotifications(true)}>
-                <Text style={{ color: 'white', fontSize: 22}}>Set True</Text>
-            </Pressable>
-
-            <Pressable onPress={() => setNotifications(false)}>
-                <Text style={{ color: 'white', fontSize: 22}}>Set False</Text>
-            </Pressable>
 
             <Pressable style={[ styles.sContainer , { display: 'flex', flexDirection: 'column'} ]} onPress={() => setShow(!show)}>
                 <Text style={[ styles.sText ]}>Delivery Time</Text>

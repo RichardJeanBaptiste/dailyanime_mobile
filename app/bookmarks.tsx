@@ -27,6 +27,11 @@ export default function Bookmarks(){
             return
         }
 
+        let x = JSON.parse(value);
+
+        console.log("Saved Quotes");
+        console.log(x);
+
         setSavedQuotes(JSON.parse(value))
     }
 
@@ -61,22 +66,26 @@ export default function Bookmarks(){
         }
     }
 
-    const BookmarkItem = ({quote ,author} : {quote: string, author: string}) => {
-        return (
-            <View style={styles.bookmark_border}>
-                <Text style={styles.bookmark_text}>{`${quote}\n\n-${author}`}</Text>
-                <View style={styles.bookmark_btn_container}>
-                    <View style={styles.delete_btn}>
-                        <IconButton icon={<FontAwesome name="trash" size={20} color="white" />} onPress={() => deleteBookmark(quote)}/>
+    const BookmarkItem = ({quote , author} : {quote: string, author: string}) => {
+
+        if(quote !== undefined) {
+            return (
+                <View style={styles.bookmark_border}>
+                    <Text style={styles.bookmark_text}>{`${quote}\n\n-${author}`}</Text>
+                    <View style={styles.bookmark_btn_container}>
+                        <View style={styles.delete_btn}>
+                            <IconButton icon={<FontAwesome name="trash" size={20} color="white" />} onPress={() => deleteBookmark(quote)}/>
+                        </View>
+                        
+                        <View style={styles.share_btn}>
+                            <IconButton icon={<FontAwesome name="share" size={20} color="white" />} onPress={() => shareBookmark(quote, author)}/>
+                        </View>
+                        
                     </View>
-                    
-                    <View style={styles.share_btn}>
-                        <IconButton icon={<FontAwesome name="share" size={20} color="white" />} onPress={() => shareBookmark(quote, author)}/>
-                    </View>
-                    
                 </View>
-            </View>
-        )
+            )
+        }
+        
     }
 
     return (
@@ -92,11 +101,17 @@ export default function Bookmarks(){
                     paddingBottom: '15%'
                 }}
             >
-                {savedQuotes?.map((item : {author: string, quote: string}, index : Key) => {
-                    return ( 
-                        <BookmarkItem key={index} quote={item.quote} author={item.author}/>
-                    )
-                })}
+                {Array.isArray(savedQuotes) && savedQuotes.length > 0 ? (
+                    savedQuotes?.map((item: {author: string, quote: string}, index: Key) => (
+                        <BookmarkItem 
+                            key={index} 
+                            quote={item?.quote} 
+                            author={item?.author}
+                        />
+                    ))
+                ) : (
+                    <View/> 
+                )}
             </ScrollView>
         </SafeAreaView>
     )
