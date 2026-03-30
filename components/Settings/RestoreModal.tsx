@@ -1,4 +1,7 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('screen').width;
+const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 export default function RestoreModel({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
     return (
@@ -12,12 +15,22 @@ export default function RestoreModel({modalVisible, setVisible}: {modalVisible:a
             }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Restore Modal</Text>
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setVisible()}>
-                        <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
+                    <Text style={[styles.modalText, {fontSize: 22}]}>Restore Modal</Text>
+                    <Text style={[ styles.modalText ]}>{`Pressing 'restore' will restore your app from the previous backup.\n\n If no backup is available it will restore to default settings. \n\n Are you sure you want to continue?`}</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', gap: 20, marginTop: '15%'}}>
+                        <Pressable
+                          style={[ styles.button, styles.buttonDanger ]}
+                          onPress={() => setVisible()}
+                        >
+                          <Text>Cancel</Text>
+                        </Pressable>
+
+                        <Pressable
+                          style={[ styles.button, styles.buttonOpen ]}
+                        >
+                          <Text>Restore</Text>
+                        </Pressable>
+                    </View>
                     </View>
                 </View>
             </Modal>
@@ -32,6 +45,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalView: {
+    width: SCREEN_WIDTH * .7,
+    height: SCREEN_HEIGHT * .45,
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
@@ -53,6 +68,9 @@ const styles = StyleSheet.create({
   },
   buttonOpen: {
     backgroundColor: '#F194FF',
+  },
+  buttonDanger: {
+    backgroundColor: 'red',
   },
   buttonClose: {
     backgroundColor: '#2196F3',

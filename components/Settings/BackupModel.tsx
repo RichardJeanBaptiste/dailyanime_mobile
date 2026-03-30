@@ -1,6 +1,23 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import useUserSettings from '@/hooks/useUserSettings';
+import { Alert, Dimensions, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('screen').width;
+const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 export default function BackupModel({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
+
+    const { createBackup } = useUserSettings();
+
+    const handleNewBackup = () => {
+        try {
+          createBackup();
+          Alert.alert("New Backup Created");
+          setVisible();
+        } catch (error) {
+          Alert.alert("Something went wrong when creating a new backup")
+        }
+    }
+
     return (
         <>
             <Modal
@@ -12,12 +29,27 @@ export default function BackupModel({modalVisible, setVisible}: {modalVisible:an
             }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Backup Modal</Text>
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setVisible()}>
-                        <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
+                      <Text style={[ styles.modalText, {textAlign: 'center', fontSize: 22}]}>Backup</Text>
+
+                      <Text style={[ styles.modalText, {textAlign: 'center', marginTop: '2%'}]}>
+                          {`Creating a backup will save your current settings and quotes to your device but it will delete any previous backups created. \n\n Are you sure you want to continue?`}
+                      </Text>
+
+                      <View style={{ display: 'flex', flexDirection: 'row', gap: 20, marginTop: '15%'}}>
+                          <Pressable
+                            style={[ styles.button, styles.buttonDanger ]}
+                            onPress={() => setVisible()}
+                          >
+                            <Text>Cancel</Text>
+                          </Pressable>
+
+                          <Pressable
+                            style={[ styles.button, styles.buttonOpen ]}
+                            onPress={handleNewBackup}
+                          >
+                            <Text>Create</Text>
+                          </Pressable>
+                      </View>
                     </View>
                 </View>
             </Modal>
@@ -32,6 +64,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalView: {
+    width: SCREEN_WIDTH * .7,
+    height: SCREEN_HEIGHT * .45,
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
@@ -56,6 +90,9 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     backgroundColor: '#2196F3',
+  },
+  buttonDanger: {
+    backgroundColor: 'red',
   },
   textStyle: {
     color: 'white',

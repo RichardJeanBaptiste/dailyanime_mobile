@@ -1,5 +1,4 @@
 import BackupModel from '@/components/Settings/BackupModel';
-import NotificationModel from '@/components/Settings/NotificationModel';
 import Notifications from '@/components/Settings/Notifications';
 import RestoreModel from '@/components/Settings/RestoreModal';
 import TutorialModel from '@/components/Settings/TutorialModal';
@@ -12,8 +11,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
-const screenWidth = Dimensions.get('screen').width;
-const screenHeight = Dimensions.get('screen').height;
+const SCREEN_WIDTH = Dimensions.get('screen').width;
+const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 
 
@@ -52,8 +51,8 @@ export default function Settings() {
                         <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             <Image
                                 style={{
-                                    width: screenWidth * .13,
-                                    height: screenHeight * .06,
+                                    width: SCREEN_WIDTH * .13,
+                                    height: SCREEN_HEIGHT * .06,
                                     borderRadius: 75,
                                 }}
                                 source={PlaceholderImage}
@@ -80,8 +79,6 @@ export default function Settings() {
         <SafeAreaView style={styles.settings_root}>
             
             <TutorialModel modalVisible={tutorialModal} setVisible={setTModal}/>
-
-            <NotificationModel modalVisible={notificationModal} setVisible={setNModel}/>
 
             <BackupModel modalVisible={backupModal} setVisible={setBModal}/>
 
@@ -137,12 +134,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#25292e'
     },
     sc_container: {
-        width: '95%',
-        height: '95%'
+        width: SCREEN_WIDTH * .9,
+        height: SCREEN_HEIGHT * .8
     },
     settings_item: {
-        width: screenWidth * .95,
-        height: screenHeight * .14,
+        width: SCREEN_WIDTH * .95,
+        height: SCREEN_HEIGHT * .14,
         display: 'flex',
         flexDirection: 'row',
         marginTop: '2%',
@@ -154,8 +151,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: .3
     },
     settings_image: {
-        width: screenWidth * .15,
-        height: screenHeight * .07
+        width: SCREEN_WIDTH * .15,
+        height: SCREEN_HEIGHT * .07
     },
     settings_text : {
         flex: .8,
