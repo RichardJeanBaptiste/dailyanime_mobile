@@ -59,7 +59,7 @@ const loadUserSettings = async () => {
   }
 }
 
-loadUserSettings();
+//loadUserSettings();
 
 const saveJsonFile = async (filename , jsonString) => {
  

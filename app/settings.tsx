@@ -1,8 +1,7 @@
-import BackupModel from '@/components/Settings/BackupModel';
 import Notifications from '@/components/Settings/Notifications';
+import Restore from '@/components/Settings/Restore';
 import RestoreModel from '@/components/Settings/RestoreModal';
 import TutorialModel from '@/components/Settings/TutorialModal';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Image } from 'expo-image';
 import { useState } from 'react';
@@ -22,8 +21,6 @@ export default function Settings() {
 
     const [ notificationModal, setNotificationModal ] = useState(false);
 
-    const [ backupModal, setBackupModal ] = useState(false);
-
     const [ restoreModal, setRestoreModal ] = useState(false);
 
     const setTModal = () => {
@@ -34,10 +31,7 @@ export default function Settings() {
         setNotificationModal(!notificationModal);
     }
 
-    const setBModal = () => {
-        setBackupModal(!backupModal);
-    }
-
+   
     const setRModal = () => {
         setRestoreModal(!restoreModal);
     }
@@ -80,8 +74,6 @@ export default function Settings() {
             
             <TutorialModel modalVisible={tutorialModal} setVisible={setTModal}/>
 
-            <BackupModel modalVisible={backupModal} setVisible={setBModal}/>
-
             <RestoreModel modalVisible={restoreModal} setVisible={setRModal}/>
 
             <ScrollView
@@ -106,23 +98,8 @@ export default function Settings() {
                 
                 <Notifications/>
                
-
-                <Pressable onPress={() => setBModal()}>
-                    <SettingItem 
-                        icon={<FontAwesome name="save" size={22} color="white" />}
-                        title="Backup" 
-                        info="Backup your saved bookmarks and settings"
-                    />
-                </Pressable>
+                <Restore/>
                 
-
-                <Pressable onPress={() => setRModal()}>
-                    <SettingItem 
-                        icon={<FontAwesome name="repeat" size={22} color="white" />} 
-                        title="Restore" 
-                        info="Restore your bookmarks and settings"
-                    />
-                </Pressable>
             </ScrollView>
         </SafeAreaView>
     )
@@ -135,7 +112,7 @@ const styles = StyleSheet.create({
     },
     sc_container: {
         width: SCREEN_WIDTH * .9,
-        height: SCREEN_HEIGHT * .8
+        height: SCREEN_HEIGHT
     },
     settings_item: {
         width: SCREEN_WIDTH * .95,

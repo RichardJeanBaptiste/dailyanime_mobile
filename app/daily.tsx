@@ -6,7 +6,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function Daily() {
 
-    const { createBackup, showBackup, resetSettings, clearQuotes, restoreFromBackup } = useUserSettings();
+    const { createBackup, showBackup, resetSettings, clearQuotes, restoreFromBackup, userSettings } = useUserSettings();
 
     
     return (
@@ -17,6 +17,7 @@ export default function Daily() {
                 <Button onPress={resetSettings} title="Reset"/>
                 <Button onPress={clearQuotes} title="Clear Quotes"/>
                 <Button onPress={restoreFromBackup} title="Restore Backup"/>
+                <Button onPress={() => console.log(userSettings)} title="Show Current Settings"/>
             </View>
         </QuoteProvider>
     )

@@ -4,12 +4,12 @@ import { Alert, Dimensions, Modal, Pressable, StyleSheet, Text, View } from 'rea
 const SCREEN_WIDTH = Dimensions.get('screen').width;
 const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
-export default function RestoreModel({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
+export default function ResetModel({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
 
-    const { restoreFromBackup } = useUserSettings();
+    const { resetSettings } = useUserSettings();
 
     const restoreAndClose= () => {
-      restoreFromBackup();
+      resetSettings();
       Alert.alert("App restored from backup");
       setVisible();
     }
@@ -25,8 +25,8 @@ export default function RestoreModel({modalVisible, setVisible}: {modalVisible:a
             }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                    <Text style={[styles.modalText, {fontSize: 22}]}>Restore Modal</Text>
-                    <Text style={[ styles.modalText ]}>{`Pressing 'restore' will restore your app from the previous backup.\n\n If no backup is available it will restore to default settings. \n\n Are you sure you want to continue?`}</Text>
+                    <Text style={[styles.modalText, {fontSize: 22}]}>Reset</Text>
+                    <Text style={[ styles.modalText ]}>{`Pressing 'reset' will return your app to the default settings. \n\n Are you sure you want to continue?`}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', gap: 20, marginTop: '15%'}}>
                         <Pressable
                           style={[ styles.button, styles.buttonDanger ]}
@@ -39,7 +39,7 @@ export default function RestoreModel({modalVisible, setVisible}: {modalVisible:a
                           style={[ styles.button, styles.buttonOpen ]}
                           onPress={restoreAndClose}
                         >
-                          <Text>Restore</Text>
+                          <Text>Reset</Text>
                         </Pressable>
                     </View>
                     </View>

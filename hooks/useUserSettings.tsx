@@ -1,52 +1,67 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 interface UserSettings {
     NotificationTime: string,
     isNotifications: boolean,
-    showTutorial: boolean
+    showTutorial: boolean,
+    isSoundOn: boolean,
+}
+
+const defaults = {
+    NotificationTime: "08:00",
+    isNotifications: false,
+    showTutorial: true,
+    isSoundOn: true
 }
 
 
 export default function useUserSettings() {
 
-    const [ userSettings, setUserSettings ] = useState<UserSettings>({
-        NotificationTime: "08:00",
-        isNotifications: false,
-        showTutorial: true
-    });
+    const isLoaded = useRef(false);
+
+    const [ userSettings, setUserSettings ] = useState<UserSettings>(defaults);
 
     useEffect(() => {
         getUserSettings();
     },[]);
 
     useEffect(() => {
-        saveSettings();
+        if(isLoaded.current) {
+            saveSettings();
+        }
     },[userSettings]);
 
     const getUserSettings = async () => {
 
-        let x = await AsyncStorage.getItem("Settings");
+        try {
+            let x = await AsyncStorage.getItem("settings");
 
-        let items;
+            let items;
 
-        if(x !== null) {
-            items = JSON.parse(x);
-        } else {
-            console.log("No Settings Found");
-            return
+            if(x !== null) {
+                items = JSON.parse(x);
+            } else {
+                console.log("No Settings Found");
+                return
+            }
+
+            //console.log("Items: ", items);
+            setUserSettings(items);  
+        } catch (error) {
+            console.error("Load error", error);
+        } finally {
+            isLoaded.current = true;
         }
-
-        console.log(items);
-
-        setUserSettings(items);
     }
 
     const saveSettings = async () => {
 
-        await AsyncStorage.setItem("Settings", JSON.stringify(userSettings));
-        console.log("Save New Settings");
+        await AsyncStorage.setItem("settings", JSON.stringify(userSettings));
+        let x = await AsyncStorage.getItem("settings");
+
+        //console.log("Save New Settings: ", x);
     }
 
     const setNotifications = (setNotifications: boolean) => {
@@ -59,7 +74,19 @@ export default function useUserSettings() {
                 isNotifications: x 
             };
         }); 
-    } 
+    }
+    
+    const setSoundSettings = (isSoundOn: boolean) => {
+
+        setUserSettings((prev) => {
+            //let x = isSoundOn ? true : false
+
+            return {
+                ...prev,
+                isSoundOn: isSoundOn
+            }
+        })
+    }
 
     const setNotificationTime = (newTimeObject: Date) => {
 
@@ -72,6 +99,7 @@ export default function useUserSettings() {
             }
         })
     }
+
 
     const createBackup = async () => {
 
@@ -103,16 +131,16 @@ export default function useUserSettings() {
 
     const resetSettings = async () => {
         
-        await AsyncStorage.removeItem('Backup');
-        await AsyncStorage.removeItem('quotes');
+        try {
 
-        let defaults = {
-            NotificationTime: "08:00",
-            isNotifications: false,
-            showTutorial: true
+            await AsyncStorage.removeItem('Backup');
+            await AsyncStorage.removeItem('quotes');
+            await AsyncStorage.setItem('settings', JSON.stringify(defaults));
+
+            //console.log("Reset Settings");
+        } catch (error) {
+            console.error("Error reseting app : ", error);
         }
-
-        await AsyncStorage.setItem('Settings', JSON.stringify(defaults));
     }
 
     const clearQuotes = async () => {
@@ -135,13 +163,14 @@ export default function useUserSettings() {
 
             if(data) {
                 await AsyncStorage.setItem("quotes", data.quotes);
-                await AsyncStorage.setItem('Settings', JSON.stringify(data.settings));
+                await AsyncStorage.setItem('settings', JSON.stringify(data.settings));
+                console.log("Restored from backups")
             }
             return 
             
         } catch (error) {
             
-            Alert.alert("Failed to create backup");
+            Alert.alert("Failed to restore backup");
             console.error(error);
         }
     }
@@ -150,6 +179,7 @@ export default function useUserSettings() {
         userSettings,
         setNotifications,
         setNotificationTime,
+        setSoundSettings,
         createBackup,
         showBackup,
         resetSettings,
