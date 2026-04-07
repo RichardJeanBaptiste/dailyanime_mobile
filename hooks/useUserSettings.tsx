@@ -7,13 +7,15 @@ interface UserSettings {
     isNotifications: boolean,
     showTutorial: boolean,
     isSoundOn: boolean,
+    theme: string
 }
 
 const defaults = {
     NotificationTime: "08:00",
     isNotifications: false,
     showTutorial: true,
-    isSoundOn: true
+    isSoundOn: true,
+    theme: "dark"
 }
 
 

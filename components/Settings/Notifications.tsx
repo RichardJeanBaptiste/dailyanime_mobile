@@ -3,16 +3,23 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import useUserSettings from '../../hooks/useUserSettings';
+import ThemeModal from './ThemeModal';
 
 export default function Notifications() {
 
     const [date, setDate] = useState(new Date());
     const [show, setShow] = useState(false);
+
+    const [ themeModal, setThemeModal] =useState(false);
     
     const { userSettings, setNotifications, setNotificationTime, setSoundSettings } = useUserSettings();
 
     const handleNotificitations = (notification: boolean) => {
         setNotifications(notification);
+    }
+
+    const handleThemeModal = () => {
+        setThemeModal(!themeModal);
     }
     
     const CheckMarkButton = () => {
@@ -79,6 +86,9 @@ export default function Notifications() {
             }}
         >
 
+
+            <ThemeModal modalVisible={themeModal} setVisible={handleThemeModal}/>
+
             <Text style={[styles.sText, {color: 'orange', fontSize: 18, marginLeft: '3%'}]}>Notifications</Text>
 
             <View style={[ { display: 'flex', flexDirection: 'row',  marginTop: '1%', marginLeft: '7%'} ]}>
@@ -121,10 +131,10 @@ export default function Notifications() {
                 </View>
             </View>
 
-            <View style={{ display: 'flex', flexDirection: 'column', marginLeft: '8%' }}>
+            <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '8%' }} onPress={handleThemeModal}>
                 <Text style={[ styles.sText ]}>Themes</Text>
                 <Text style={[ styles.sText ]}>Choose your color mode</Text>
-            </View>
+            </Pressable>
                
         </View>
     )

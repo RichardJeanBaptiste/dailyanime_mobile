@@ -61,13 +61,13 @@ export default function Index() {
 
 
     return (
-      <SafeAreaProvider>
-        <QuoteProvider>
-            <View style={styles.container}>
-              <Quotes/>
-            </View>
-        </QuoteProvider>
-      </SafeAreaProvider>
+        <SafeAreaProvider>
+          <QuoteProvider>
+              <View style={styles.container}>
+                <Quotes/>
+              </View>
+          </QuoteProvider>
+        </SafeAreaProvider>
     );
   
 }
