@@ -120,7 +120,7 @@ export default function Notifications() {
                 <Text style={[ styles.sText ]}>Current Delivery Time: {userSettings.NotificationTime}</Text>  
             </Pressable>   
 
-            <View style={{ display: 'flex', flexDirection: 'row',  marginLeft: '8%' }}>
+            <View style={{ display: 'flex', flexDirection: 'row',  marginLeft: '7%' }}>
                 <View style={{ display: 'flex', flexDirection: 'column', flex: .9 }}>
                     <Text style={[ styles.sText, { fontSize: 16 } ]}>Sound</Text>
                     <Text style={[ styles.sText, { fontSize: 13 } ]}>Notification sound when delivered</Text>
@@ -131,7 +131,7 @@ export default function Notifications() {
                 </View>
             </View>
 
-            <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '8%' }} onPress={handleThemeModal}>
+            <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '7%' }} onPress={handleThemeModal}>
                 <Text style={[ styles.sText ]}>Themes</Text>
                 <Text style={[ styles.sText ]}>Choose your color mode</Text>
             </Pressable>

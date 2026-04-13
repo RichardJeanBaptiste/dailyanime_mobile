@@ -14,7 +14,6 @@ const SCREEN_WIDTH = Dimensions.get('screen').width;
 const SCREEN_HEIGHT = Dimensions.get('screen').height;
 
 
-
 export default function Settings() {
 
     const [ tutorialModal, setTutorialModal ] = useState(false);
@@ -107,12 +106,15 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
     settings_root: {
-        flex: 1,
         backgroundColor: '#25292e'
     },
     sc_container: {
+        flex: 1,
         width: SCREEN_WIDTH * .9,
-        height: SCREEN_HEIGHT
+        height: SCREEN_HEIGHT,
+        alignSelf: 'center', 
+        marginTop: 0,
+        paddingBottom: 20
     },
     settings_item: {
         width: SCREEN_WIDTH * .95,

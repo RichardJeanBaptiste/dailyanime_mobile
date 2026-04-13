@@ -36,17 +36,17 @@ export default function Restore() {
             
             <Text style={{ color: 'orange', fontSize: 18, marginLeft: '3%'}}>Backup & Restore</Text>
 
-            <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '5%', gap: 3 }} onPress={setBModal}>
+            <Pressable style={styles.itemContainer} onPress={setBModal}>
                 <Text style={{ color: 'white' , fontSize: 16 }}>Backup</Text>
                 <Text style={{ color: 'white' , fontSize: 13 }}>Backup your bookmarks</Text>
             </Pressable>
 
-            <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '5%', gap: 3 }} onPress={setRModal}>
+            <Pressable style={styles.itemContainer} onPress={setRModal}>
                 <Text style={{ color: 'white' , fontSize: 16 }}>Restore</Text>
                 <Text style={{ color: 'white' , fontSize: 13 }}>Restore bookmarks</Text>
             </Pressable>
 
-            <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '5%', gap: 3 }} onPress={setResetModalState}>
+            <Pressable style={styles.itemContainer} onPress={setResetModalState}>
                 <Text style={{ color: 'white' , fontSize: 16 }}>Reset</Text>
                 <Text style={{ color: 'white' , fontSize: 13 }}>Reset to the default app settings</Text>
             </Pressable>
@@ -101,5 +101,11 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: 'center',
+    },
+    itemContainer: {
+        display: 'flex', 
+        flexDirection: 'column', 
+        marginLeft: '7%', 
+        gap: 3
     }
 })
