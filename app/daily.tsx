@@ -1,24 +1,32 @@
-import { QuoteProvider } from "@/components/QuoteContext";
-import useUserSettings from "@/hooks/useUserSettings";
-import { Button, Dimensions, View } from "react-native";
+import { QuoteProvider, useSearchContext } from "@/components/QuoteContext";
+import { useEffect } from "react";
+import { Dimensions, Text, View } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default function Daily() {
 
-    const { createBackup, showBackup, resetSettings, clearQuotes, restoreFromBackup, userSettings } = useUserSettings();
+    const Daily = () => {
+
+        const { dailyQuote } = useSearchContext();
+
+        useEffect(() => {
+            console.log(dailyQuote);
+        },[]);
+
+
+        return (
+            <View style={{ flex: 1 , backgroundColor: '#25292e', gap:20 }}>
+                <Text style={{ color: 'white'}}>Daily</Text>
+            </View>
+        )
+    }
 
     
     return (
         <QuoteProvider>
-            <View style={{ flex: 1 , backgroundColor: '#25292e', gap:20 }}>
-                <Button onPress={showBackup} title="Show Backup"/>
-                <Button onPress={createBackup} title="Create Backup"/>
-                <Button onPress={resetSettings} title="Reset"/>
-                <Button onPress={clearQuotes} title="Clear Quotes"/>
-                <Button onPress={restoreFromBackup} title="Restore Backup"/>
-                <Button onPress={() => console.log(userSettings)} title="Show Current Settings"/>
-            </View>
+            <Daily/>
         </QuoteProvider>
     )
 }

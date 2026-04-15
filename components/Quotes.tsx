@@ -32,7 +32,7 @@ export default function Quotes() {
 
     const DAILY_QUOTE_ID = 'daily-quote';
 
-    const { jsonData, isLoading } = useSearchContext();
+    const { jsonData, isLoading, setDailyQuote } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
@@ -73,8 +73,8 @@ export default function Quotes() {
                 data: {quote}
             },
             trigger: {
-                hour: 11,
-                minute: 52,
+                hour: 8,
+                minute: 0,
                 repeats: true, 
                 type: Notifications.SchedulableTriggerInputTypes.DAILY,
                 channelId: 'daily-quotes'
@@ -123,6 +123,7 @@ export default function Quotes() {
 
                 const subQuote = response.notification.request.content.data.quote as QuoteLogItem;
 
+                setDailyQuote(subQuote);
                 setSubQuote(subQuote);
                 setIsSubLoaded(true);
             }

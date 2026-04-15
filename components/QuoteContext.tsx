@@ -8,6 +8,8 @@ interface QuoteContextType {
     charJson: any;
     isLoading: boolean;
     isCharLoading: boolean;
+    dailyQuote: any;
+    setDailyQuote: any;
 }
 
 const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
@@ -26,6 +28,8 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
     const [ charJson, setCharJson ] = useState([]);
     const [ isCharLoading, setIsCharLoading ] = useState(true); 
+
+    const [dailyQuote, setDailyQuote] = useState({});
 
 
     const loadJsonFile = async () => {
@@ -94,7 +98,7 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
    
     return (
-        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading }}>
+        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading, dailyQuote, setDailyQuote }}>
             {children}
         </QuoteContext.Provider>
     )

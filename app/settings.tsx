@@ -74,7 +74,7 @@ export default function Settings() {
             <TutorialModel modalVisible={tutorialModal} setVisible={setTModal}/>
 
             <RestoreModel modalVisible={restoreModal} setVisible={setRModal}/>
-
+        
             <ScrollView
                 contentContainerStyle= {
                     styles.sc_container
@@ -94,7 +94,6 @@ export default function Settings() {
                     />
                 </Pressable>
                 
-                
                 <Notifications/>
                
                 <Restore/>
@@ -106,13 +105,13 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
     settings_root: {
+        flex: 1,
         backgroundColor: '#25292e'
     },
     sc_container: {
-        flex: 1,
         width: SCREEN_WIDTH * .9,
         height: SCREEN_HEIGHT,
-        alignSelf: 'center', 
+        //alignSelf: 'center', 
         marginTop: 0,
         paddingBottom: 20
     },

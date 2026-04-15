@@ -25,8 +25,6 @@ export default function ThemeModel({modalVisible, setVisible}: {modalVisible:any
         if(x !== null) {
             x = JSON.parse(x);
         }
-
-        //console.log(x);
     }
 
     
@@ -78,12 +76,12 @@ export default function ThemeModel({modalVisible, setVisible}: {modalVisible:any
                             </View>
                         </View>
                         
-                        <View style={{ display: 'flex', flexDirection: 'row', gap: 15, marginTop: '3%'}}>
-                            <Pressable onPress={setVisible}>
+                        <View style={{ display: 'flex', flexDirection: 'row', gap: 15, position: 'absolute', top: '90%'}}>
+                            <Pressable style={[ styles.button , styles.buttonClose]} onPress={setVisible}>
                                 <Text>Close</Text>
                             </Pressable>
 
-                            <Pressable>
+                            <Pressable style={[ styles.button, styles.buttonOpen]}>
                                 <Text>Save</Text>
                             </Pressable>
                         </View>
@@ -100,6 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   modalView: {
     width: SCREEN_WIDTH * .7,
