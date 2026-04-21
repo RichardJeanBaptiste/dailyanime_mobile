@@ -14,7 +14,7 @@ import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
 import { MotiView } from 'moti';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { Button, Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "./Interfaces";
@@ -32,7 +32,7 @@ export default function Quotes() {
 
     const DAILY_QUOTE_ID = 'daily-quote';
 
-    const { jsonData, isLoading, setDailyQuote } = useSearchContext();
+    const { jsonData, isLoading,  updateDailyQuote, dailyQuote } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
 
@@ -97,6 +97,42 @@ export default function Quotes() {
         scheduleDailyQuote(notificationQuote);
     }
 
+    const testPushNoti = async () => {
+
+        console.log("Sending Push Notifications")
+
+        const { data , error } = await supabase.rpc('get_quotes_json');
+
+        const randomIndex = Math.floor(Math.random() * (data.length || 100));
+
+        let quote = await data[randomIndex];
+
+        if(error) {
+            console.log("Error getting Push Notification Post: ", error);
+            return;
+        }
+        
+        const now = new Date();
+
+        await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
+
+        await Notifications.scheduleNotificationAsync({
+            identifier: DAILY_QUOTE_ID,
+            content: {
+                title: quote.char_name,
+                body: quote.quote,
+                data: {quote}
+            },
+            trigger: {
+                hour: now.getHours(),
+                minute: now.getMinutes() + 1,
+                repeats: true, 
+                type: Notifications.SchedulableTriggerInputTypes.DAILY,
+                channelId: 'daily-quotes'
+            } as Notifications.DailyTriggerInput,
+        });
+    }
+
 
     // Add quote to the front of appData array
     const changeDataLog = (subQuote: any) => {
@@ -115,21 +151,32 @@ export default function Quotes() {
     }
 
 
+    // Handle Push Notification Click Interaction
     useEffect(() => {
         try {
-            const response = Notifications.getLastNotificationResponse();
 
-            if (response?.notification) {
+            // Handles Closed -> app launched from notification
+            const lastResponse = Notifications.getLastNotificationResponse();
 
-                const subQuote = response.notification.request.content.data.quote as QuoteLogItem;
+            if (lastResponse?.notification) {
+                const subQuote = lastResponse.notification.request.content.data.quote;
 
-                setDailyQuote(subQuote);
-                setSubQuote(subQuote);
-                setIsSubLoaded(true);
+                console.log(subQuote);
+
+                setTimeout(() => {
+                    updateDailyQuote(subQuote);
+                }, 0);
             }
 
-            schedulePosts();
-            
+            // Background / Foreground -> notification tapped
+
+            const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+                const subQuote = response.notification.request.content.data.quote;
+
+                updateDailyQuote(subQuote);
+            })
+
+            return () => subscription.remove();
         } catch (error) {
             console.log("Error During Intial Mount: ", error);
         }
@@ -284,6 +331,8 @@ export default function Quotes() {
         )
     });
 
+   
+
 
     if(isLoading) {
         return (
@@ -295,10 +344,13 @@ export default function Quotes() {
         return (
             <>
                 <SafeAreaView style={styles.quotes_container}>
+                    
                     {/*********************** Modal *************************/}
                     <QuoteModal currentQuote={activeQuote} modalVisible={modalVisible} setVisible={setVisible} />
 
                     {/****************************************** Quotes *******************************************/}
+
+                    <Button onPress={testPushNoti} title="Test Push Notifications"/>
                     <FlatList
                         ref={listRef}
                         data={quoteLog}

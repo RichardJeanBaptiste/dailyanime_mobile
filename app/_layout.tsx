@@ -1,3 +1,4 @@
+import { QuoteProvider } from '@/components/QuoteContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useRouter } from 'expo-router';
@@ -17,6 +18,7 @@ export default function RootLayout() {
   }
 
   return (
+    <QuoteProvider>
     <Drawer
       screenOptions={{
         drawerStyle: {
@@ -189,6 +191,7 @@ export default function RootLayout() {
         }}
       />
     </Drawer>
+    </QuoteProvider>
   )
 }
 

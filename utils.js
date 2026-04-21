@@ -22,15 +22,7 @@ export const supabase = createClient(
     },
 })
 
-// Check Async Storage For Settings
-/** Single Nested Settings Object
- * 
- *  Settings : {
- *    "Tutorial": Boolean,
- *    "isNotificationsOn": Boolean,
- *    "NotificationTime": TimeString,
- * }
- */
+
 
 const loadUserSettings = async () => {
 
@@ -84,7 +76,7 @@ const exportTable = async () => {
 
     if (error) {
       if(error.details.startsWith("TypeError: Network request failed")) {
-        console.log("Failed to connect to supabase: Function: get_quotes_json : ", Platform.OS, " :",Platform.Version);
+        console.log("Failed to connect to supabase: Function: get_quotes_json : ", Platform.OS, " : ",Platform.Version);
       } else {
         console.log("Error exporting table: ", error);
       }
@@ -110,7 +102,7 @@ const exportCharTable = async () => {
 
     if (error) {
       if(error.details.startsWith("TypeError: Network request failed")) {
-        console.log("Failed to connect to supabase: Function: get_chars : ", Platform.OS, " :",Platform.Version);
+        console.log("Failed to connect to supabase: Function: get_chars : ", Platform.OS, " : ",Platform.Version);
       } else {
         console.log("Error exporting table: ", error);
       }
