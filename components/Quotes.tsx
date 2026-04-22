@@ -3,8 +3,6 @@
  * 
  *  Fix background sync 
  *  Better Swiping Animation on the Quote Component
- *  Create Settings Component Functionality
- *  Create/Restore from Local Backup 
  *  Create App Tutorial Functionality
  *  Add Advertising 
  */
@@ -12,9 +10,10 @@
 import { supabase } from "@/utils";
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
+import { useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "./Interfaces";
@@ -27,10 +26,15 @@ const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;  
+const loremIpsum = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis purus nec nisl molestie, vitae rutrum dolor vestibulum. Aenean pretium facilisis metus. Aliquam justo justo, luctus porttitor imperdiet ut, eleifend ut ipsum. Vivamus ultricies rhoncus velit in faucibus. Suspendisse tempus scelerisque dui at congue. Morbi eu nulla justo. Vivamus vehicula augue a dolor fringilla venenatis non vitae nisi. Donec tempus dui eget libero fringilla imperdiet. Vivamus at elementum enim, in interdum ligula. Donec quis enim fermentum, tincidunt arcu at, eleifend purus.
+
+Praesent quis ligula erat. Etiam accumsan efficitur risus non mattis. Proin cursus metus metus, at maximus urna lobortis sit amet. Nullam eu maximus tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi congue metus odio, ac facilisis dui pretium ac. Etiam consequat leo ut tellus dapibus, non vestibulum mauris ornare. In gravida efficitur odio ac ultrices. Fusce vestibulum erat libero, id consequat odio tempor et. Sed ligula odio, commodo nec ultricies eu, interdum eget turpis. Pellentesque sapien purus, sagittis porta sapien id, consequat luctus nisl. Ut at nisl at eros faucibus placerat.`
 
 export default function Quotes() {
 
     const DAILY_QUOTE_ID = 'daily-quote';
+
+    const router = useRouter();
 
     const { jsonData, isLoading,  updateDailyQuote, dailyQuote } = useSearchContext();
 
@@ -40,17 +44,6 @@ export default function Quotes() {
 
     const [data, setAppData] = useState<QuoteLogItem[]>([]);
 
-    const [subQuote, setSubQuote] = useState<QuoteLogItem>({
-        char_name: '',
-        anime: '',
-        quote: '',
-        biography: '',
-        wiki: '',
-        img_links: []
-    });
-
-    const [isSubLoaded, setIsSubLoaded] = useState<boolean>(false);
-
     const [quoteLog, setQuoteLog] = useState<number[]>([]);
 
     const [displayIndex, setDisplayIndex] = useState(-1);
@@ -59,59 +52,21 @@ export default function Quotes() {
 
     const halfWindow = Math.floor(windowSize / 2);
 
-    const subReady = isSubLoaded && subQuote && quoteLog?.length && data?.length;
-
-    const scheduleDailyQuote = async (quote: any) => {
-        
-        await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
-
-        await Notifications.scheduleNotificationAsync({
-            identifier: DAILY_QUOTE_ID,
-            content: {
-                title: quote.char_name,
-                body: quote.quote,
-                data: {quote}
-            },
-            trigger: {
-                hour: 8,
-                minute: 0,
-                repeats: true, 
-                type: Notifications.SchedulableTriggerInputTypes.DAILY,
-                channelId: 'daily-quotes'
-            } as Notifications.DailyTriggerInput,
-        });
-    };
-
     const schedulePosts = async () => {
+        console.log("Sending Push Notifications")
+
         const { data , error } = await supabase.rpc('get_quotes_json');
 
         if(error) {
             console.log("Error getting Push Notification Post: ", error);
             return;
         }
-
-        const randomIndex = Math.floor(Math.random() * (data.length || 100));
-
-        let notificationQuote = await data[randomIndex];
-
-        scheduleDailyQuote(notificationQuote);
-    }
-
-    const testPushNoti = async () => {
-
-        console.log("Sending Push Notifications")
-
-        const { data , error } = await supabase.rpc('get_quotes_json');
 
         const randomIndex = Math.floor(Math.random() * (data.length || 100));
 
         let quote = await data[randomIndex];
 
-        if(error) {
-            console.log("Error getting Push Notification Post: ", error);
-            return;
-        }
-        
+        // Schedule Daily Quote
         const now = new Date();
 
         await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
@@ -133,28 +88,9 @@ export default function Quotes() {
         });
     }
 
-
-    // Add quote to the front of appData array
-    const changeDataLog = (subQuote: any) => {
-
-        let quoteIndex = quoteLog[0];
-
-        setAppData((prev) => {
-            let newLog = [...prev];
-            newLog[quoteIndex] = subQuote;
-            return newLog; 
-        }); 
-
-        setDisplayIndex((prev) => {
-            return 0;
-        });
-    }
-
-
     // Handle Push Notification Click Interaction
     useEffect(() => {
         try {
-
             // Handles Closed -> app launched from notification
             const lastResponse = Notifications.getLastNotificationResponse();
 
@@ -165,6 +101,7 @@ export default function Quotes() {
 
                 setTimeout(() => {
                     updateDailyQuote(subQuote);
+                    router.push('/daily');
                 }, 0);
             }
 
@@ -188,12 +125,8 @@ export default function Quotes() {
         if(!isLoading && jsonData) {
 
             setAppData(jsonData)
-            
-            if(isSubLoaded) {
-                setAppData(prev => {
-                    return [subQuote, ...prev];
-                })
-            }
+
+            schedulePosts();
             
             const indices = Array.from({ length: jsonData.length }, (_, i) => i);
 
@@ -207,15 +140,7 @@ export default function Quotes() {
     },[isLoading, jsonData]);
 
 
-    useEffect(() => {
-
-        if (!subReady) return;  
-
-        changeDataLog(subQuote);
-
-    }, [subReady]);
-
-
+    // Modal Functions 
     const [ activeQuote, setActiveQuote ] = useState({
         name: '',
         anime: '',
@@ -319,8 +244,12 @@ export default function Quotes() {
                         </View>
                     </View>
                 
-                <View style={{ position: 'absolute', top: '25%',  width: '100%', height: '40%', alignItems: 'center', justifyContent: 'center',}}>
-                    <Text style={{ color: 'white', fontSize: 24, textAlign: 'center', width:'75%'}}>{item?.quote}</Text>
+                <View style={{ position: 'absolute', top: '25%',  width: '100%', height: '40%', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text 
+                        style={{ color: 'white', fontSize: 24, textAlign: 'center', width:'75%'}}
+                    >
+                        {item?.quote}
+                    </Text>
                 </View>
 
                 {/********************** Quote Buttons ******************/}
@@ -349,8 +278,6 @@ export default function Quotes() {
                     <QuoteModal currentQuote={activeQuote} modalVisible={modalVisible} setVisible={setVisible} />
 
                     {/****************************************** Quotes *******************************************/}
-
-                    <Button onPress={testPushNoti} title="Test Push Notifications"/>
                     <FlatList
                         ref={listRef}
                         data={quoteLog}

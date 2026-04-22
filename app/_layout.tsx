@@ -47,6 +47,24 @@ export default function RootLayout() {
     />
 
     <Drawer.Screen
+        name="daily"
+        options={{
+          drawerLabel: 'Daily',
+          drawerIcon: () => (
+            <FontAwesome name="calendar-check-o" size={15} color="white" />
+          ),
+          drawerLabelStyle: {
+            color: 'white'
+          },
+          title: '',
+          headerStyle: {
+            backgroundColor: '#25292e'
+          },
+          headerTintColor: 'white'
+        }}
+    />
+
+    <Drawer.Screen
       name="bookmarks"
       options={{
         drawerLabel: 'Bookmarks',
@@ -173,23 +191,7 @@ export default function RootLayout() {
         }}
       />
 
-      <Drawer.Screen
-        name="daily"
-        options={{
-          drawerLabel: 'Daily',
-          drawerIcon: () => (
-            <FontAwesome name="user" size={15} color="white" />
-          ),
-          drawerLabelStyle: {
-            color: 'white'
-          },
-          title: '',
-          headerStyle: {
-            backgroundColor: '#25292e'
-          },
-          headerTintColor: 'white'
-        }}
-      />
+      
     </Drawer>
     </QuoteProvider>
   )
