@@ -12,3 +12,32 @@ export const shuffleArray = <T>(array: T[]): T[] => {
   
   return shuffled;
 };
+
+export const getTimeFromString = (timeString: string) => {
+  if (!timeString) return { hours: NaN, minutes: NaN };
+
+  const clean = timeString.trim().toUpperCase();
+
+  const parts = timeString.trim().toUpperCase().split(/\s+/);
+  if (parts.length < 2) return { hours: NaN, minutes: NaN };
+
+  const [time, modifier] = parts;
+  const [hoursStr, minutesStr] = time.split(':');
+
+  let hours = Number(hoursStr);
+  let minutes = Number(minutesStr);
+
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    return { hours: NaN, minutes: NaN };
+  }
+
+  if (modifier === 'PM' && hours !== 12) {
+    hours += 12;
+  }
+
+  if (modifier === 'AM' && hours === 12) {
+    hours = 0;
+  }
+
+  return { hours, minutes };
+};

@@ -30,7 +30,7 @@ export default function Bookmarks(){
         let x = JSON.parse(value);
 
         console.log("Saved Quotes");
-        console.log(x);
+        //console.log(x);
 
         setSavedQuotes(JSON.parse(value))
     }

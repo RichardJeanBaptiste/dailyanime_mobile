@@ -7,6 +7,7 @@
  *  Add Advertising 
  */
 
+import useUserSettings from "@/hooks/useUserSettings";
 import { supabase } from "@/utils";
 import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
@@ -17,7 +18,7 @@ import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-n
 import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "./Interfaces";
-import { shuffleArray } from "./methods";
+import { getTimeFromString, shuffleArray } from "./methods";
 import QuoteButtons from "./QuoteButtons";
 import { useSearchContext } from './QuoteContext';
 import QuoteModal from "./QuoteModal";
@@ -36,6 +37,7 @@ export default function Quotes() {
 
     const router = useRouter();
 
+    const { userSettings } = useUserSettings();
     const { jsonData, isLoading,  updateDailyQuote, dailyQuote } = useSearchContext();
 
     const [imageUriIndex, setImageUriIndex] = useState(0);
@@ -67,7 +69,23 @@ export default function Quotes() {
         let quote = await data[randomIndex];
 
         // Schedule Daily Quote
+
+        console.log(userSettings.NotificationTime);
+
         const now = new Date();
+
+        const {hours, minutes} = getTimeFromString(userSettings.NotificationTime);
+
+        if (
+            Number.isNaN(hours) || Number.isNaN(minutes)
+        ) {
+            console.log("Invalid time input:", userSettings.NotificationTime);
+            console.log(typeof userSettings.NotificationTime);
+            return;
+        }
+
+        console.log('hours:', hours, typeof hours);
+        console.log('minutes:', minutes, typeof minutes);
 
         await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
 
@@ -79,8 +97,8 @@ export default function Quotes() {
                 data: {quote}
             },
             trigger: {
-                hour: now.getHours(),
-                minute: now.getMinutes() + 1,
+                hour: hours,
+                minute: minutes,
                 repeats: true, 
                 type: Notifications.SchedulableTriggerInputTypes.DAILY,
                 channelId: 'daily-quotes'
@@ -260,9 +278,8 @@ export default function Quotes() {
         )
     });
 
-   
-
-
+    
+    
     if(isLoading) {
         return (
             <SafeAreaView style={{ flex: 1 }}>
