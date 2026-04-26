@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import { useEffect, useState } from 'react';
 import { Share, StyleSheet, View } from 'react-native';
-import IconButton from './IconButton';
+import IconButton from '../IconButton';
 
 interface QuoteButtonItem {
     wikiLink: string,
@@ -130,10 +130,6 @@ export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButto
 
 const styles = StyleSheet.create({
     btnGroup : {
-        // position: 'absolute',
-        // top: '85%',
-        // left: '50%',
-        // transform: 'translate(-50%, -50%)',
         width: '100%',
         height: '30%',
         justifyContent: 'center',

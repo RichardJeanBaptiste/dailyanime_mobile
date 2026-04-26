@@ -1,17 +1,18 @@
-import QuoteButtons from "@/components/QuoteButtons";
-import { useSearchContext } from "@/components/QuoteContext";
-import QuoteModal from "@/components/QuoteModal";
+import QuoteButtons from "@/components/Quotes/QuoteButtons";
+import { useSearchContext } from "@/components/Quotes/QuoteContext";
+import QuoteModal from "@/components/Quotes/QuoteModal";
+import useAppConstants from "@/hooks/useAppConstants";
 import { supabase } from "@/utils";
 import { Image } from 'expo-image';
 import { useEffect, useState } from 'react';
-import { Dimensions, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default function Daily() {
 
     const { dailyQuote, updateDailyQuote } = useSearchContext();
+
+    const { SCREEN_WIDTH } = useAppConstants();
 
     const [ modalVisible, setModalVisible ] = useState(false);
 
@@ -20,7 +21,7 @@ export default function Daily() {
     }
 
     useEffect(() => {
-        if(dailyQuote.quote == undefined) {
+        if(dailyQuote?.quote == undefined) {
             console.log("Quote Undefined");
             getQuote();
         }
@@ -41,7 +42,7 @@ export default function Daily() {
         updateDailyQuote(quote);
     }
 
-    if(dailyQuote.quote !== undefined) {
+    if(dailyQuote?.quote) {
         return (
             <View style={{ flex: 1 , backgroundColor: '#25292e', gap:20, justifyContent: 'center', alignItems: 'center'}}>
 
@@ -68,7 +69,7 @@ export default function Daily() {
         )
     } else {
         return (
-            <Text>No Quote Available</Text>
+            <View style={{ flex: 1 , backgroundColor: '#25292e' }} ></View>
         )
     }
 }

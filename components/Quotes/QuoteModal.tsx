@@ -2,9 +2,9 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
 import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
-import IconButton from './IconButton';
-import { ModalInfo } from './Interfaces';
-import { useSearchContext } from './QuoteContext';
+import IconButton from '../IconButton';
+import { ModalInfo } from '../Interfaces';
+import { useSearchContext } from '../Quotes/QuoteContext';
 
 
 export default function QuoteModal({currentQuote, modalVisible, setVisible}: ModalInfo) {

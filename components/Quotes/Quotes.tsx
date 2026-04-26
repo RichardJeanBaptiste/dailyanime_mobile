@@ -2,34 +2,27 @@
  *  TODO LIST
  * 
  *  Fix background sync 
- *  Better Swiping Animation on the Quote Component
  *  Create App Tutorial Functionality
+ *  Better Swiping Animation on the Quote Component
  *  Add Advertising 
  */
 
+import useAppConstants from "@/hooks/useAppConstants";
 import useUserSettings from "@/hooks/useUserSettings";
 import { supabase } from "@/utils";
-import { Image } from "expo-image";
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
-import { MotiView } from 'moti';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FlatList, StyleSheet, Text } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { QuoteLogItem } from "./Interfaces";
-import { getTimeFromString, shuffleArray } from "./methods";
-import QuoteButtons from "./QuoteButtons";
+import { QuoteLogItem } from "../Interfaces";
+import { getTimeFromString, shuffleArray } from "../methods";
 import { useSearchContext } from './QuoteContext';
+import QuoteItem from "./QuoteItems";
 import QuoteModal from "./QuoteModal";
 
-const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;  
-const loremIpsum = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis purus nec nisl molestie, vitae rutrum dolor vestibulum. Aenean pretium facilisis metus. Aliquam justo justo, luctus porttitor imperdiet ut, eleifend ut ipsum. Vivamus ultricies rhoncus velit in faucibus. Suspendisse tempus scelerisque dui at congue. Morbi eu nulla justo. Vivamus vehicula augue a dolor fringilla venenatis non vitae nisi. Donec tempus dui eget libero fringilla imperdiet. Vivamus at elementum enim, in interdum ligula. Donec quis enim fermentum, tincidunt arcu at, eleifend purus.
-
-Praesent quis ligula erat. Etiam accumsan efficitur risus non mattis. Proin cursus metus metus, at maximus urna lobortis sit amet. Nullam eu maximus tellus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi congue metus odio, ac facilisis dui pretium ac. Etiam consequat leo ut tellus dapibus, non vestibulum mauris ornare. In gravida efficitur odio ac ultrices. Fusce vestibulum erat libero, id consequat odio tempor et. Sed ligula odio, commodo nec ultricies eu, interdum eget turpis. Pellentesque sapien purus, sagittis porta sapien id, consequat luctus nisl. Ut at nisl at eros faucibus placerat.`
+//const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;  
 
 export default function Quotes() {
 
@@ -38,9 +31,8 @@ export default function Quotes() {
     const router = useRouter();
 
     const { userSettings } = useUserSettings();
+    const { SCREEN_WIDTH } = useAppConstants();
     const { jsonData, isLoading,  updateDailyQuote, dailyQuote } = useSearchContext();
-
-    const [imageUriIndex, setImageUriIndex] = useState(0);
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -70,8 +62,6 @@ export default function Quotes() {
 
         // Schedule Daily Quote
 
-        console.log(userSettings.NotificationTime);
-
         const now = new Date();
 
         const {hours, minutes} = getTimeFromString(userSettings.NotificationTime);
@@ -84,8 +74,8 @@ export default function Quotes() {
             return;
         }
 
-        console.log('hours:', hours, typeof hours);
-        console.log('minutes:', minutes, typeof minutes);
+        // console.log('hours:', hours, typeof hours);
+        // console.log('minutes:', minutes, typeof minutes);
 
         await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
 
@@ -94,7 +84,8 @@ export default function Quotes() {
             content: {
                 title: quote.char_name,
                 body: quote.quote,
-                data: {quote}
+                data: {quote},
+                sound: true
             },
             trigger: {
                 hour: hours,
@@ -115,12 +106,8 @@ export default function Quotes() {
             if (lastResponse?.notification) {
                 const subQuote = lastResponse.notification.request.content.data.quote;
 
-                console.log(subQuote);
-
-                setTimeout(() => {
-                    updateDailyQuote(subQuote);
-                    router.push('/daily');
-                }, 0);
+                //console.log(subQuote);
+                updateDailyQuote(subQuote);
             }
 
             // Background / Foreground -> notification tapped
@@ -128,7 +115,10 @@ export default function Quotes() {
             const subscription = Notifications.addNotificationResponseReceivedListener(response => {
                 const subQuote = response.notification.request.content.data.quote;
 
-                updateDailyQuote(subQuote);
+                setTimeout(() => {
+                    updateDailyQuote(subQuote);
+                    router.push('/daily');
+                }, 0);
             })
 
             return () => subscription.remove();
@@ -144,7 +134,9 @@ export default function Quotes() {
 
             setAppData(jsonData)
 
-            schedulePosts();
+            if(userSettings.isNotifications) {
+                schedulePosts();
+            }
             
             const indices = Array.from({ length: jsonData.length }, (_, i) => i);
 
@@ -190,94 +182,6 @@ export default function Quotes() {
     const onScroll = (event: any) => {
         scrollX.value = event.nativeEvent.contentOffset.x;
     }
-
-    const QuoteItem = memo(({item, index, scrollX, setActive}: {item: QuoteLogItem, index: number, scrollX: any, setActive: any}) => {
-
-        const animatedStyle = useAnimatedStyle(() => {
-        
-            const inputRange = [
-                (index - 1) * SCREEN_WIDTH,
-                index * SCREEN_WIDTH,
-                (index + 1) * SCREEN_WIDTH
-            ];
-
-            const rotateY = interpolate(
-                scrollX.value,
-                inputRange,
-                [45, 0 , -45]
-            );
-
-            const scale = interpolate(
-                scrollX.value, 
-                inputRange,
-                [0.8, 1, 0.8]
-            );
-
-            return {
-                transform: [
-                    { perspective: 1000 },
-                    { rotateY: `${rotateY}deg` },
-                    { scale }
-                ],
-            };
-        });
-        
-        return (
-            <MotiView 
-                from={{ opacity: 0, scale: 0.9, translateX: 50 }}
-                animate={{ opacity: 1, scale: 1, translateX: 0 }}
-                transition={{ type: 'spring', delay: index * 100}}
-                style={[
-                    { width: SCREEN_WIDTH, height: SCREEN_HEIGHT, position: 'relative'},
-                    animatedStyle
-                ]}
-            >
-                {/*************************** Title *****************************/}
-                    <View style={{ width: '100%', height: '30%',position: 'absolute', top: '2%', display: 'flex', flexDirection: 'row', }}>
-                        <View style={{ flex: .3, marginTop: '9%', marginLeft: '8%' }}>
-                            <Pressable onPress={setActive}>
-                                {/* Only render the Image component if the URL is a non-empty string */}
-                                    {item?.img_links[imageUriIndex] ? (
-                                        
-                                    <Image
-                                        style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={{ uri: item?.img_links[imageUriIndex] }}
-                                        cachePolicy="memory-disk"
-                                        contentFit="fill"
-                                        contentPosition={"bottom left"}
-                                    />
-                                ) : (
-
-                                    <Image
-                                        style={{ width: 75, height: 75, borderRadius: 35 }}
-                                        source={PlaceholderImage}
-                                    />
-                                )}
-                            </Pressable>
-                        </View>
-
-                        <View style={{flex: .7, display: 'flex', flexDirection: 'column', marginTop: '10%', marginLeft: '4%'}}>
-                            <Text style={[styles.text, {fontSize: 18}]} onPress={() => console.log(data[0])}>{item?.char_name}</Text>
-                            <Text style={[styles.text, {marginTop: '5%'} ]}>{item?.anime || ''}</Text>       
-                        </View>
-                    </View>
-                
-                <View style={{ position: 'absolute', top: '25%',  width: '100%', height: '40%', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text 
-                        style={{ color: 'white', fontSize: 24, textAlign: 'center', width:'75%'}}
-                    >
-                        {item?.quote}
-                    </Text>
-                </View>
-
-                {/********************** Quote Buttons ******************/}
-                <View style={{ position: 'absolute', top: '65%', height: '10%', width: '100%'}}>
-                    <QuoteButtons wikiLink={item?.wiki || ''} quote={item?.quote || ''} name={item?.char_name || ''}/>
-                </View>
-            </MotiView>
-        )
-    });
-
     
     
     if(isLoading) {
@@ -315,7 +219,7 @@ export default function Quotes() {
                         })} 
                         renderItem={({item, index}) => <QuoteItem item={jsonData[item]} index={index} scrollX={scrollX} setActive={() => setActive(jsonData[item])}/>} 
                         keyExtractor={(item, index) => `${item}-${index}`}
-                        ListEmptyComponent={<Text>Empty List</Text>}      
+                        ListEmptyComponent={<Text></Text>}      
                     />
                 </SafeAreaView>
             </>

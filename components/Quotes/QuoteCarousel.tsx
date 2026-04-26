@@ -4,7 +4,7 @@ import { memo, useCallback, useRef, useState } from 'react';
 import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { QuoteLogItem } from './Interfaces';
+import { QuoteLogItem } from '../Interfaces';
 import QuoteButtons from './QuoteButtons';
 import QuoteModal from './QuoteModal';
 

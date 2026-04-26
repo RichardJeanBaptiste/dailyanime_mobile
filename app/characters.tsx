@@ -1,7 +1,7 @@
 import CharAvatar from '@/components/CharAvatar';
 import { QuoteLogItem } from '@/components/Interfaces';
-import { QuoteProvider, useSearchContext } from '@/components/QuoteContext';
-import QuoteModal from '@/components/QuoteModal';
+import { QuoteProvider, useSearchContext } from '@/components/Quotes/QuoteContext';
+import QuoteModal from '@/components/Quotes/QuoteModal';
 import { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';

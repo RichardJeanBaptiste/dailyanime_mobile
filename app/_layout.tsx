@@ -1,4 +1,4 @@
-import { QuoteProvider } from '@/components/QuoteContext';
+import { QuoteProvider } from '@/components/Quotes/QuoteContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useRouter } from 'expo-router';
@@ -101,25 +101,6 @@ export default function RootLayout() {
     />
 
     <Drawer.Screen
-      name="about"
-      options={{
-        drawerLabel: 'About',
-        drawerIcon: () => (
-          <FontAwesome name="info-circle" size={15} color="white" />
-        ),
-        drawerLabelStyle: {
-          color: 'white'
-        },
-        title: '',
-        headerStyle: {
-          backgroundColor: '#25292e'
-        },
-        headerTintColor: 'white'
-      }}
-    />
-
-
-    <Drawer.Screen
       name="settings"
       options={{
         drawerLabel: 'Settings',
@@ -137,23 +118,41 @@ export default function RootLayout() {
       }}
     />
 
-      <Drawer.Screen
-        name="query/[character]"
-        options={{
-          drawerLabel: '',
-          drawerLabelStyle: {
-            color: 'white'
-          },
-          drawerItemStyle: {
-            display: 'none'
-          },
-          title: '',
-          headerStyle: {
-            backgroundColor: '#25292e'
-          },
-          headerTintColor: 'white'
-        }}
-      />
+    <Drawer.Screen
+      name="about"
+      options={{
+        drawerLabel: 'About',
+        drawerIcon: () => (
+          <FontAwesome name="info-circle" size={15} color="white" />
+        ),
+        drawerLabelStyle: {
+          color: 'white'
+        },
+        title: '',
+        headerStyle: {
+          backgroundColor: '#25292e'
+        },
+        headerTintColor: 'white'
+      }}
+    />
+
+    <Drawer.Screen
+      name="query/[character]"
+      options={{
+        drawerLabel: '',
+        drawerLabelStyle: {
+          color: 'white'
+        },
+        drawerItemStyle: {
+          display: 'none'
+        },
+        title: '',
+        headerStyle: {
+          backgroundColor: '#25292e'
+        },
+        headerTintColor: 'white'
+      }}
+    />
 
       <Drawer.Screen
         name="privacy"
