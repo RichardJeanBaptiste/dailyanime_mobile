@@ -84,8 +84,12 @@ const exportTable = async () => {
 
     const json = JSON.stringify(data, null, 2);
 
-    saveJsonFile('user_data.json', json);
 
+    if(data) {
+      console.log("Connected To Quote Table")
+      saveJsonFile('user_data.json', json);
+    }
+    
     return json;
   } catch (error) {
     console.log("Error exporting table: ", error);
@@ -110,8 +114,10 @@ const exportCharTable = async () => {
 
     const json = JSON.stringify(data, null, 2);
 
-    saveJsonFile('characters.json', json);
-
+    if(data) {
+      saveJsonFile('characters.json', json);
+    }
+    
     return json;
     
   } catch (error) {

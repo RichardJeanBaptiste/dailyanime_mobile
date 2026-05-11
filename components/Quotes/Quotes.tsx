@@ -2,9 +2,11 @@
  *  TODO LIST
  * 
  *  Fix background sync 
+ *      - Char JSON Bug - Not Loading From Backup
  *  Create App Tutorial Functionality
  *  Better Swiping Animation on the Quote Component
  *  Add Advertising 
+ *  
  */
 
 import useAppConstants from "@/hooks/useAppConstants";
@@ -21,6 +23,7 @@ import { getTimeFromString, shuffleArray } from "../methods";
 import { useSearchContext } from './QuoteContext';
 import QuoteItem from "./QuoteItems";
 import QuoteModal from "./QuoteModal";
+import TutorialOverlay from "./TutorialOverlay";
 
 //const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;  
 
@@ -198,6 +201,9 @@ export default function Quotes() {
                     {/*********************** Modal *************************/}
                     <QuoteModal currentQuote={activeQuote} modalVisible={modalVisible} setVisible={setVisible} />
 
+                    
+                   <TutorialOverlay />
+                    
                     {/****************************************** Quotes *******************************************/}
                     <FlatList
                         ref={listRef}

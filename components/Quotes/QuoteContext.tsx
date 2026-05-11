@@ -34,11 +34,13 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
     const loadJsonFile = async () => {
         const filePath = `${RNFS.DocumentDirectoryPath}/user_data.json`;
+
         try {
             const exists = await RNFS.exists(filePath);
-            
+
             if (exists) {
                 const content = await RNFS.readFile(filePath, 'utf8');
+
                 const jsonObject = JSON.parse(content);
 
                 if(jsonObject == null || jsonObject == undefined) {
