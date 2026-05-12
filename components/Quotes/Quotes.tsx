@@ -202,14 +202,17 @@ export default function Quotes() {
     } else {
         return (
             <>
-                <SafeAreaView style={styles.quotes_container}>
+                <SafeAreaView style={[styles.quotes_container]}>
                     
                     {/*********************** Modal *************************/}
                     <QuoteModal currentQuote={activeQuote} modalVisible={modalVisible} setVisible={setVisible} />
 
-                    <View style={{ display: showTutorial }} >
+                    {/* The Tutorial Overlay */}
+                    {showTutorial === 'flex' && (
+                        <View style={styles.tutorialWrapper}>
                         <TutorialOverlay closeTutorial={closeTutorial}/>
-                    </View>
+                        </View>
+                    )}
 
                     <Text style={{ fontSize: 16 }} onPress={() => setShowTutorial('flex')}>Show Tutorial</Text>                    
                    
@@ -276,4 +279,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    tutorialWrapper: {
+    // This covers the entire screen
+    ...StyleSheet.absoluteFillObject, 
+    
+    // Semi-transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', 
+    
+    // Centers the tutorial component
+    justifyContent: 'center', 
+    alignItems: 'center',
+    
+    // Ensures it sits on top of everything else
+    zIndex: 1000, 
+    elevation: 1000, // Necessary for Android
+  }
 });
