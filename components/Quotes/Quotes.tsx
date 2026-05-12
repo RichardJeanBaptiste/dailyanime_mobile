@@ -15,7 +15,7 @@ import { supabase } from "@/utils";
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, StyleSheet, Text } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "../Interfaces";
@@ -42,6 +42,8 @@ export default function Quotes() {
     const [data, setAppData] = useState<QuoteLogItem[]>([]);
 
     const [quoteLog, setQuoteLog] = useState<number[]>([]);
+
+    const [showTutorial, setShowTutorial] = useState<'none' | 'flex'>('none');
 
     const [displayIndex, setDisplayIndex] = useState(-1);
 
@@ -185,6 +187,10 @@ export default function Quotes() {
     const onScroll = (event: any) => {
         scrollX.value = event.nativeEvent.contentOffset.x;
     }
+
+    const closeTutorial = () => {
+        setShowTutorial('none')
+    }
     
     
     if(isLoading) {
@@ -201,8 +207,12 @@ export default function Quotes() {
                     {/*********************** Modal *************************/}
                     <QuoteModal currentQuote={activeQuote} modalVisible={modalVisible} setVisible={setVisible} />
 
-                    
-                   <TutorialOverlay />
+                    <View style={{ display: showTutorial }} >
+                        <TutorialOverlay closeTutorial={closeTutorial}/>
+                    </View>
+
+                    <Text style={{ fontSize: 16 }} onPress={() => setShowTutorial('flex')}>Show Tutorial</Text>                    
+                   
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList

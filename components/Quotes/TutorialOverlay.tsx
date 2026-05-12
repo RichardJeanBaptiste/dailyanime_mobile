@@ -11,45 +11,61 @@ const quoteDesc = `Here you can see the current qoute.`
 
 const swipeDesc = `Swipe left to get more quotes.`
 
-export default function TutorialOverlay() {
+export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) {
 
     const { SCREEN_WIDTH, SCREEN_HEIGHT } = useAppConstants();
 
     const [tIndex, setTIndex] = useState(1);
 
+    const updateIndex = () => {
+        setTIndex((prev) => prev + 1);
+    }
+
+    const Tutorial0 = () => {
+        return (
+            <View/>
+        )
+    }
+
     const Tutorial1 = () => {
         return (
-             <View style={[styles.titleContainer, {width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .15 }]}>
-
+            <Pressable 
+                style={[styles.titleContainer, {width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .15 }]} 
+                onPress={updateIndex}    
+            >
                 <View style={{ flex: 1, position: 'relative' }}>
                     <View style={styles.titleTextContainer}>
                         <FontAwesome name="hand-o-down" size={20} color="white"/>
                         <Text style={[styles.text, {width: '60%', fontSize: 14} ]}>{titleDesc}</Text>
                     </View>
                 </View>
-            </View>
+            </Pressable>            
         )
     }
 
     const Tutorial2 = () => {
         return (
-            <View style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .26}]}>
+            <Pressable 
+                style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .26}]}
+                onPress={updateIndex}
+            >
                 <View style={{ flex: 1, position: 'relative' }}>
                     <View style={styles.qTextContainer1}>
                         <FontAwesome name="hand-o-down" size={20} color="white"/>
                         <Text style={styles.text}>{quoteDesc}</Text>
                     </View>
                 </View>
-            </View>
-
-            
+            </Pressable>       
         )
-        
     }
 
     const Tutorial3 = () => {
         return (
-            <View style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .26}]}>
+            
+            <Pressable 
+                style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .26}]}
+                onPress={updateIndex}
+            >
                 <View style={{ flex: 1, position: 'relative' }}>
 
                     <View style={styles.qTextContainer2}>
@@ -66,51 +82,68 @@ export default function TutorialOverlay() {
                         </View> 
                     </View> 
                 </View>
-            </View>
+            </Pressable>
+            
         )
     }
 
     const Tutorial4 = () => {
         return (
-            <View style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}>
+            <Pressable 
+                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}
+                onPress={updateIndex}
+            >
                 <View style={{flex: 1, position: 'relative'}}>
                     <View style={[styles.btnTextContainer, {left: '28%'}]}>
                         <FontAwesome name="hand-o-up" size={20} color="white"/>
                         <Text style={[styles.text, ]}>Bookmark</Text>
                     </View>
                 </View>
-            </View>
+            </Pressable> 
         )
     }
 
     const Tutorial5 = () => {
         return (
-            <View style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}>
+            <Pressable 
+                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}
+                onPress={updateIndex}
+            >
                 <View style={{flex: 1, position: 'relative'}}>
                     <View style={[styles.btnTextContainer, {left: '48%'}]}>
                         <FontAwesome name="hand-o-up" size={20} color="white"/>
                         <Text style={[styles.text, ]}>Wiki</Text>
                     </View>
                 </View>
-            </View>
+            </Pressable>
         )
+    }
+
+    const handleLastClick = () => {
+        updateIndex();
+        closeTutorial();
+        setTIndex(1);
     }
 
     const Tutorial6 = () => {
         return (
-            <View style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}>
+            <Pressable
+                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}
+                onPress={handleLastClick}
+            >
                 <View style={{flex: 1, position: 'relative'}}>
                     <View style={[styles.btnTextContainer, {left: '62%'}]}>
                         <FontAwesome name="hand-o-up" size={20} color="white"/>
                         <Text style={[styles.text, ]}>Share</Text>
                     </View>
                 </View>
-            </View>
+            </Pressable> 
         )
     }
 
     const Tutorial = () => {
         switch(tIndex) {
+            case 0: return <Tutorial0/>
             case 1: return <Tutorial1/>
             case 2: return <Tutorial2/>
             case 3: return <Tutorial3/>
@@ -123,24 +156,8 @@ export default function TutorialOverlay() {
 
 
     return (
-        <View  style={[ {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}, styles.oContainer ]}>
-            
-            <Pressable
-                style={{ position: 'absolute', top: '30%'}}
-                onPress={() => setTIndex((prev) => prev + 1 )}
-            >
-                <Text style={{ fontSize: 16, color: 'white' }}>Next</Text>
-            </Pressable>
-
-            <Pressable
-                style={{ position: 'absolute', top: '35%'}}
-                onPress={() => setTIndex(1)}
-            >
-                <Text style={{ fontSize: 16, color: 'white' }}>Reset</Text>
-            </Pressable>
-
+        <View style={[ {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}, styles.oContainer ]}>
            <Tutorial/>
-
         </View>
     )
 }
