@@ -1,6 +1,7 @@
 import useAppConstants from '@/hooks/useAppConstants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const titleDesc = `Here is where you can find the character name and the media the character is from.`
 
@@ -8,16 +9,17 @@ const modalDesc = `Here is the character image. You can click on this to find ou
 
 const quoteDesc = `Here you can see the current qoute.`
 
-const swipeDesc = `Swipe right over here to get more quotes.\n Swipe left to see previous ones`
+const swipeDesc = `Swipe left to get more quotes.`
 
 export default function TutorialOverlay() {
 
     const { SCREEN_WIDTH, SCREEN_HEIGHT } = useAppConstants();
 
-    return (
-        <View pointerEvents='none' style={[ {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}, styles.oContainer ]}>
+    const [tIndex, setTIndex] = useState(1);
 
-            <View style={[styles.titleContainer, {width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .15 }]}>
+    const Tutorial1 = () => {
+        return (
+             <View style={[styles.titleContainer, {width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .15 }]}>
 
                 <View style={{ flex: 1, position: 'relative' }}>
                     <View style={styles.titleTextContainer}>
@@ -25,34 +27,120 @@ export default function TutorialOverlay() {
                         <Text style={[styles.text, {width: '60%', fontSize: 14} ]}>{titleDesc}</Text>
                     </View>
                 </View>
-
             </View>
+        )
+    }
 
+    const Tutorial2 = () => {
+        return (
             <View style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .26}]}>
                 <View style={{ flex: 1, position: 'relative' }}>
-
-                    <View style={{ display: 'flex', flexDirection: 'row', gap: 20, position: 'absolute', top: 0, left: '50%', transform:'translate(-50%, -50%)' }}>
+                    <View style={styles.qTextContainer1}>
                         <FontAwesome name="hand-o-down" size={20} color="white"/>
                         <Text style={styles.text}>{quoteDesc}</Text>
                     </View>
-                    
-
-                    
-                    <View style={{ display: 'flex', flexDirection: 'row', gap: 90, position:'absolute', bottom: 20, left: '50%', transform:'translate(-50%, -50%)'}}>
-                        <FontAwesome name="hand-o-left" size={20} color="white"/>
-                        <FontAwesome name="hand-o-right" size={20} color="white"/>
-                    </View>
-                    <Text style={[styles.text, { textAlign: 'center' }]}>{swipeDesc}</Text>
                 </View>
             </View>
 
-            <View style={styles.bContainer}>
-                <Text style={styles.text}>Bookmark</Text>
-                <Text style={styles.text}>Wiki</Text>
-                <Text style={styles.text}>Bookmark</Text>
+            
+        )
+        
+    }
+
+    const Tutorial3 = () => {
+        return (
+            <View style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .26}]}>
+                <View style={{ flex: 1, position: 'relative' }}>
+
+                    <View style={styles.qTextContainer2}>
+                    
+                        <View style={{ flex:.5, justifyContent: 'center', alignItems: 'center'}}>
+                            <FontAwesome name="hand-o-right" size={20} color="white"/>
+                            <Text style={[styles.text, { textAlign: 'center', width: '80%', height: '100%', marginTop: '2%'}]}>{`Swipe right to get previous quotes`}</Text>
+                        </View>
+
+
+                        <View style={{ flex:.5 , justifyContent: 'center', alignItems: 'center'}}>
+                            <FontAwesome name="hand-o-left" size={20} color="white"/>
+                            <Text style={[styles.text, { textAlign: 'center', width: '80%', height: '100%', marginTop: '2%'}]}>{`Swipe left to get more quotes`}</Text>
+                        </View> 
+                    </View> 
+                </View>
             </View>
+        )
+    }
+
+    const Tutorial4 = () => {
+        return (
+            <View style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}>
+                <View style={{flex: 1, position: 'relative'}}>
+                    <View style={[styles.btnTextContainer, {left: '28%'}]}>
+                        <FontAwesome name="hand-o-up" size={20} color="white"/>
+                        <Text style={[styles.text, ]}>Bookmark</Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
+    const Tutorial5 = () => {
+        return (
+            <View style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}>
+                <View style={{flex: 1, position: 'relative'}}>
+                    <View style={[styles.btnTextContainer, {left: '48%'}]}>
+                        <FontAwesome name="hand-o-up" size={20} color="white"/>
+                        <Text style={[styles.text, ]}>Wiki</Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
+    const Tutorial6 = () => {
+        return (
+            <View style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}>
+                <View style={{flex: 1, position: 'relative'}}>
+                    <View style={[styles.btnTextContainer, {left: '62%'}]}>
+                        <FontAwesome name="hand-o-up" size={20} color="white"/>
+                        <Text style={[styles.text, ]}>Share</Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
+    const Tutorial = () => {
+        switch(tIndex) {
+            case 1: return <Tutorial1/>
+            case 2: return <Tutorial2/>
+            case 3: return <Tutorial3/>
+            case 4: return <Tutorial4/>
+            case 5: return <Tutorial5/>
+            case 6: return <Tutorial6/>
+            default: return null
+        }
+    }
+
+
+    return (
+        <View  style={[ {width: SCREEN_WIDTH, height: SCREEN_HEIGHT}, styles.oContainer ]}>
             
-            
+            <Pressable
+                style={{ position: 'absolute', top: '30%'}}
+                onPress={() => setTIndex((prev) => prev + 1 )}
+            >
+                <Text style={{ fontSize: 16, color: 'white' }}>Next</Text>
+            </Pressable>
+
+            <Pressable
+                style={{ position: 'absolute', top: '35%'}}
+                onPress={() => setTIndex(1)}
+            >
+                <Text style={{ fontSize: 16, color: 'white' }}>Reset</Text>
+            </Pressable>
+
+           <Tutorial/>
+
         </View>
     )
 }
@@ -85,10 +173,34 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: '35%',
     },
+    qTextContainer1: {
+        display: 'flex', 
+        flexDirection: 'row', 
+        gap: 20, 
+        position: 'absolute', 
+        top: 0, 
+        left: '50%', 
+        transform:'translate(-50%, -50%)' 
+    },
+    qTextContainer2: {
+        display: 'flex', 
+        flexDirection: 'row', 
+        gap: 90, 
+        position:'absolute', 
+        bottom: "-20%", 
+        left: '50%', 
+        transform:'translate(-50%, -50%)'
+    },
     bContainer: {
         position: 'absolute',
-        top: '70%',
-        left: '40%',
+        top: '70%'
+    },
+    btnTextContainer: {
+        position: 'absolute', 
+        top: 5, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        gap: 10
     },
     text: {
         color: 'white',
