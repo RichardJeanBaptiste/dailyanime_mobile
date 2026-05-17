@@ -12,6 +12,8 @@
 import useAppConstants from "@/hooks/useAppConstants";
 import useUserSettings from "@/hooks/useUserSettings";
 import { supabase } from "@/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -33,7 +35,7 @@ export default function Quotes() {
 
     const router = useRouter();
 
-    const { userSettings } = useUserSettings();
+    const { userSettings, setTutorialSettings } = useUserSettings();
     const { SCREEN_WIDTH } = useAppConstants();
     const { jsonData, isLoading,  updateDailyQuote, dailyQuote } = useSearchContext();
 
@@ -139,6 +141,14 @@ export default function Quotes() {
 
             setAppData(jsonData)
 
+            if(userSettings.showTutorial) {
+                setShowTutorial('flex')
+                setTutorialSettings(false);
+            } else {
+                console.log("User has seen tutorial")
+            }
+
+
             if(userSettings.isNotifications) {
                 schedulePosts();
             }
@@ -153,6 +163,36 @@ export default function Quotes() {
         }
         
     },[isLoading, jsonData]);
+
+    // Check if user should view tutorial on screen focus
+    useFocusEffect(
+        useCallback(() => {
+            console.log("Screen Focused");
+
+            checkTutorial();
+        },[])
+    )
+
+    const checkTutorial = async () => {
+        let x = await AsyncStorage.getItem('settings');
+
+        let items;
+
+        if(x !== null) {
+            items = JSON.parse(x);
+        } else {
+            console.log("No Settings Found");
+            return
+        }
+
+        // console.log(items.showTutorial);
+
+        if(items.showTutorial) {
+            setShowTutorial('flex')
+            setTutorialSettings(false);
+        }
+
+    }
 
 
     // Modal Functions 
@@ -214,7 +254,7 @@ export default function Quotes() {
                         </View>
                     )}
 
-                    <Text style={{ fontSize: 16 }} onPress={() => setShowTutorial('flex')}>Show Tutorial</Text>                    
+                    <Text style={{ fontSize: 16 }} onPress={() => console.log(userSettings.showTutorial)}>Show Tutorial</Text>                    
                    
                     
                     {/****************************************** Quotes *******************************************/}

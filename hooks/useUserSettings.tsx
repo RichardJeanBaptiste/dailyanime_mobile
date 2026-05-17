@@ -102,6 +102,16 @@ export default function useUserSettings() {
         })
     }
 
+    const setTutorialSettings = (showTutorial: boolean) => {
+
+        setUserSettings((prev) => {
+            return {
+                ...prev,
+                showTutorial: showTutorial
+            }
+        })
+    }
+
 
     const createBackup = async () => {
 
@@ -182,6 +192,7 @@ export default function useUserSettings() {
         setNotifications,
         setNotificationTime,
         setSoundSettings,
+        setTutorialSettings,
         createBackup,
         showBackup,
         resetSettings,

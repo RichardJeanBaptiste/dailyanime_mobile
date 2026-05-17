@@ -1,6 +1,16 @@
+import useUserSettings from '@/hooks/useUserSettings';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function TutorialModel({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
+
+    const { setTutorialSettings } = useUserSettings();
+
+    const setTutorialAgain = () => {
+      setTutorialSettings(true)
+      setVisible()
+
+      // Push To Quotes Tutorial
+    }
     return (
         <>
             <Modal
@@ -9,15 +19,25 @@ export default function TutorialModel({modalVisible, setVisible}: {modalVisible:
                 visible={modalVisible}
                 onRequestClose={() => {
                     setVisible();
-            }}>
+                }}
+            >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Tutorial Modal</Text>
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setVisible()}>
-                        <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
+                      <Text style={styles.modalText}>Tutorial</Text>
+                      <Text style={styles.modalText}>Do you want to view the tutorial again?</Text>
+                      <View style={{ display: 'flex', flexDirection: 'row', gap: 15 }}>
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => setVisible()}>
+                            <Text style={styles.textStyle}>No</Text>
+                        </Pressable>
+
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => setTutorialAgain()}>
+                            <Text style={styles.textStyle}>Yes</Text>
+                        </Pressable>
+                      </View>
                     </View>
                 </View>
             </Modal>
