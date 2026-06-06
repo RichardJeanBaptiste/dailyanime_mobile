@@ -1,7 +1,10 @@
+import ChangeLogModal from '@/components/About/changeLogModal';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const screenWidth = Dimensions.get('screen').width;
@@ -10,6 +13,12 @@ const screenHeight = Dimensions.get('screen').height;
 export default function About() {
 
     const router = useRouter();
+
+    const [ changeLogModal, setChangeLogModal ] = useState(false);
+
+    const handleChangeModal = () => {
+        setChangeLogModal(!changeLogModal);
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }} edges={['right', 'bottom', 'left']}>
@@ -51,14 +60,17 @@ export default function About() {
                             <Text style={[ styles.text2 ]}>Report bugs or request new features</Text>
                         </View>
                         
-                        <View style={styles.about_items}>
+                        <Pressable style={styles.about_items} onPress={handleChangeModal}>
                             <Text style={[styles.text1]}>Change Logs</Text>
                             <Text style={[styles.text2]}>Updates to the app</Text>
-                        </View>
+                        </Pressable>
                         
-                        <View style={styles.about_items}>
-                            <Text style={[styles.text1]}>FAQs</Text>
-                        </View>
+                        {/** 
+                            <View style={styles.about_items}>
+                                <Text style={[styles.text1]}>FAQs</Text>
+                            </View>
+                        **/}
+                        
                         
                         <Pressable onPress={() => router.push('/privacy')}>
                             <Text style={[styles.text1, styles.about_items, {marginTop: '-2%'}]}>Privacy Policy</Text>
@@ -69,7 +81,7 @@ export default function About() {
                             <Text style={[styles.text1, styles.about_items, {marginTop: '-2%'}]}>Terms & Conditions</Text>
                         </Pressable>
                         
-                        
+                        <ChangeLogModal modalVisible={changeLogModal} setVisible={handleChangeModal}/>
                     </View>
                 </View>
             </ScrollView>
