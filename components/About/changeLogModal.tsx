@@ -1,27 +1,74 @@
 import changeLogData from '@/changelog.json';
 import useAppConstants from '@/hooks/useAppConstants';
-import { useEffect } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+interface LogItem {
+    version : string,
+    releaseDate: string,
+    type: string,
+    highlights: Highlight[]
+}
+
+interface Highlight extends Array<Highlight> {
+    category: string,
+    title: string,
+    description: string,
+    navigateTo: string
+}
 
 export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
 
-    useEffect(() => {
-        console.log(changeLogData);
+    // useEffect(() => {
+    //     console.log(changeLogData);
 
-        changeLogData.map((x) => {
-            console.log(x.version)
+    //     changeLogData.map((x) => {
+    //         console.log(x.version)
 
-            x.highlights.map((y) => {
-                console.log(y)
-            })
-        })
-    },[])
+    //         x.highlights.map((y) => {
+    //             console.log(y)
+    //         })
+    //     })
+    // },[])
 
     const { SCREEN_WIDTH, SCREEN_HEIGHT } = useAppConstants(); 
 
-    const LogItem = () => {
+    const LogItem = ({version, releaseDate, type, highlights}: LogItem) => {
+
+        const catColor = (x: string) => {
+            switch(x) {
+                case 'New':
+                    return 'green'
+                case 'Fixed':
+                    return 'red'
+                case 'Improved':
+                    return 'lightblue'
+                default:
+                    return 'white' 
+            }
+        }
+
         return (
-            <Text>Log Item</Text>
+            <View style={{ width: '100%', height: 'auto', borderBottomColor: 'white', borderBottomWidth: 1}}>
+
+                <View style={{display: 'flex', flexDirection: 'row', width: 'auto', height: '5%', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10, marginTop: '3%'}}>
+                    <Text style={styles.modalText}>{version}</Text>
+                    <Text style={styles.modalText}>{releaseDate}</Text>
+                </View>
+                
+                <View style={{ marginTop: '2%'}}>
+                    {highlights.map((item,key) => {
+                        return (
+                            <View style={{ paddingHorizontal: 10 }} key={key}>
+                                <Text style={[styles.modalText, {color: catColor(item.category)}]}>{item.category}</Text>
+                                <Text style={[styles.modalText]}>{item.title}</Text>
+                                <Text style={[styles.modalText]}>{item.description}</Text>
+                                <Text style={[styles.modalText]}>{item.navigateTo}</Text>
+                            </View>
+                        )
+                    })}
+                </View>
+                
+            </View>
         )
     }
 
@@ -37,57 +84,19 @@ export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible
             >
                 <View style={[styles.centeredView]}>
                     <View style={[styles.modalView, {width: SCREEN_WIDTH * .8 , height: SCREEN_HEIGHT * .7 }]}>
-                        <Text style={styles.modalText}>Change Logs</Text>
-                        <LogItem/>
-                        <View style={{ backgroundColor: 'pink', width: SCREEN_WIDTH * .8, height: '80%'}}>
+                        <Text style={[styles.modalText, {fontWeight: 'bold', fontSize: 20, textDecorationLine: 'underline' }]}>Change Logs</Text>
+                        <View style={{ width: SCREEN_WIDTH * .8, height: '85%'}}>
                                 <ScrollView
                                     style={{ flex: 1 }}
                                     contentContainerStyle={{
                                         alignItems: 'center',
                                     }}
                                 >
-                                    <Text style={{ fontSize: 24 }}>a</Text>
-                                    <Text style={{ fontSize: 24 }}>b</Text>
-                                    <Text style={{ fontSize: 24 }}>c</Text>
-                                    <Text style={{ fontSize: 24 }}>d</Text>
-                                    <Text style={{ fontSize: 24 }}>e</Text>
-                                    <Text style={{ fontSize: 24 }}>f</Text>
-                                    <Text style={{ fontSize: 24 }}>g</Text>
-                                    <Text style={{ fontSize: 24 }}>a</Text>
-                                    <Text style={{ fontSize: 24 }}>b</Text>
-                                    <Text style={{ fontSize: 24 }}>c</Text>
-                                    <Text style={{ fontSize: 24 }}>d</Text>
-                                    <Text style={{ fontSize: 24 }}>e</Text>
-                                    <Text style={{ fontSize: 24 }}>f</Text>
-                                    <Text style={{ fontSize: 24 }}>g</Text>
-                                    <Text style={{ fontSize: 24 }}>a</Text>
-                                    <Text style={{ fontSize: 24 }}>b</Text>
-                                    <Text style={{ fontSize: 24 }}>c</Text>
-                                    <Text style={{ fontSize: 24 }}>d</Text>
-                                    <Text style={{ fontSize: 24 }}>e</Text>
-                                    <Text style={{ fontSize: 24 }}>f</Text>
-                                    <Text style={{ fontSize: 24 }}>g</Text>
-                                    <Text style={{ fontSize: 24 }}>a</Text>
-                                    <Text style={{ fontSize: 24 }}>b</Text>
-                                    <Text style={{ fontSize: 24 }}>c</Text>
-                                    <Text style={{ fontSize: 24 }}>d</Text>
-                                    <Text style={{ fontSize: 24 }}>e</Text>
-                                    <Text style={{ fontSize: 24 }}>f</Text>
-                                    <Text style={{ fontSize: 24 }}>g</Text>
-                                    <Text style={{ fontSize: 24 }}>a</Text>
-                                    <Text style={{ fontSize: 24 }}>b</Text>
-                                    <Text style={{ fontSize: 24 }}>c</Text>
-                                    <Text style={{ fontSize: 24 }}>d</Text>
-                                    <Text style={{ fontSize: 24 }}>e</Text>
-                                    <Text style={{ fontSize: 24 }}>f</Text>
-                                    <Text style={{ fontSize: 24 }}>g</Text>
-                                    <Text style={{ fontSize: 24 }}>a</Text>
-                                    <Text style={{ fontSize: 24 }}>b</Text>
-                                    <Text style={{ fontSize: 24 }}>c</Text>
-                                    <Text style={{ fontSize: 24 }}>d</Text>
-                                    <Text style={{ fontSize: 24 }}>e</Text>
-                                    <Text style={{ fontSize: 24 }}>f</Text>
-                                    <Text style={{ fontSize: 24 }}>g</Text>
+                                    {changeLogData?.map((item,key) => {
+                                        return (
+                                            <LogItem version={item.version} releaseDate={item.releaseDate} type={item.type} highlights={item.highlights as Highlight} key={key}/>
+                                        )
+                                    })}
 
                                 </ScrollView>
                         </View>
@@ -96,7 +105,7 @@ export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setVisible()}>
-                                <Text style={styles.textStyle}>No</Text>
+                                <Text style={styles.textStyle}>Close </Text>
                             </Pressable>
                         </View>
                     </View>
@@ -114,7 +123,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#25292e',
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
@@ -145,7 +154,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    color: 'white'
   },
 
 });

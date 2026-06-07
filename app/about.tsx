@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     about_items: {
         height: screenHeight * .10,
         width: screenWidth * .95,
-        marginTop: '2%'
+        marginTop: '2%',
+        backgroundColor: '#25292e'
     }
 })
