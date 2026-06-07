@@ -1,4 +1,5 @@
 import ChangeLogModal from '@/components/About/changeLogModal';
+import ReportBugModal from '@/components/About/ReportBugModal';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -16,8 +17,14 @@ export default function About() {
 
     const [ changeLogModal, setChangeLogModal ] = useState(false);
 
+    const [ changeReportModal, setChangeReportModal ] = useState(false);
+
     const handleChangeModal = () => {
         setChangeLogModal(!changeLogModal);
+    }
+
+    const handleReportModal = () => {
+        setChangeReportModal(!changeReportModal)
     }
 
     return (
@@ -55,10 +62,10 @@ export default function About() {
                             <Text style={[ styles.text2]}>If like the app, give me a rating it helps alot</Text>
                         </View>
 
-                        <View style={styles.about_items}>
+                        <Pressable style={styles.about_items} onPress={handleReportModal}>
                             <Text style={[ styles.text1 ]}>Report Bug</Text>
                             <Text style={[ styles.text2 ]}>Report bugs or request new features</Text>
-                        </View>
+                        </Pressable>
                         
                         <Pressable style={styles.about_items} onPress={handleChangeModal}>
                             <Text style={[styles.text1]}>Change Logs</Text>
@@ -82,6 +89,8 @@ export default function About() {
                         </Pressable>
                         
                         <ChangeLogModal modalVisible={changeLogModal} setVisible={handleChangeModal}/>
+
+                        <ReportBugModal modalVisible={changeReportModal} setVisible={handleReportModal}/>
                     </View>
                 </View>
             </ScrollView>

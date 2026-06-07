@@ -19,6 +19,8 @@ interface Highlight extends Array<Highlight> {
 export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
 
     // useEffect(() => {
+
+        
     //     console.log(changeLogData);
 
     //     changeLogData.map((x) => {
