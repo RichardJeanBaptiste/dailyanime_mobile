@@ -13,6 +13,7 @@
   "dependencies": {
     "@dr.pogodin/react-native-fs": "^2.36.2",
     "@expo/vector-icons": "^15.0.3",
+    "@octokit/core": "^7.0.6",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-community/netinfo": "11.4.1",
@@ -25,6 +26,7 @@
     "better-sqlite3": "^12.6.2",
     "dotenv": "^17.2.3",
     "expo": "~54.0.33",
+    "expo-application": "~7.0.8",
     "expo-constants": "~18.0.13",
     "expo-dev-client": "~6.0.20",
     "expo-device": "~8.0.10",

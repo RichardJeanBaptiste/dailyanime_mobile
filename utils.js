@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 import { Platform } from "react-native";
 import 'react-native-url-polyfill/auto';
 
+
 const supabaseUrl = Constants.expoConfig.extra.supabaseUrl ?? '';
 const supabaseKey = Constants.expoConfig.extra.supabaseAnonKey ?? '';
 
@@ -21,7 +22,6 @@ export const supabase = createClient(
       lock: processLock,
     },
 })
-
 
 
 const loadUserSettings = async () => {
