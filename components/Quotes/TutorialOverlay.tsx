@@ -38,12 +38,12 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
     const Tutorial1 = () => {
         return (
             <Pressable 
-                style={[styles.titleContainer, {width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .15 }]} 
+                style={[{width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .7, position: 'absolute', top: SCREEN_HEIGHT * .1}]} 
                 onPress={updateIndex}    
             >
                 <View style={{ flex: 1, position: 'relative' }}>
                     <View style={styles.titleTextContainer}>
-                        <FontAwesome name="hand-o-down" size={24} color="white"/>
+                        <FontAwesome name="hand-o-up" size={24} color="white"/>
                         <Text style={[styles.text, {width: '60%', height: '110%',fontSize: 16} ]}>{titleDesc}</Text>
                     </View>
                 </View>
@@ -71,23 +71,29 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
         return (
             
             <Pressable 
-                style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .26}]}
+                style={[styles.qContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .3}]}
                 onPress={updateIndex}
             >
                 <View style={{ flex: 1, position: 'relative' }}>
 
                     <View style={styles.qTextContainer2}>
                     
-                        <View style={{ flex:.5, justifyContent: 'center', alignItems: 'center'}}>
+                        <Pressable 
+                            style={{ flex:.5, justifyContent: 'center', alignItems: 'center'}} 
+                            onPress={updateIndex}
+                        >
                             <FontAwesome name="hand-o-right" size={20} color="white"/>
                             <Text style={[styles.text, styles.qBtnText ]}>{`Swipe right to get previous quotes`}</Text>
-                        </View>
+                        </Pressable>
 
 
-                        <View style={{ flex:.5 , justifyContent: 'center', alignItems: 'center'}}>
+                        <Pressable 
+                            style={{ flex:.5 , justifyContent: 'center', alignItems: 'center'}}
+                            onPress={updateIndex}
+                        >
                             <FontAwesome name="hand-o-left" size={20} color="white"/>
                             <Text style={[styles.text, styles.qBtnText]}>{`Swipe left to get more quotes`}</Text>
-                        </View> 
+                        </Pressable> 
                     </View> 
                 </View>
             </Pressable>
@@ -98,13 +104,13 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
     const Tutorial4 = () => {
         return (
             <Pressable 
-                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}
+                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .4 }]}
                 onPress={updateIndex}
             >
-                <View style={{flex: 1, position: 'relative'}}>
-                    <View style={[styles.btnTextContainer, {left: '6%', top: '20%'}]}>
-                        <FontAwesome name="hand-o-up" size={20} color="white"/>
+                <View style={{flex: 1, position: 'relative' }}>
+                    <View style={{ position: 'absolute' , top: '15%', left: '-3%', justifyContent: 'center', alignItems: 'center'}}>
                         <Text style={[styles.text, {textAlign: 'center', width: '60%', height: '80%'}]}>{bookmarkDesc}</Text>
+                        <FontAwesome name="hand-o-down" size={20} color="white"/>
                     </View>
                 </View>
             </Pressable> 
@@ -114,13 +120,13 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
     const Tutorial5 = () => {
         return (
             <Pressable 
-                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}
+                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .4,  }]}
                 onPress={updateIndex}
             >
                 <View style={{flex: 1, position: 'relative'}}>
-                    <View style={[styles.btnTextContainer, {left: '-8%', top: '20%'}]}>
+                    <View style={{ position: 'absolute' , top: '70%', left: '50%', alignItems: 'center', transform: 'translate(-50%, -50%)'}}>
                         <FontAwesome name="hand-o-up" size={20} color="white"/>
-                        <Text style={[styles.text, styles.bBtnText]}>{wikiDesc}</Text>
+                        <Text style={[styles.text, {textAlign: 'center', width: '40%', height: '70%'}]}>{wikiDesc}</Text>
                     </View>
                 </View>
             </Pressable>
@@ -136,13 +142,13 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
     const Tutorial6 = () => {
         return (
             <Pressable
-                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .1 }]}
+                style={[styles.bContainer, { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * .4 }]}
                 onPress={handleLastClick}
             >
                 <View style={{flex: 1, position: 'relative'}}>
-                    <View style={[styles.btnTextContainer, {left: '21%', top: '20%'}]}>
-                        <FontAwesome name="hand-o-up" size={20} color="white"/>
-                        <Text style={[styles.text, styles.bBtnText]}>{shareDesc}</Text>
+                    <View style={[{position: 'absolute' , top: '5%', right: '16%', width: '30%', height: '50%', alignItems: 'center', gap: 10}]}>
+                        <Text style={[styles.text, {textAlign: 'center'}]}>{shareDesc}</Text>
+                        <FontAwesome name="hand-o-down" size={20} color="white"/>
                     </View>
                 </View>
             </Pressable> 
@@ -172,7 +178,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
 
 const styles = StyleSheet.create({
     oContainer: {
-        position: 'absolute',
+        position: 'relative',
         top: 0,
         left: 0,
         zIndex: 999,
@@ -189,11 +195,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         gap: 10, 
         position: 'absolute', 
-        top: 0,
-        right: 30, 
+        top: "20%",
+        right: ".5%", 
         justifyContent: 'center',
         alignItems: 'center', 
-        height: '65%', 
+        height: '25%',
     },
     qContainer: {
         position: 'absolute',
@@ -225,7 +231,7 @@ const styles = StyleSheet.create({
     },
     bContainer: {
         position: 'absolute',
-        top: '70%'
+        top: '55%',
     },
     btnTextContainer: {
         position: 'absolute', 

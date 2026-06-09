@@ -31,5 +31,17 @@
                 "description": "Squashed a bug that caused cropped images to appear distorted on iOS."
             }
         ]
+    },
+    {
+        "version": "1.0",
+        "releaseDate": "2026-01-09",
+        "type": "Minor",
+        "highlights": [
+            {
+                "category": "Fixed",
+                "title": "Tutorial Overlay",
+                "description": "Edited the tutorial for a cleaner look on more devices."
+            }
+        ]
     }
 ]

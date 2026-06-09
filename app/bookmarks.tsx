@@ -133,7 +133,8 @@ const styles = StyleSheet.create({
         height: 'auto', 
         paddingBottom: 20, 
         marginTop: '2%', 
-        flexDirection: 'row'
+        flexDirection: 'row',
+        paddingHorizontal: 10
     },
     bookmark_text: {
         color: 'white', 

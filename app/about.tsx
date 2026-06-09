@@ -2,6 +2,7 @@ import ChangeLogModal from '@/components/About/changeLogModal';
 import ReportBugModal from '@/components/About/ReportBugModal';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+//import * as StoreReview from 'expo-store-review';
 import { useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -25,6 +26,19 @@ export default function About() {
 
     const handleReportModal = () => {
         setChangeReportModal(!changeReportModal)
+    }
+
+    const handleRateApp = async () => {
+
+        // try {
+        //     if(await StoreReview.hasAction()) {
+        //         await StoreReview.requestReview();
+        //     }  else {
+        //         console.log("Not Supported on this device");
+        //     }  
+        // } catch (error) {
+        //     console.log("Reviews not supported", error)
+        // }
     }
 
     return (
@@ -57,10 +71,10 @@ export default function About() {
                             <Text style={[ styles.text2 ]}>Remove all the ads on the app and support future development</Text>
                         </View>
                         
-                        <View style={styles.about_items}>
+                        <Pressable style={styles.about_items} onPress={handleRateApp}>
                             <Text style={[ styles.text1]}>Rate App</Text>
                             <Text style={[ styles.text2]}>If like the app, give me a rating it helps alot</Text>
-                        </View>
+                        </Pressable>
 
                         <Pressable style={styles.about_items} onPress={handleReportModal}>
                             <Text style={[ styles.text1 ]}>Report Bug</Text>

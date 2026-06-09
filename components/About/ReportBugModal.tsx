@@ -60,15 +60,20 @@ export default function ReportBugModal({modalVisible, setVisible}: {modalVisible
 
             if (response.status === 201) {
                 console.log("Issue successfully logged! URL:", response.data.html_url);
+
+                setReportForm((prev) => ({
+                    title: '',
+                    description: ''
+                }))
+
+                setVisible();
+
                 return true;
             }
         } catch (error) {
             console.error("Octokit transmission failure:", error)
             return false;
         }
-        // console.log(appVersion, " ", buildNumber, " ", bundleId, " ", modelName, " ", osName, " ", deviceType)
-
-        // console.log(reportForm)
     }
    
     return (
@@ -97,16 +102,6 @@ export default function ReportBugModal({modalVisible, setVisible}: {modalVisible
                                 onChangeText={(text) => handleChangeReport('description', text)}
                                 style={[styles.inputField, {height: '50%'}]}
                             />
-                            
-                            
-                            {/** 
-                             *  <TextInput placeholder="App Version" value={reportForm.appVersion} onChangeText={(text) => handleChangeReport('appVersion', text)}/>
-                                <TextInput placeholder="Build Number" value={reportForm.buildNumber} onChangeText={(text) => handleChangeReport('buildNumber', text)}/>
-                                <TextInput placeholder="Device Modal" value={reportForm.deviceModal} onChangeText={(text) => handleChangeReport('deviceModal', text)}/>
-                                <TextInput placeholder="Locale" value={reportForm.locale} onChangeText={(text) => handleChangeReport('locale', text)}/>  
-                             * 
-                            */}
-                              
                         </View>
                         
                         <View style={{ display: 'flex', flexDirection: 'row', gap: 15,  position: 'absolute', bottom: 30, width: '100%', justifyContent: 'space-between', paddingHorizontal: 10}}>

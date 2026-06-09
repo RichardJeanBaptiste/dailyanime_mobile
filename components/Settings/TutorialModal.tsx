@@ -1,7 +1,10 @@
 import useUserSettings from '@/hooks/useUserSettings';
+import { useRouter } from 'expo-router';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function TutorialModel({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
+
+    const router = useRouter();
 
     const { setTutorialSettings } = useUserSettings();
 
@@ -10,6 +13,8 @@ export default function TutorialModel({modalVisible, setVisible}: {modalVisible:
       setVisible()
 
       // Push To Quotes Tutorial
+
+      router.push('/')
     }
     return (
         <>

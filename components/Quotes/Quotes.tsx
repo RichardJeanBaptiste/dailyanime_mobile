@@ -252,10 +252,7 @@ export default function Quotes() {
                         <View style={styles.tutorialWrapper}>
                         <TutorialOverlay closeTutorial={closeTutorial}/>
                         </View>
-                    )}
-
-                    <Text style={{ fontSize: 16 }} onPress={() => console.log(userSettings.showTutorial)}>Show Tutorial</Text>                    
-                   
+                    )}                   
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList

@@ -131,10 +131,15 @@ export default function Notifications() {
                 </View>
             </View>
 
-            <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '7%' }} onPress={handleThemeModal}>
-                <Text style={[ styles.sText ]}>Themes</Text>
-                <Text style={[ styles.sText ]}>Choose your color mode</Text>
-            </Pressable>
+            {/** 
+             * 
+             *  <Pressable style={{ display: 'flex', flexDirection: 'column', marginLeft: '7%' }} onPress={handleThemeModal}>
+                    <Text style={[ styles.sText ]}>Themes</Text>
+                    <Text style={[ styles.sText ]}>Choose your color mode</Text>
+                </Pressable>
+             * 
+            */}
+            
                
         </View>
     )
