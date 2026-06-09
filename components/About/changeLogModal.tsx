@@ -1,5 +1,6 @@
 import changeLogData from '@/changelog.json';
 import useAppConstants from '@/hooks/useAppConstants';
+import { useEffect } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 interface LogItem {
@@ -18,19 +19,19 @@ interface Highlight extends Array<Highlight> {
 
 export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible:any, setVisible: any}) {
 
-    // useEffect(() => {
+    useEffect(() => {
 
         
-    //     console.log(changeLogData);
+        // console.log(changeLogData);
 
-    //     changeLogData.map((x) => {
-    //         console.log(x.version)
+        // changeLogData.map((x) => {
+        //     console.log(x.version)
 
-    //         x.highlights.map((y) => {
-    //             console.log(y)
-    //         })
-    //     })
-    // },[])
+        //     x.highlights.map((y) => {
+        //         console.log(y)
+        //     })
+        // })
+    },[])
 
     const { SCREEN_WIDTH, SCREEN_HEIGHT } = useAppConstants(); 
 
@@ -52,7 +53,7 @@ export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible
         return (
             <View style={{ width: '100%', height: 'auto', borderBottomColor: 'white', borderBottomWidth: 1}}>
 
-                <View style={{display: 'flex', flexDirection: 'row', width: 'auto', height: '5%', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10, marginTop: '3%'}}>
+                <View style={{display: 'flex', flexDirection: 'row', width: 'auto',  justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10, marginTop: '3%'}}>
                     <Text style={styles.modalText}>{version}</Text>
                     <Text style={styles.modalText}>{releaseDate}</Text>
                 </View>
@@ -69,6 +70,7 @@ export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible
                         )
                     })}
                 </View>
+            
                 
             </View>
         )
@@ -92,9 +94,11 @@ export default function ChangeLogModal({modalVisible, setVisible}: {modalVisible
                                     style={{ flex: 1 }}
                                     contentContainerStyle={{
                                         alignItems: 'center',
+                                        paddingBottom: SCREEN_HEIGHT * .1
                                     }}
                                 >
-                                    {changeLogData?.map((item,key) => {
+
+                                    {changeLogData.map((item,key) => {
                                         return (
                                             <LogItem version={item.version} releaseDate={item.releaseDate} type={item.type} highlights={item.highlights as Highlight} key={key}/>
                                         )
@@ -156,7 +160,8 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    color: 'white'
+    color: 'white',
+    fontSize: 14
   },
 
 });
