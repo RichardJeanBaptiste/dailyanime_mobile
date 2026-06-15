@@ -4,6 +4,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, View, } from "react-native";
+import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 Notifications.setNotificationHandler({
@@ -60,15 +61,15 @@ export default function Index() {
   }, []);
 
 
-
     return (
         <SafeAreaProvider>
-          <View style={styles.container}>
-            <Quotes/>
-          </View>
+          <PaperProvider>
+              <View style={styles.container}>
+                <Quotes/>
+              </View>
+          </PaperProvider>
         </SafeAreaProvider>
     );
-  
 }
 
 

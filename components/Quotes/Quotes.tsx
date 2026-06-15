@@ -18,6 +18,7 @@ import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator } from 'react-native-paper';
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "../Interfaces";
@@ -252,7 +253,9 @@ export default function Quotes() {
                         <View style={styles.tutorialWrapper}>
                         <TutorialOverlay closeTutorial={closeTutorial}/>
                         </View>
-                    )}                   
+                    )} 
+
+                    <ActivityIndicator animating={true} color={"red"} />                  
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList
