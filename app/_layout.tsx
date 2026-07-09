@@ -137,6 +137,24 @@ export default function RootLayout() {
     />
 
     <Drawer.Screen
+      name="Test"
+      options={{
+        drawerLabel: 'Test',
+        drawerIcon: () => (
+          <FontAwesome name="info-circle" size={15} color="white" />
+        ),
+        drawerLabelStyle: {
+          color: 'white'
+        },
+        title: '',
+        headerStyle: {
+          backgroundColor: '#25292e'
+        },
+        headerTintColor: 'white'
+      }}
+    />
+
+    <Drawer.Screen
       name="query/[character]"
       options={{
         drawerLabel: '',

@@ -1,6 +1,7 @@
 /**
  *  TODO LIST
  * 
+ *  Fix Quote Loading
  *  Fix background sync 
  *      - Char JSON Bug - Not Loading From Backup
  *  Create App Tutorial Functionality
@@ -18,7 +19,7 @@ import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { ActivityIndicator } from 'react-native-paper';
+//import { ActivityIndicator } from 'react-native-paper';
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "../Interfaces";
@@ -255,7 +256,7 @@ export default function Quotes() {
                         </View>
                     )} 
 
-                    <ActivityIndicator animating={true} color={"red"} />                  
+                                    
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList
