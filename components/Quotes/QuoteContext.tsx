@@ -7,6 +7,7 @@ import { useQueries } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { QuoteLogItem } from '../Interfaces';
 
 
 interface QuoteContextType {
@@ -15,10 +16,12 @@ interface QuoteContextType {
     charJson: any;
     isLoading: boolean;
     isCharLoading: boolean;
+    charQuotes: any;
+    getCharQuotes: any;
     dailyQuote: any;
     updateDailyQuote: any;
-    isOnline: any;
-    dbOnline: any;
+    isOnline: boolean;
+    dbOnline: boolean;
 }
 
 const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? '';
@@ -58,7 +61,9 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     const [ isLoading, setIsLoading ] = useState(true);
 
     const [ charJson, setCharJson ] = useState([]);
-    const [ isCharLoading, setIsCharLoading ] = useState(true); 
+    const [ isCharLoading, setIsCharLoading ] = useState(true);
+    
+    const [ charQuotes, setCharQuotes ] = useState([]);
 
     const [dailyQuote, setDailyQuote] = useState({});
 
@@ -169,6 +174,37 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
         return [];
     }
 
+    const getCharQuotes = async (character: string) => {
+        // if(isOnline) {
+        //     const { data, error } = await supabase.rpc('get_char_quotes', { 
+        //         p_char_name: character 
+        //     });
+
+        //     if (error) {
+        //         console.log(`Error fetching data from character:\n`)
+        //         throw error;
+        //     }
+        //     return data;
+        // }
+        // Offline Pathway
+
+        /**
+         * Get Quotes Json
+         * Filter for quotes character == char_name
+         */
+
+        try {
+            let charQuotes = jsonData.filter((quote: QuoteLogItem) => quote.char_name == character);
+            
+            return charQuotes;
+
+        } catch (error) {
+            console.error("Error reading offline backup file:", error);
+        }
+
+        return [];
+    }
+
     const [quotesQuery, charsQuery] = useQueries({
         queries: [
             {queryKey: ['quoteData'], queryFn: getQuotes},
@@ -186,8 +222,6 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     
 
     
-
-
     const updateDailyQuote = (x: any) => {
         setDailyQuote((prev: any) => {
             return x
@@ -196,7 +230,7 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
    
     return (
-        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading, dailyQuote, updateDailyQuote, isOnline, dbOnline }}>
+        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading, charQuotes, getCharQuotes, dailyQuote, updateDailyQuote, isOnline, dbOnline }}>
             {children}
         </QuoteContext.Provider>
     )

@@ -1,10 +1,11 @@
 /**
  *  TODO LIST
  * 
- *  Fix Quote Loading
- *  Fix background sync 
- *      - Char JSON Bug - Not Loading From Backup
- *  Create App Tutorial Functionality
+ *  Fix Settings Loading
+ *  Unify Quote Loading to QuoteContext
+ *      - character.tsx
+ *      - daily.tsx
+ *  Create App Rating
  *  Better Swiping Animation on the Quote Component
  *  Add Advertising 
  *  
@@ -38,7 +39,7 @@ export default function Quotes() {
 
     const { userSettings, setTutorialSettings } = useUserSettings();
     const { SCREEN_WIDTH } = useAppConstants();
-    const { jsonData, isLoading,  updateDailyQuote, dailyQuote } = useSearchContext();
+    const { jsonData, isLoading,  updateDailyQuote, dailyQuote,  } = useSearchContext();
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -257,7 +258,7 @@ export default function Quotes() {
                         </View>
                     )} 
 
-                                    
+                                  
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList
