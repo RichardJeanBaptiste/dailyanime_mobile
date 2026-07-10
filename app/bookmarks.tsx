@@ -92,7 +92,7 @@ export default function Bookmarks(){
         <SafeAreaView style={{ flex: 1, backgroundColor:'#25292e' }} edges={['right', 'bottom', 'left']}>
             {/** Put title here later */}
             <View style={{ width: '100%', height: '8%', justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: 'white' , fontSize: 18 }}>Bookmarks</Text>
+                <Text style={{ color: 'white' , fontSize: 18 }} >Bookmarks</Text>
             </View>
             
             <ScrollView 

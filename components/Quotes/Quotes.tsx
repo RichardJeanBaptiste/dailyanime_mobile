@@ -12,7 +12,6 @@
 
 import useAppConstants from "@/hooks/useAppConstants";
 import useUserSettings from "@/hooks/useUserSettings";
-import { supabase } from "@/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Notifications from 'expo-notifications';
@@ -23,7 +22,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QuoteLogItem } from "../Interfaces";
-import { getTimeFromString, shuffleArray } from "../methods";
+import { getTimeFromString, shuffleArray, supabase } from "../methods";
 import { useSearchContext } from './QuoteContext';
 import QuoteItem from "./QuoteItems";
 import QuoteModal from "./QuoteModal";
@@ -56,7 +55,7 @@ export default function Quotes() {
     const halfWindow = Math.floor(windowSize / 2);
 
     const schedulePosts = async () => {
-        console.log("Sending Push Notifications")
+        //console.log("Sending Push Notifications")
 
         const { data , error } = await supabase.rpc('get_quotes_json');
 
@@ -78,8 +77,8 @@ export default function Quotes() {
         if (
             Number.isNaN(hours) || Number.isNaN(minutes)
         ) {
-            console.log("Invalid time input:", userSettings.NotificationTime);
-            console.log(typeof userSettings.NotificationTime);
+            //console.log("Invalid time input:", userSettings.NotificationTime);
+            //console.log(typeof userSettings.NotificationTime);
             return;
         }
 
@@ -142,11 +141,13 @@ export default function Quotes() {
         if(!isLoading && jsonData) {
 
             setAppData(jsonData)
-
+            
             if(userSettings.showTutorial) {
-                setShowTutorial('flex')
+                
+                setShowTutorial('flex');
                 setTutorialSettings(false);
             } else {
+                setShowTutorial('none');
                 console.log("User has seen tutorial")
             }
 
@@ -238,7 +239,7 @@ export default function Quotes() {
     if(isLoading) {
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                <Text style={{ color: 'white', fontSize: 24}}>Loading</Text>
+                <Text style={{ color: 'white', fontSize: 24}} onPress={() => console.log(jsonData)}>Loading</Text>
             </SafeAreaView>
         )
     } else {
@@ -252,7 +253,7 @@ export default function Quotes() {
                     {/* The Tutorial Overlay */}
                     {showTutorial === 'flex' && (
                         <View style={styles.tutorialWrapper}>
-                        <TutorialOverlay closeTutorial={closeTutorial}/>
+                            <TutorialOverlay closeTutorial={closeTutorial}/>
                         </View>
                     )} 
 

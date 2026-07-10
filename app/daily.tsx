@@ -1,8 +1,8 @@
+import { supabase } from "@/components/methods";
 import QuoteButtons from "@/components/Quotes/QuoteButtons";
 import { useSearchContext } from "@/components/Quotes/QuoteContext";
 import QuoteModal from "@/components/Quotes/QuoteModal";
 import useAppConstants from "@/hooks/useAppConstants";
-import { supabase } from "@/utils";
 import { Image } from 'expo-image';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from "react-native";

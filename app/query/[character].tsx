@@ -1,6 +1,6 @@
 import { QuoteLogItem } from '@/components/Interfaces';
 import QuoteButtons from '@/components/Quotes/QuoteButtons';
-import { supabase } from '@/utils';
+import { supabase } from '@/components/methods';
 import { Image } from 'expo-image';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { MotiView } from 'moti';

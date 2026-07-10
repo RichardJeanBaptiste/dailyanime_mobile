@@ -1,3 +1,26 @@
+import * as RNFS from '@dr.pogodin/react-native-fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createClient, processLock } from '@supabase/supabase-js';
+import Constants from 'expo-constants';
+
+
+const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? '';
+const supabaseKey = Constants.expoConfig?.extra?.supabaseAnonKey ?? '';
+
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseKey,
+  {
+    auth: {
+      storage: AsyncStorage,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+      lock: processLock,
+    },
+})
+
+
 export const shuffleArray = <T>(array: T[]): T[] => {
   
   const shuffled = [...array]; 
@@ -40,4 +63,19 @@ export const getTimeFromString = (timeString: string) => {
   }
 
   return { hours, minutes };
+};
+
+export const saveJsonFile = async (filename: any , jsonString: any) => {
+ 
+  const path = `${RNFS.DocumentDirectoryPath}/${filename}`;
+ 
+  try {
+    await RNFS.writeFile(path, jsonString, 'utf8');
+    
+    console.log(`Success! File saved at: ${path}`);
+    return path;
+  } catch (error) {
+    console.error('Failed to write JSON file:', error);
+    throw error;
+  }
 };
