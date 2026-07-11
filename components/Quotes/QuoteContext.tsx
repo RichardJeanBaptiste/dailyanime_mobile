@@ -1,7 +1,7 @@
 import { saveJsonFile } from '@/components/methods';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetch } from "@react-native-community/netinfo";
+import NetInfo, { fetch } from '@react-native-community/netinfo';
 import { createClient, processLock } from '@supabase/supabase-js';
 import { useQueries } from '@tanstack/react-query';
 import Constants from 'expo-constants';
@@ -53,7 +53,6 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
         router.push(`/query/${name}`)        
     }
 
-
     const [isOnline, setIsOnline] = useState(false);
     const [dbOnline, setDBOnline] = useState(false);
 
@@ -65,7 +64,7 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     
     const [ charQuotes, setCharQuotes ] = useState([]);
 
-    const [dailyQuote, setDailyQuote] = useState({});
+    const [ dailyQuote, setDailyQuote ] = useState({});
 
     
     const checkDBStatus = async () => {
@@ -79,10 +78,15 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
         return true;
     }
 
+    const checkOnline = async () => {
+        const state = await NetInfo.fetch();
+        return state.isConnected ?? false;
+    };
+
     useEffect(() => {
         fetch().then(state => {
             if(state.isConnected) {
-                setIsOnline(false);
+                setIsOnline(true);
             }
         });
 
@@ -103,7 +107,11 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     
         let json;
 
-        if(isOnline) {
+        let onlineStatus = await checkOnline();
+
+        //console.log("Online Status: ", onlineStatus);
+
+        if(onlineStatus) {
             const { data, error } = await supabase.rpc('get_quotes_json');
 
             if (error) throw error;
@@ -115,7 +123,6 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
             }
 
             return data;
-            
         } 
 
         // Offline Pathway
@@ -140,8 +147,14 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     const getChars = async () => {
         let json;
 
-        if(isOnline) {
-            const { data , error } = await supabase.from('characters').select('*')
+        let onlineStatus = await checkOnline();
+
+        //console.log("Online Status: ", onlineStatus);
+
+        if(onlineStatus) {
+            const { data , error } = await supabase.from('characters').select('*');
+
+            console.log(error);
 
             if (error) throw error;
 
@@ -152,7 +165,6 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
             }
 
             return data;
-            
         } 
 
         // Offline Pathway
@@ -175,19 +187,7 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     }
 
     const getCharQuotes = async (character: string) => {
-        // if(isOnline) {
-        //     const { data, error } = await supabase.rpc('get_char_quotes', { 
-        //         p_char_name: character 
-        //     });
-
-        //     if (error) {
-        //         console.log(`Error fetching data from character:\n`)
-        //         throw error;
-        //     }
-        //     return data;
-        // }
-        // Offline Pathway
-
+       
         /**
          * Get Quotes Json
          * Filter for quotes character == char_name
@@ -203,6 +203,10 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
         }
 
         return [];
+    }
+
+    const retryQuoteFetch = () => {
+        getChars()
     }
 
     const [quotesQuery, charsQuery] = useQueries({
@@ -221,7 +225,6 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     }, [quotesQuery.data, charsQuery.data]);
     
 
-    
     const updateDailyQuote = (x: any) => {
         setDailyQuote((prev: any) => {
             return x

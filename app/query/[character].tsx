@@ -10,10 +10,8 @@ import { interpolate, useAnimatedStyle, useSharedValue } from "react-native-rean
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-const PlaceholderImage = require('@/assets/images/anime_splash.jpg');
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH; 
 
 export default function CharQuery() {
     

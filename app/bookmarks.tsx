@@ -1,8 +1,8 @@
 import IconButton from '@/components/IconButton';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
-import { Key, useCallback, useEffect, useState } from 'react';
+import { useIsFocused } from 'expo-router';
+import { Key, useEffect, useState } from 'react';
 import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,15 +10,17 @@ export default function Bookmarks(){
 
     const [ savedQuotes, setSavedQuotes ] = useState<any>([]);
 
+    const isFocused = useIsFocused();
+
     useEffect(() => {
        getSavedQuotes();
     },[]);
 
-    useFocusEffect(
-        useCallback(() => {
+    useEffect(() => {
+        if (isFocused) {
             getSavedQuotes();
-        },[])
-    );
+        }
+    }, [isFocused]);
 
     const getSavedQuotes = async () => {
         let value = await AsyncStorage.getItem('quotes');

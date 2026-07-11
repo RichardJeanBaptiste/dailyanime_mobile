@@ -1,8 +1,8 @@
 import ChangeLogModal from '@/components/About/changeLogModal';
 import ReportBugModal from '@/components/About/ReportBugModal';
 import { Image } from 'expo-image';
+import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
-//import * as StoreReview from 'expo-store-review';
 import { useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -30,15 +30,15 @@ export default function About() {
 
     const handleRateApp = async () => {
 
-        // try {
-        //     if(await StoreReview.hasAction()) {
-        //         await StoreReview.requestReview();
-        //     }  else {
-        //         console.log("Not Supported on this device");
-        //     }  
-        // } catch (error) {
-        //     console.log("Reviews not supported", error)
-        // }
+        console.log("Rate App");
+
+        const androidPackageName = 'com.company.dailyanime';
+
+        Linking.openURL(
+            `https://play.google.com/store/apps/details?id=${androidPackageName}&showAllReviews=true`
+        );
+
+       
     }
 
     return (
@@ -67,7 +67,8 @@ export default function About() {
                 
                     <View style={styles.about_content}>
                         <View style={styles.about_items}>
-                            <Text style={[ styles.text1 ]} >Ad Free / Pro version</Text>
+                            <Text style={[ styles.text1 ]}>Ad Free / Pro version</Text>
+                            <Text style={[ styles.text2 ]}>Coming Soon!</Text>
                             <Text style={[ styles.text2 ]}>Remove all the ads on the app and support future development</Text>
                         </View>
                         

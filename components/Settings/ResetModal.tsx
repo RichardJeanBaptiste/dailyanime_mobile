@@ -10,7 +10,7 @@ export default function ResetModel({modalVisible, setVisible}: {modalVisible:any
 
     const restoreAndClose= () => {
       resetSettings();
-      Alert.alert("App restored from backup");
+      Alert.alert("App restored from backup, reload may be required");
       setVisible();
     }
 

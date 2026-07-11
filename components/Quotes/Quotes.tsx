@@ -14,15 +14,13 @@
 import useAppConstants from "@/hooks/useAppConstants";
 import useUserSettings from "@/hooks/useUserSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
 import * as Notifications from 'expo-notifications';
-import { useRouter } from 'expo-router';
+import { useIsFocused, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from "react-native";
 //import { ActivityIndicator } from 'react-native-paper';
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { QuoteLogItem } from "../Interfaces";
 import { getTimeFromString, shuffleArray, supabase } from "../methods";
 import { useSearchContext } from './QuoteContext';
 import QuoteItem from "./QuoteItems";
@@ -36,6 +34,7 @@ export default function Quotes() {
     const DAILY_QUOTE_ID = 'daily-quote';
 
     const router = useRouter();
+    const isFocused = useIsFocused();
 
     const { userSettings, setTutorialSettings } = useUserSettings();
     const { SCREEN_WIDTH } = useAppConstants();
@@ -43,13 +42,11 @@ export default function Quotes() {
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [data, setAppData] = useState<QuoteLogItem[]>([]);
-
     const [quoteLog, setQuoteLog] = useState<number[]>([]);
 
     const [showTutorial, setShowTutorial] = useState<'none' | 'flex'>('none');
 
-    const [displayIndex, setDisplayIndex] = useState(-1);
+    //const [displayIndex, setDisplayIndex] = useState(-1);
 
     const windowSize = 5;
 
@@ -94,7 +91,6 @@ export default function Quotes() {
                 title: quote.char_name,
                 body: quote.quote,
                 data: {quote},
-                sound: true
             },
             trigger: {
                 hour: hours,
@@ -113,7 +109,7 @@ export default function Quotes() {
             const lastResponse = Notifications.getLastNotificationResponse();
 
             if (lastResponse?.notification) {
-                const subQuote = lastResponse.notification.request.content.data.quote;
+                const subQuote = lastResponse.notification?.request?.content?.data?.quote;
 
                 //console.log(subQuote);
                 updateDailyQuote(subQuote);
@@ -122,7 +118,7 @@ export default function Quotes() {
             // Background / Foreground -> notification tapped
 
             const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-                const subQuote = response.notification.request.content.data.quote;
+                const subQuote = response.notification?.request?.content?.data?.quote;
 
                 setTimeout(() => {
                     updateDailyQuote(subQuote);
@@ -135,20 +131,29 @@ export default function Quotes() {
             console.log("Error During Intial Mount: ", error);
         }
     },[]);
+
+
+    // Retry DB when Quotes Empty
+    useEffect(() => {
+        if(jsonData.length == 0) {
+            console.log("Empty Data Array")
+        }
+    },[jsonData]);
     
     // Load JSON Data
     useEffect(() => {
 
         if(!isLoading && jsonData) {
 
-            setAppData(jsonData)
+            //setAppData(jsonData)
             
             if(userSettings.showTutorial) {
                 
                 setShowTutorial('flex');
-                setTutorialSettings(false);
+                
             } else {
-                setShowTutorial('none');
+                //setShowTutorial('none');
+                setTutorialSettings(false);
                 console.log("User has seen tutorial")
             }
 
@@ -163,19 +168,17 @@ export default function Quotes() {
 
             setQuoteLog(randomizedIndicies);
             
-            setDisplayIndex(0);
+            //setDisplayIndex(0);
         }
         
     },[isLoading, jsonData]);
 
     // Check if user should view tutorial on screen focus
-    useFocusEffect(
-        useCallback(() => {
-            console.log("Screen Focused");
-
+    useEffect(() => {
+        if (isFocused) {
             checkTutorial();
-        },[])
-    )
+        }
+    }, [isFocused]);
 
     const checkTutorial = async () => {
         let x = await AsyncStorage.getItem('settings');
@@ -195,9 +198,7 @@ export default function Quotes() {
             setShowTutorial('flex')
             setTutorialSettings(false);
         }
-
     }
-
 
     // Modal Functions 
     const [ activeQuote, setActiveQuote ] = useState({
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
     },
     tutorialWrapper: {
     // This covers the entire screen
-    ...StyleSheet.absoluteFillObject, 
+    ...StyleSheet.absoluteFill, 
     
     // Semi-transparent background
     backgroundColor: 'rgba(0, 0, 0, 0.7)', 

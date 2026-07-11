@@ -33,36 +33,49 @@ export default {
             package: "com.company.dailyanime",
             googleServicesFile: process.env.GOOGLE_SERVICES_FILE ?? './google-services.json'
         },
-        plugins: [
+       "plugins": [
             "@react-native-community/datetimepicker",
             "expo-router",
             "expo-notifications",
+            "expo-build-properties",
+            "expo-font",
+            "expo-image",
+            "expo-status-bar",
+            "expo-web-browser",
             [
-            "expo-sqlite",
+                "expo-sqlite",
                 {
-                    "enableFTS": true,
-                    "useSQLCipher": true,
-                    "android": {
-                        "enableFTS": false,
-                        "useSQLCipher": false
-                    },
-                    "ios": {
-                        "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
-                    }
+                "enableFTS": true,
+                "useSQLCipher": true,
+                "android": {
+                    "enableFTS": false,
+                    "useSQLCipher": false
+                },
+                "ios": {
+                    "customBuildFlags": [
+                    "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
+                    ]
+                }
                 }
             ],
             [
                 "expo-splash-screen",
                 {
-                    image: "./assets/images/splash-icon.png",
-                    imageWidth: 200,
-                    resizeMode: "contain",
-                    backgroundColor: "#ffffff",
-                    dark: {
-                        "backgroundColor": "#000000"
-                    }
+                "image": "./assets/images/splash-icon.png",
+                "imageWidth": 200,
+                "resizeMode": "contain",
+                "backgroundColor": "#ffffff",
+                "dark": {
+                    "backgroundColor": "#000000"
+                }
                 }
             ],
+            [
+                "react-native-google-mobile-ads",
+                {
+                    "androidAppId": "ca-app-pub-4929537070408822~3908928179"
+                }
+            ]
         ],
         extra: {
             supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,

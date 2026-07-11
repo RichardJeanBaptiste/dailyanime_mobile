@@ -36,7 +36,6 @@ export default function Index() {
       Notifications.setNotificationChannelAsync('daily-quotes', {
         name: 'Daily Quotes',
         importance: Notifications.AndroidImportance.HIGH,
-        sound: 'default',
         vibrationPattern: [0, 250, 250, 250]
       });
 
