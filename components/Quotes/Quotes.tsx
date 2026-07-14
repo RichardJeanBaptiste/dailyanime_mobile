@@ -12,33 +12,30 @@
  */
 
 import useAppConstants from "@/hooks/useAppConstants";
+import useScheduleNotification from "@/hooks/useScheduleNotification";
 import useUserSettings from "@/hooks/useUserSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Notifications from 'expo-notifications';
-import { useIsFocused, useRouter } from 'expo-router';
+import { useIsFocused } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from "react-native";
 //import { ActivityIndicator } from 'react-native-paper';
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getTimeFromString, shuffleArray, supabase } from "../methods";
+import { shuffleArray } from "../methods";
 import { useSearchContext } from './QuoteContext';
 import QuoteItem from "./QuoteItems";
 import QuoteModal from "./QuoteModal";
 import TutorialOverlay from "./TutorialOverlay";
 
-//const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;  
 
 export default function Quotes() {
 
-    const DAILY_QUOTE_ID = 'daily-quote';
-
-    const router = useRouter();
     const isFocused = useIsFocused();
 
     const { userSettings, setTutorialSettings } = useUserSettings();
+    const { schedulePosts, handlePushNotification } = useScheduleNotification();
     const { SCREEN_WIDTH } = useAppConstants();
-    const { jsonData, isLoading,  updateDailyQuote, dailyQuote,  } = useSearchContext();
+    const { jsonData, isLoading } = useSearchContext();
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -46,90 +43,14 @@ export default function Quotes() {
 
     const [showTutorial, setShowTutorial] = useState<'none' | 'flex'>('none');
 
-    //const [displayIndex, setDisplayIndex] = useState(-1);
-
     const windowSize = 5;
 
     const halfWindow = Math.floor(windowSize / 2);
 
-    const schedulePosts = async () => {
-        //console.log("Sending Push Notifications")
-
-        const { data , error } = await supabase.rpc('get_quotes_json');
-
-        if(error) {
-            console.log("Error getting Push Notification Post: ", error);
-            return;
-        }
-
-        const randomIndex = Math.floor(Math.random() * (data.length || 100));
-
-        let quote = await data[randomIndex];
-
-        // Schedule Daily Quote
-
-        const now = new Date();
-
-        const {hours, minutes} = getTimeFromString(userSettings.NotificationTime);
-
-        if (
-            Number.isNaN(hours) || Number.isNaN(minutes)
-        ) {
-            //console.log("Invalid time input:", userSettings.NotificationTime);
-            //console.log(typeof userSettings.NotificationTime);
-            return;
-        }
-
-        // console.log('hours:', hours, typeof hours);
-        // console.log('minutes:', minutes, typeof minutes);
-
-        await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
-
-        await Notifications.scheduleNotificationAsync({
-            identifier: DAILY_QUOTE_ID,
-            content: {
-                title: quote.char_name,
-                body: quote.quote,
-                data: {quote},
-            },
-            trigger: {
-                hour: hours,
-                minute: minutes,
-                repeats: true, 
-                type: Notifications.SchedulableTriggerInputTypes.DAILY,
-                channelId: 'daily-quotes'
-            } as Notifications.DailyTriggerInput,
-        });
-    }
-
+ 
     // Handle Push Notification Click Interaction
     useEffect(() => {
-        try {
-            // Handles Closed -> app launched from notification
-            const lastResponse = Notifications.getLastNotificationResponse();
-
-            if (lastResponse?.notification) {
-                const subQuote = lastResponse.notification?.request?.content?.data?.quote;
-
-                //console.log(subQuote);
-                updateDailyQuote(subQuote);
-            }
-
-            // Background / Foreground -> notification tapped
-
-            const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-                const subQuote = response.notification?.request?.content?.data?.quote;
-
-                setTimeout(() => {
-                    updateDailyQuote(subQuote);
-                    router.push('/daily');
-                }, 0);
-            })
-
-            return () => subscription.remove();
-        } catch (error) {
-            console.log("Error During Intial Mount: ", error);
-        }
+        handlePushNotification();
     },[]);
 
 
@@ -168,7 +89,6 @@ export default function Quotes() {
 
             setQuoteLog(randomizedIndicies);
             
-            //setDisplayIndex(0);
         }
         
     },[isLoading, jsonData]);
@@ -257,9 +177,7 @@ export default function Quotes() {
                         <View style={styles.tutorialWrapper}>
                             <TutorialOverlay closeTutorial={closeTutorial}/>
                         </View>
-                    )} 
-
-                                  
+                    )}        
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList
@@ -339,3 +257,53 @@ const styles = StyleSheet.create({
     elevation: 1000, // Necessary for Android
   }
 });
+
+   // const schedulePosts = async () => {
+    //     //console.log("Sending Push Notifications")
+
+    //     const { data , error } = await supabase.rpc('get_quotes_json');
+
+    //     if(error) {
+    //         console.log("Error getting Push Notification Post: ", error);
+    //         return;
+    //     }
+
+    //     const randomIndex = Math.floor(Math.random() * (data.length || 100));
+
+    //     let quote = await data[randomIndex];
+
+    //     // Schedule Daily Quote
+
+    //     const now = new Date();
+
+    //     const {hours, minutes} = getTimeFromString(userSettings.NotificationTime);
+
+    //     // if (
+    //     //     Number.isNaN(hours) || Number.isNaN(minutes)
+    //     // ) {
+    //     //     console.log("Invalid time input:", userSettings.NotificationTime);
+    //     //     console.log(typeof userSettings.NotificationTime);
+    //     //     return;
+    //     // }
+
+    //     // console.log('hours:', hours, typeof hours);
+    //     // console.log('minutes:', minutes, typeof minutes);
+
+    //     await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
+
+    //     await Notifications.scheduleNotificationAsync({
+    //         identifier: DAILY_QUOTE_ID,
+    //         content: {
+    //             title: quote.char_name,
+    //             body: quote.quote,
+    //             data: {quote},
+    //         },
+    //         trigger: {
+    //             hour: hours,
+    //             minute: minutes,
+    //             repeats: true, 
+    //             type: Notifications.SchedulableTriggerInputTypes.DAILY,
+    //             channelId: 'daily-quotes'
+    //         } as Notifications.DailyTriggerInput,
+    //     });
+    // }

@@ -66,7 +66,6 @@ export default function Characters(){
         
     }
 
-
     return (
         <QuoteProvider>
             <View style={{ flex: 1, backgroundColor: '#25292e' }}>

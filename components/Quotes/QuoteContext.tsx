@@ -22,6 +22,7 @@ interface QuoteContextType {
     updateDailyQuote: any;
     isOnline: boolean;
     dbOnline: boolean;
+    getRandomQuote: any;
 }
 
 const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? '';
@@ -205,6 +206,22 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
         return [];
     }
 
+    const getRandomQuote = async () => {
+
+        const randomIndex = Math.floor(Math.random() * (jsonData.length || 150));
+
+        let quote = jsonData[randomIndex];
+
+        return quote;
+
+    }
+
+    const updateDailyQuote = (x: any) => {
+        setDailyQuote((prev: any) => {
+            return x
+        });
+    };
+
     const retryQuoteFetch = () => {
         getChars()
     }
@@ -225,15 +242,11 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     }, [quotesQuery.data, charsQuery.data]);
     
 
-    const updateDailyQuote = (x: any) => {
-        setDailyQuote((prev: any) => {
-            return x
-        });
-    };
+   
 
    
     return (
-        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading, charQuotes, getCharQuotes, dailyQuote, updateDailyQuote, isOnline, dbOnline }}>
+        <QuoteContext.Provider value={{ charQuery, jsonData, isLoading, charJson, isCharLoading, charQuotes, getCharQuotes, dailyQuote, updateDailyQuote, getRandomQuote, isOnline, dbOnline }}>
             {children}
         </QuoteContext.Provider>
     )
