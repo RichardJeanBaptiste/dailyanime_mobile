@@ -208,11 +208,59 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
     const getRandomQuote = async () => {
 
-        const randomIndex = Math.floor(Math.random() * (jsonData.length || 150));
+        // const randomIndex = Math.floor(Math.random() * (jsonData.length || 150));
 
-        let quote = jsonData[randomIndex];
+        // let quote = jsonData[randomIndex];
 
-        return quote;
+        // return quote;
+
+        let json;
+
+        let onlineStatus = await checkOnline();
+
+        //console.log("Online Status: ", onlineStatus);
+
+        // if(onlineStatus) {
+        //     const { data, error } = await supabase.rpc('get_quotes_json');
+
+        //     if (error) throw error;
+
+        //     const randomIndex = Math.floor(Math.random() * (data.length));
+
+        //     let quote = data[randomIndex];
+
+        //     return quote;
+        // } 
+
+        // // Offline Pathway
+        // try {
+        //     const exists = await RNFS.exists(filePath);
+
+        //     if (exists) {
+        //         const content = await RNFS.readFile(filePath, 'utf8');
+        //         const jsonObject = JSON.parse(content);
+
+        //         const randomIndex = Math.floor(Math.random() * (jsonData.length));
+
+        //         let quote = jsonData[randomIndex];
+
+        //         return quote;
+        //     }
+        // } catch (error) {
+        //     console.error("Error reading offline backup file:", error);
+        // }
+    
+        // return [];
+
+            const { data, error } = await supabase.rpc('get_quotes_json');
+
+            if (error) throw error;
+
+            const randomIndex = Math.floor(Math.random() * (data.length));
+
+            let quote = data[randomIndex];
+
+            return quote;
 
     }
 

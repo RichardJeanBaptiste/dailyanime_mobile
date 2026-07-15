@@ -8,15 +8,20 @@ export default function useScheduleNotification() {
 
     const DAILY_QUOTE_ID = 'daily-quote';
 
-    const { dailyQuote, updateDailyQuote, getRandomQuote } = useSearchContext();
+    const {  updateDailyQuote, getRandomQuote } = useSearchContext();
     const { userSettings } = useUserSettings();
     const router = useRouter();
 
-    const schedulePosts = async () => {
-
-        const quote = getRandomQuote();
+    const schedulePosts = async (quote: any) => {
 
         const { hours, minutes } = getTimeFromString(userSettings.NotificationTime);
+
+        console.log("Scheduled Quote: ", quote.quote);
+    
+        // const testTime = new Date(Date.now() + 60 * 1000); // 1 minute from now
+
+        // const h = testTime.getHours();
+        // const m = testTime.getMinutes();
 
         await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
 
@@ -37,6 +42,11 @@ export default function useScheduleNotification() {
         });
     }
 
+    const getNewRandom = async () => {
+        let x = await getRandomQuote();
+        schedulePosts(x);
+    }
+
     const handlePushNotification = () => {
         try {
             // Handles Closed -> app launched from notification
@@ -45,7 +55,7 @@ export default function useScheduleNotification() {
             if (lastResponse?.notification) {
                 const subQuote = lastResponse.notification?.request?.content?.data?.quote;
 
-                console.log("Sub Quote: ",subQuote);
+                console.log("Sub Quote: ", subQuote);
                 updateDailyQuote(subQuote);
             }
 
@@ -55,6 +65,7 @@ export default function useScheduleNotification() {
 
                 setTimeout(() => {
                     updateDailyQuote(subQuote);
+                    getNewRandom();
                     router.push('/daily');
                 }, 0);
             })
@@ -65,8 +76,24 @@ export default function useScheduleNotification() {
         }
     }
 
+    const checkScheduledPosts = async () => {
+        const notifications = await Notifications.getAllScheduledNotificationsAsync();
+        console.log(notifications);
+
+        const { hours, minutes } = getTimeFromString(userSettings.NotificationTime);
+
+        console.log(hours, " : ", minutes);
+
+        if (notifications.length == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
     return {
         schedulePosts,
-        handlePushNotification
+        handlePushNotification,
+        checkScheduledPosts
     }
 }

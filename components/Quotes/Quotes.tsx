@@ -33,9 +33,9 @@ export default function Quotes() {
     const isFocused = useIsFocused();
 
     const { userSettings, setTutorialSettings } = useUserSettings();
-    const { schedulePosts, handlePushNotification } = useScheduleNotification();
+    const { schedulePosts, handlePushNotification, checkScheduledPosts } = useScheduleNotification();
     const { SCREEN_WIDTH } = useAppConstants();
-    const { jsonData, isLoading } = useSearchContext();
+    const { jsonData, isLoading, getRandomQuote } = useSearchContext();
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -60,6 +60,11 @@ export default function Quotes() {
             console.log("Empty Data Array")
         }
     },[jsonData]);
+
+    const getNewRandom = async () => {
+        let x = await getRandomQuote();
+        schedulePosts(x);
+    }
     
     // Load JSON Data
     useEffect(() => {
@@ -80,7 +85,7 @@ export default function Quotes() {
 
 
             if(userSettings.isNotifications) {
-                schedulePosts();
+                getNewRandom();
             }
             
             const indices = Array.from({ length: jsonData.length }, (_, i) => i);
@@ -93,8 +98,9 @@ export default function Quotes() {
         
     },[isLoading, jsonData]);
 
+
     // Check if user should view tutorial on screen focus
-    useEffect(() => {
+    useEffect(() => {        
         if (isFocused) {
             checkTutorial();
         }
@@ -156,6 +162,8 @@ export default function Quotes() {
     const closeTutorial = () => {
         setShowTutorial('none')
     }
+
+   
     
     
     if(isLoading) {
@@ -177,7 +185,9 @@ export default function Quotes() {
                         <View style={styles.tutorialWrapper}>
                             <TutorialOverlay closeTutorial={closeTutorial}/>
                         </View>
-                    )}        
+                    )}  
+
+                    <Text onPress={() => console.log(getRandomQuote)} style={{ color: 'white', fontSize: 24 }}>CHECK Notif</Text>      
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList
