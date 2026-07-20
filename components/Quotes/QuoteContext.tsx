@@ -208,12 +208,6 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
 
     const getRandomQuote = async () => {
 
-        // const randomIndex = Math.floor(Math.random() * (jsonData.length || 150));
-
-        // let quote = jsonData[randomIndex];
-
-        // return quote;
-
         let json;
 
         let onlineStatus = await checkOnline();

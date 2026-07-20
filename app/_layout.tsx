@@ -152,14 +152,14 @@ export default function RootLayout() {
       <Drawer.Screen
         name="test"
         options={{
-          drawerLabel: 'Test',
-          drawerIcon: () => (
-            <FontAwesome name="info-circle" size={15} color="white" />
-          ),
+          drawerLabel: '',
           drawerLabelStyle: {
             color: 'white'
           },
           title: '',
+          drawerItemStyle: {
+            display: 'none'
+          },
           headerStyle: {
             backgroundColor: '#25292e'
           },

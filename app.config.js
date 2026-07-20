@@ -81,6 +81,7 @@ export default {
             supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
             supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_KEY,
             githubKey: process.env.EXPO_PUBLIC_GITHUB_KEY,
+            bannerId: process.env.EXPO_PUBLIC_BANNER_ID,
             // You can also use non-prefixed vars here if you prefer
             router: {},
             "eas": {

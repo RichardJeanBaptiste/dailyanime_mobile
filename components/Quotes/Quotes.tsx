@@ -1,10 +1,6 @@
 /**
  *  TODO LIST
  * 
- *  Fix Settings Loading
- *  Unify Quote Loading to QuoteContext
- *      - character.tsx
- *      - daily.tsx
  *  Create App Rating
  *  Better Swiping Animation on the Quote Component
  *  Add Advertising 
@@ -17,8 +13,10 @@ import useUserSettings from "@/hooks/useUserSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
 //import { ActivityIndicator } from 'react-native-paper';
+import Constants from 'expo-constants';
+import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { shuffleArray } from "../methods";
@@ -27,6 +25,11 @@ import QuoteItem from "./QuoteItems";
 import QuoteModal from "./QuoteModal";
 import TutorialOverlay from "./TutorialOverlay";
 
+//const adUnitId = 'ca-app-pub-4929537070408822/647380718';
+
+const bannerUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : Constants?.expoConfig?.extra?.bannerId;
+
+//const testBannerAd = TestIds.ADAPTIVE_BANNER;
 
 export default function Quotes() {
 
@@ -47,6 +50,11 @@ export default function Quotes() {
 
     const halfWindow = Math.floor(windowSize / 2);
 
+    const bannerRef = useRef<BannerAd>(null);
+
+    useForeground(() => {
+        Platform.OS === 'ios' && bannerRef.current?.load();
+    });
  
     // Handle Push Notification Click Interaction
     useEffect(() => {
@@ -186,8 +194,7 @@ export default function Quotes() {
                             <TutorialOverlay closeTutorial={closeTutorial}/>
                         </View>
                     )}  
-
-                    <Text onPress={() => console.log(getRandomQuote)} style={{ color: 'white', fontSize: 24 }}>CHECK Notif</Text>      
+    
                     
                     {/****************************************** Quotes *******************************************/}
                     <FlatList
@@ -212,6 +219,20 @@ export default function Quotes() {
                         keyExtractor={(item, index) => `${item}-${index}`}
                         ListEmptyComponent={<Text></Text>}      
                     />
+
+                    <View style={styles.bannerContainer}>
+                        <BannerAd
+                            unitId={bannerUnitId}
+                            size={BannerAdSize.BANNER}
+                            requestOptions={{
+                                networkExtras: {
+                                    collapsible: 'bottom',
+                                },
+                            }}
+                        />
+                    </View>
+
+                    
                 </SafeAreaView>
             </>
         );
@@ -231,7 +252,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '20%',
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'row'
     },
     divider: {
         width: 'auto',
@@ -250,6 +271,14 @@ const styles = StyleSheet.create({
         height: '60%',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    bannerContainer: {
+        position: 'absolute', 
+        bottom: 10, 
+        alignSelf: 'center', // Clean way to center horizontally
+        width: '100%',       // Or 80%, depending on your design
+        alignItems: 'center', 
+        justifyContent: 'center',
     },
     tutorialWrapper: {
     // This covers the entire screen
