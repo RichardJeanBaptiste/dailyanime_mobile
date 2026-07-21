@@ -51,11 +51,11 @@ export default {
                     "enableFTS": false,
                     "useSQLCipher": false
                 },
-                "ios": {
-                    "customBuildFlags": [
-                    "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
-                    ]
-                }
+                // "ios": {
+                //     "customBuildFlags": [
+                //     "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
+                //     ]
+                // }
                 }
             ],
             [
