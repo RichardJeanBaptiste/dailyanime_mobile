@@ -8,6 +8,7 @@ import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 //import { AppOpenAd, BannerAd, BannerAdSize, TestIds, useForeground, useInterstitialAd } from 'react-native-google-mobile-ads';
+import LoadingScreen from '@/components/Quotes/LoadingScreen';
 
 
 const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? '';
@@ -145,11 +146,7 @@ function Example() {
 
     return (
         <View>
-            <Text onPress={() => console.log(data[0])}>Example</Text>
-            <Text>{data[0].quote}</Text>
-            <Text>{data[0].char_name}</Text>
-            <Text>Online Status: {isOnline ? "True" : "False"}</Text>
-            <Text>Database Status: {dbOnline ? "True": "False"}</Text>
+            <LoadingScreen/>
             
         </View>
     )
@@ -159,7 +156,6 @@ export default function TestStuff() {
     return (
         <QueryClientProvider client={queryClient}>
             <View>
-                <Text style={{ fontSize: 24 }}>Test Page</Text>
                 <Example/>
             </View>
         </QueryClientProvider> 

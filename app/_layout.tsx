@@ -158,7 +158,7 @@ export default function RootLayout() {
           },
           title: '',
           drawerItemStyle: {
-            display: 'none'
+            display: 'flex'
           },
           headerStyle: {
             backgroundColor: '#25292e'
