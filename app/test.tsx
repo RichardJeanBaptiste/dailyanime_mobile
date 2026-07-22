@@ -5,10 +5,9 @@ import { fetch } from "@react-native-community/netinfo";
 import { createClient, processLock } from '@supabase/supabase-js';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import Constants from 'expo-constants';
-import { useEffect, useRef, useState } from 'react';
-import { Button, Platform, Text, View } from 'react-native';
-import { AppOpenAd, BannerAd, BannerAdSize, TestIds, useForeground, useInterstitialAd } from 'react-native-google-mobile-ads';
-
+import { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+//import { AppOpenAd, BannerAd, BannerAdSize, TestIds, useForeground, useInterstitialAd } from 'react-native-google-mobile-ads';
 
 
 const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl ?? '';
@@ -31,12 +30,12 @@ const supabase = createClient(
 const queryClient = new QueryClient();
 const filePath = `${RNFS.DocumentDirectoryPath}/quotes.json`;
 
-const adUnitId =  TestIds.APP_OPEN;
-const testBannerAd = TestIds.ADAPTIVE_BANNER;
+// const adUnitId =  TestIds.APP_OPEN;
+// const testBannerAd = TestIds.ADAPTIVE_BANNER;
 
-const appOpenAd = AppOpenAd.createForAdRequest(adUnitId, {
-    keywords: ['fashion', 'clothing'],
-});
+// const appOpenAd = AppOpenAd.createForAdRequest(adUnitId, {
+//     keywords: ['fashion', 'clothing'],
+// });
 
 
 
@@ -45,26 +44,26 @@ function Example() {
     const [isOnline, setIsOnline] = useState(false);
     const [dbOnline, setDBOnline] = useState(false);
 
-    const { isLoaded, isClosed, load, show } = useInterstitialAd(TestIds.INTERSTITIAL);
+    // const { isLoaded, isClosed, load, show } = useInterstitialAd(TestIds.INTERSTITIAL);
 
-    const bannerRef = useRef<BannerAd>(null);
+    // const bannerRef = useRef<BannerAd>(null);
 
-    useForeground(() => {
-        Platform.OS === 'ios' && bannerRef.current?.load();
-    });
+    // useForeground(() => {
+    //     Platform.OS === 'ios' && bannerRef.current?.load();
+    // });
 
-    useEffect(() => {
-        // Start loading the interstitial straight away
-        load();
-    }, [load]);
+    // useEffect(() => {
+    //     // Start loading the interstitial straight away
+    //     load();
+    // }, [load]);
 
-    useEffect(() => {
-        if (isClosed) {
-            // Action after the ad is closed
-            // Alert.alert("Ad Closed");
-            load();
-        }
-    }, [isClosed, load]);
+    // useEffect(() => {
+    //     if (isClosed) {
+    //         // Action after the ad is closed
+    //         // Alert.alert("Ad Closed");
+    //         load();
+    //     }
+    // }, [isClosed, load]);
 
     const checkDBStatus = async () => {
         const { data, error } = await supabase.from('quotes').select('*').limit(1);
@@ -151,32 +150,6 @@ function Example() {
             <Text>{data[0].char_name}</Text>
             <Text>Online Status: {isOnline ? "True" : "False"}</Text>
             <Text>Database Status: {dbOnline ? "True": "False"}</Text>
-
-            <View>
-                <Button
-                    title="Navigate to next screen"
-                    onPress={() => {
-                        if (isLoaded) {
-                            show();
-                        } 
-                    }}
-                />
-            </View>
-
-           
-
-            <View style={{ marginTop: '80%'}}>
-                <BannerAd
-                    unitId={testBannerAd}
-                    size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
-                    requestOptions={{
-                        networkExtras: {
-                            collapsible: 'bottom',
-                        },
-                    }}
-                />
-            </View>
-
             
         </View>
     )

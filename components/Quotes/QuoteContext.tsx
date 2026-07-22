@@ -277,9 +277,14 @@ export const QuoteProvider = ({ children } : {children: ReactNode}) => {
     
     useEffect(() => {
         if (quotesQuery.data && charsQuery.data) {
-            setIsLoading(false);
             setJsonData(quotesQuery.data);
             setCharJson(charsQuery.data);
+
+            setTimeout(() => {
+                console.log("Data Loading")
+                setIsLoading(false);
+            },15000)
+            
         }
     }, [quotesQuery.data, charsQuery.data]);
     

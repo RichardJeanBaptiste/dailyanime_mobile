@@ -88,7 +88,7 @@ export default function QuoteCarousel({data, style}: { data: any , style?: any }
                 transition={{ type: 'spring', delay: index * 100}}
                 style={[
                     { width: SCREEN_WIDTH, height: SCREEN_HEIGHT, position: 'relative'},
-                    animatedStyle
+                    //animatedStyle
                 ]}
             >
                 {/*************************** Title *****************************/}

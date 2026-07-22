@@ -28,7 +28,7 @@ export default {
                 monochromeImage: "./assets/images/android-icon-monochrome.png"
             },
             "usesCleartextTraffic": true,
-            edgeToEdgeEnabled: true,
+            //edgeToEdgeEnabled: true,
             predictiveBackGestureEnabled: false,
             package: "com.company.dailyanime",
             googleServicesFile: process.env.GOOGLE_SERVICES_FILE ?? './google-services.json'
@@ -70,12 +70,12 @@ export default {
                 }
                 }
             ],
-            [
-                "react-native-google-mobile-ads",
-                {
-                    "androidAppId": "ca-app-pub-4929537070408822~3908928179"
-                }
-            ]
+            // [
+            //     "react-native-google-mobile-ads",
+            //     {
+            //         "androidAppId": "ca-app-pub-4929537070408822~3908928179"
+            //     }
+            // ]
         ],
         extra: {
             supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,

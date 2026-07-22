@@ -13,22 +13,20 @@ import useUserSettings from "@/hooks/useUserSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 //import { ActivityIndicator } from 'react-native-paper';
-import Constants from 'expo-constants';
-import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
+//import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { shuffleArray } from "../methods";
+import LoadingScreen from "./LoadingScreen";
 import { useSearchContext } from './QuoteContext';
 import QuoteItem from "./QuoteItems";
 import QuoteModal from "./QuoteModal";
 import TutorialOverlay from "./TutorialOverlay";
 
-//const adUnitId = 'ca-app-pub-4929537070408822/647380718';
 
-const bannerUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : Constants?.expoConfig?.extra?.bannerId;
-
+// const bannerUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : Constants?.expoConfig?.extra?.bannerId;
 //const testBannerAd = TestIds.ADAPTIVE_BANNER;
 
 export default function Quotes() {
@@ -50,11 +48,11 @@ export default function Quotes() {
 
     const halfWindow = Math.floor(windowSize / 2);
 
-    const bannerRef = useRef<BannerAd>(null);
+    //const bannerRef = useRef<BannerAd>(null);
 
-    useForeground(() => {
-        Platform.OS === 'ios' && bannerRef.current?.load();
-    });
+    // useForeground(() => {
+    //     Platform.OS === 'ios' && bannerRef.current?.load();
+    // });
  
     // Handle Push Notification Click Interaction
     useEffect(() => {
@@ -101,7 +99,7 @@ export default function Quotes() {
             const randomizedIndicies = shuffleArray(indices);
 
             setQuoteLog(randomizedIndicies);
-            
+                        
         }
         
     },[isLoading, jsonData]);
@@ -171,13 +169,11 @@ export default function Quotes() {
         setShowTutorial('none')
     }
 
-   
-    
     
     if(isLoading) {
         return (
             <SafeAreaView style={{ flex: 1 }}>
-                <Text style={{ color: 'white', fontSize: 24}} onPress={() => console.log(jsonData)}>Loading</Text>
+                <LoadingScreen/>
             </SafeAreaView>
         )
     } else {
@@ -219,19 +215,6 @@ export default function Quotes() {
                         keyExtractor={(item, index) => `${item}-${index}`}
                         ListEmptyComponent={<Text></Text>}      
                     />
-
-                    <View style={styles.bannerContainer}>
-                        <BannerAd
-                            unitId={bannerUnitId}
-                            size={BannerAdSize.BANNER}
-                            requestOptions={{
-                                networkExtras: {
-                                    collapsible: 'bottom',
-                                },
-                            }}
-                        />
-                    </View>
-
                     
                 </SafeAreaView>
             </>
@@ -297,52 +280,16 @@ const styles = StyleSheet.create({
   }
 });
 
-   // const schedulePosts = async () => {
-    //     //console.log("Sending Push Notifications")
-
-    //     const { data , error } = await supabase.rpc('get_quotes_json');
-
-    //     if(error) {
-    //         console.log("Error getting Push Notification Post: ", error);
-    //         return;
-    //     }
-
-    //     const randomIndex = Math.floor(Math.random() * (data.length || 100));
-
-    //     let quote = await data[randomIndex];
-
-    //     // Schedule Daily Quote
-
-    //     const now = new Date();
-
-    //     const {hours, minutes} = getTimeFromString(userSettings.NotificationTime);
-
-    //     // if (
-    //     //     Number.isNaN(hours) || Number.isNaN(minutes)
-    //     // ) {
-    //     //     console.log("Invalid time input:", userSettings.NotificationTime);
-    //     //     console.log(typeof userSettings.NotificationTime);
-    //     //     return;
-    //     // }
-
-    //     // console.log('hours:', hours, typeof hours);
-    //     // console.log('minutes:', minutes, typeof minutes);
-
-    //     await Notifications.cancelScheduledNotificationAsync(DAILY_QUOTE_ID);
-
-    //     await Notifications.scheduleNotificationAsync({
-    //         identifier: DAILY_QUOTE_ID,
-    //         content: {
-    //             title: quote.char_name,
-    //             body: quote.quote,
-    //             data: {quote},
-    //         },
-    //         trigger: {
-    //             hour: hours,
-    //             minute: minutes,
-    //             repeats: true, 
-    //             type: Notifications.SchedulableTriggerInputTypes.DAILY,
-    //             channelId: 'daily-quotes'
-    //         } as Notifications.DailyTriggerInput,
-    //     });
-    // }
+{/**
+    <View style={styles.bannerContainer}>
+        <BannerAd
+            unitId={bannerUnitId}
+            size={BannerAdSize.BANNER}
+            requestOptions={{
+                networkExtras: {
+                    collapsible: 'bottom',
+                },
+            }}
+        />
+    </View>
+*/}
