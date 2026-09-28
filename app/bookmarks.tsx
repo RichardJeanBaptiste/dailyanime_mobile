@@ -1,6 +1,6 @@
 import IconButton from '@/components/IconButton';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useIsFocused } from 'expo-router';
 import { Key, useEffect, useState } from 'react';
 import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
@@ -76,11 +76,11 @@ export default function Bookmarks(){
                     <Text style={styles.bookmark_text}>{`${quote}\n\n-${author}`}</Text>
                     <View style={styles.bookmark_btn_container}>
                         <View style={styles.delete_btn}>
-                            <IconButton icon={<FontAwesome name="trash" size={20} color="white" />} onPress={() => deleteBookmark(quote)}/>
+                            <IconButton icon={<MaterialDesignIcons name="trash-can-outline" size={20} color="white" />} onPress={() => deleteBookmark(quote)}/>
                         </View>
                         
                         <View style={styles.share_btn}>
-                            <IconButton icon={<FontAwesome name="share" size={20} color="white" />} onPress={() => shareBookmark(quote, author)}/>
+                            <IconButton icon={<MaterialDesignIcons name="share-variant" size={20} color="white" />} onPress={() => shareBookmark(quote, author)}/>
                         </View>
                         
                     </View>

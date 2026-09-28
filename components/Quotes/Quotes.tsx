@@ -11,7 +11,7 @@ import useAppConstants from "@/hooks/useAppConstants";
 import useScheduleNotification from "@/hooks/useScheduleNotification";
 import useUserSettings from "@/hooks/useUserSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from 'expo-router';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from "react-native";
 //import { ActivityIndicator } from 'react-native-paper';

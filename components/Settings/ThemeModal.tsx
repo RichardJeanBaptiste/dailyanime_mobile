@@ -1,5 +1,5 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useEffect, useState } from 'react';
 import { Dimensions, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -46,9 +46,9 @@ export default function ThemeModel({modalVisible, setVisible}: {modalVisible:any
                                 <Text style={{ flex: .8 }}>Light</Text>
                                 <Pressable style={{ flex: .2,  alignItems: 'center', justifyContent: 'center' }} onPress={() => handleTheme("light")}>
                                     {themeSelection == "light" ? 
-                                        <FontAwesome name="circle-thin" size={15} color="orange"/>
+                                        <MaterialDesignIcons name="circle-outline" size={15} color="orange"/>
                                         :
-                                        <FontAwesome name="circle" size={15} color="black"/>
+                                        <MaterialDesignIcons name="circle" size={15} color="black"/>
                                     }
                                 </Pressable>
                             </View>
@@ -57,9 +57,9 @@ export default function ThemeModel({modalVisible, setVisible}: {modalVisible:any
                                 <Text style={{ flex: .8 }}>Dark</Text>
                                 <Pressable style={{ flex: .2,  alignItems: 'center', justifyContent: 'center' }} onPress={() => handleTheme("dark")}>
                                     {themeSelection == "dark" ? 
-                                        <FontAwesome name="circle-thin" size={15} color="orange"/>
+                                        <MaterialDesignIcons name="circle-outline" size={15} color="orange"/>
                                         :
-                                        <FontAwesome name="circle" size={15} color="black"/>
+                                        <MaterialDesignIcons name="circle" size={15} color="black"/>
                                     }
                                 </Pressable>
                             </View>
@@ -68,9 +68,9 @@ export default function ThemeModel({modalVisible, setVisible}: {modalVisible:any
                                 <Text style={{ flex: .8 }}>System Default</Text>
                                 <Pressable style={{ flex: .2, alignItems: 'center', justifyContent: 'center' }} onPress={() => handleTheme("default")}>
                                     {themeSelection == "default" ? 
-                                        <FontAwesome name="circle-thin" size={15} color="orange"/>
+                                        <MaterialDesignIcons name="circle-outline" size={15} color="orange"/>
                                         :
-                                        <FontAwesome name="circle" size={15} color="black"/>
+                                        <MaterialDesignIcons name="circle" size={15} color="black"/>
                                     }
                                 </Pressable>
                             </View>

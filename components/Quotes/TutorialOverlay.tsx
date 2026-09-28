@@ -1,5 +1,5 @@
 import useAppConstants from '@/hooks/useAppConstants';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -43,7 +43,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
             >
                 <View style={{ flex: 1, position: 'relative' }}>
                     <View style={styles.titleTextContainer}>
-                        <FontAwesome name="hand-o-up" size={24} color="white"/>
+                        <MaterialDesignIcons name="hand-pointing-right" size={24} color="white"/>
                         <Text style={[styles.text, {width: '60%', height: '110%',fontSize: 16} ]}>{titleDesc}</Text>
                     </View>
                 </View>
@@ -59,7 +59,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
             >
                 <View style={{ flex: 1, position: 'relative' }}>
                     <View style={styles.qTextContainer1}>
-                        <FontAwesome name="hand-o-down" size={22} color="white"/>
+                        <MaterialDesignIcons name="hand-pointing-down" size={22} color="white"/>
                         <Text style={[styles.text, {fontSize: 18} ]}>{quoteDesc}</Text>
                     </View>
                 </View>
@@ -82,7 +82,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
                             style={{ flex:.5, justifyContent: 'center', alignItems: 'center'}} 
                             onPress={updateIndex}
                         >
-                            <FontAwesome name="hand-o-right" size={20} color="white"/>
+                            <MaterialDesignIcons name="hand-pointing-right" size={20} color="white"/>
                             <Text style={[styles.text, styles.qBtnText ]}>{`Swipe right to get previous quotes`}</Text>
                         </Pressable>
 
@@ -91,7 +91,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
                             style={{ flex:.5 , justifyContent: 'center', alignItems: 'center'}}
                             onPress={updateIndex}
                         >
-                            <FontAwesome name="hand-o-left" size={20} color="white"/>
+                            <MaterialDesignIcons name="hand-pointing-left" size={20} color="white"/>
                             <Text style={[styles.text, styles.qBtnText]}>{`Swipe left to get more quotes`}</Text>
                         </Pressable> 
                     </View> 
@@ -110,7 +110,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
                 <View style={{flex: 1, position: 'relative' }}>
                     <View style={{ position: 'absolute' , top: '15%', left: '-3%', justifyContent: 'center', alignItems: 'center'}}>
                         <Text style={[styles.text, {textAlign: 'center', width: '60%', height: '80%'}]}>{bookmarkDesc}</Text>
-                        <FontAwesome name="hand-o-down" size={20} color="white"/>
+                        <MaterialDesignIcons name="hand-pointing-down" size={20} color="white"/>
                     </View>
                 </View>
             </Pressable> 
@@ -125,7 +125,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
             >
                 <View style={{flex: 1, position: 'relative'}}>
                     <View style={{ position: 'absolute' , top: '70%', left: '50%', alignItems: 'center', transform: 'translate(-50%, -50%)'}}>
-                        <FontAwesome name="hand-o-up" size={20} color="white"/>
+                        <MaterialDesignIcons name="hand-pointing-up" size={20} color="white"/>
                         <Text style={[styles.text, {textAlign: 'center', width: '40%', height: '70%'}]}>{wikiDesc}</Text>
                     </View>
                 </View>
@@ -148,7 +148,7 @@ export default function TutorialOverlay({closeTutorial} : {closeTutorial: any}) 
                 <View style={{flex: 1, position: 'relative'}}>
                     <View style={[{position: 'absolute' , top: '5%', right: '16%', width: '30%', height: '50%', alignItems: 'center', gap: 10}]}>
                         <Text style={[styles.text, {textAlign: 'center'}]}>{shareDesc}</Text>
-                        <FontAwesome name="hand-o-down" size={20} color="white"/>
+                        <MaterialDesignIcons name="hand-pointing-down" size={20} color="white"/>
                     </View>
                 </View>
             </Pressable> 

@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { MotiView } from 'moti';
 import { memo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { QuoteLogItem } from '../Interfaces';
 import QuoteButtons from './QuoteButtons';
 
@@ -34,7 +34,14 @@ const QuoteItem = memo(({item, index, scrollX, setActive}: {item: QuoteLogItem, 
                 [0.8, 1, 0.8]
             );
 
+            const opacity = interpolate(
+                scrollX.value,
+                inputRange,
+                [0.65, 1, 0.65]
+            );
+
             return {
+                opacity,
                 transform: [
                     { perspective: 1000 },
                     { rotateY: `${rotateY}deg` },
@@ -44,16 +51,30 @@ const QuoteItem = memo(({item, index, scrollX, setActive}: {item: QuoteLogItem, 
         });
         
         return (
-            <MotiView 
-                from={{ opacity: 0, scale: 0.9, translateX: 50 }}
-                animate={{ opacity: 1, scale: 1, translateX: 0 }}
-                transition={{ type: 'spring', delay: index * 100}}
-                style={[
-                    { width: SCREEN_WIDTH, height: SCREEN_HEIGHT, position: 'relative'},
-                    animatedStyle
-                ]}
-            >
-                {/*************************** Title *****************************/}
+
+            <Animated.View style={animatedStyle}>
+                <MotiView
+                    from={{
+                        opacity: 0,
+                        scale: 0.9,
+                        translateX: 50,
+                    }}
+                    animate={{
+                        opacity: 1,
+                        scale: 1,
+                        translateX: 0,
+                    }}
+                    transition={{
+                        type: 'spring',
+                        delay: index * 100,
+                    }}
+                    style={{
+                        width: SCREEN_WIDTH,
+                        height: SCREEN_HEIGHT,
+                        position: 'relative',
+                    }}
+                >
+                    {/*************************** Title *****************************/}
                     <View style={styles.titleContainer}>
                         <View style={styles.imgContainer}>
                             <Pressable onPress={setActive}>
@@ -95,7 +116,8 @@ const QuoteItem = memo(({item, index, scrollX, setActive}: {item: QuoteLogItem, 
                 <View style={{ position: 'absolute', top: '65%', height: '10%', width: '100%'}}>
                     <QuoteButtons wikiLink={item?.wiki || ''} quote={item?.quote || ''} name={item?.char_name || ''}/>
                 </View>
-            </MotiView>
+                </MotiView>
+            </Animated.View>
     )
 });
 

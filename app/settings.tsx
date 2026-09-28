@@ -2,7 +2,7 @@ import Notifications from '@/components/Settings/Notifications';
 import Restore from '@/components/Settings/Restore';
 import RestoreModel from '@/components/Settings/RestoreModal';
 import TutorialModel from '@/components/Settings/TutorialModal';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -88,7 +88,7 @@ export default function Settings() {
 
                 <Pressable onPress={() => setTModal()}>
                     <SettingItem 
-                        icon={<FontAwesome6 name="chalkboard" size={22} color="white" />}
+                        icon={<MaterialDesignIcons name="school" size={22} color="white" />}
                         title="Tutorial" 
                         info="Learn all the features of the app again"
                     />

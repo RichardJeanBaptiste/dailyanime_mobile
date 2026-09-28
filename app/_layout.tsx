@@ -1,5 +1,4 @@
 import { QuoteProvider } from '@/components/Quotes/QuoteContext';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -46,7 +45,7 @@ export default function RootLayout() {
           options={{
             drawerLabel: 'Home',
             drawerIcon: () => (
-              <FontAwesome name="home" size={17} color="white" />
+              <MaterialDesignIcons name="home-variant-outline" size={17} color="white" />
             ),
             drawerLabelStyle: {
               color: 'white'
@@ -64,7 +63,7 @@ export default function RootLayout() {
             options={{
               drawerLabel: 'Daily',
               drawerIcon: () => (
-                <FontAwesome name="calendar-check-o" size={15} color="white" />
+                <MaterialDesignIcons name="calendar" size={15} color="white" />
               ),
               drawerLabelStyle: {
                 color: 'white'
@@ -82,7 +81,7 @@ export default function RootLayout() {
           options={{
             drawerLabel: 'Bookmarks',
             drawerIcon: () => (
-              <FontAwesome name="get-pocket" size={15} color="white" />
+              <MaterialDesignIcons name="pocket" size={15} color="white" />
             ),
             drawerLabelStyle: {
               color: 'white'
@@ -100,7 +99,7 @@ export default function RootLayout() {
           options={{
             drawerLabel: 'Characters',
             drawerIcon: () => (
-              <FontAwesome name="user" size={15} color="white" />
+              <MaterialDesignIcons name="face-man" size={15} color="white" />
             ),
             drawerLabelStyle: {
               color: 'white'
@@ -118,7 +117,7 @@ export default function RootLayout() {
         options={{
           drawerLabel: 'Settings',
           drawerIcon: () => (
-            <FontAwesome name="gear" size={15} color="white" />
+            <MaterialDesignIcons name="account-settings" size={15} color="white" />
           ),
           drawerLabelStyle: {
             color: 'white'
@@ -136,7 +135,7 @@ export default function RootLayout() {
         options={{
           drawerLabel: 'About',
           drawerIcon: () => (
-            <FontAwesome name="info-circle" size={15} color="white" />
+            <MaterialDesignIcons name="information-box" size={15} color="white" />
           ),
           drawerLabelStyle: {
             color: 'white'

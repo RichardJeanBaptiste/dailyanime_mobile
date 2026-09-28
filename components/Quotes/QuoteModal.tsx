@@ -1,4 +1,4 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { Image } from 'expo-image';
 import * as Linking from 'expo-linking';
 import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -73,9 +73,9 @@ export default function QuoteModal({currentQuote, modalVisible, setVisible}: Mod
                                 
                                     
                             <View style={styles.button_container}>
-                                <IconButton icon={<FontAwesome name="wikipedia-w" size={24} color="white"/>} onPress={linkToWiki}/>
-                                <IconButton icon={<FontAwesome name="quote-right" size={24} color="white"/>} onPress={() => openQuotes(currentQuote.name)}/>
-                                <IconButton icon={<FontAwesome name="close" size={24} color="red" />} onPress={() => setVisible()}/>
+                                <IconButton icon={<MaterialDesignIcons name="wikipedia" size={24} color="white"/>} onPress={linkToWiki}/>
+                                <IconButton icon={<MaterialDesignIcons name="format-quote-close-outline" size={24} color="white"/>} onPress={() => openQuotes(currentQuote.name)}/>
+                                <IconButton icon={<MaterialDesignIcons name="close-outline" size={24} color="red" />} onPress={() => setVisible()}/>
                             </View> 
                     
                         </View>

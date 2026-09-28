@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from "react";
-import { Platform, StyleSheet, View, } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -15,6 +15,7 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
     shouldShowBanner: true,
     shouldShowList: true,
+    shouldShowAlert: true
   }),
 });
 
@@ -25,6 +26,8 @@ export default function Index() {
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(
     undefined
   );
+
+  const [devMode, setMode] = useState(true);
 
  
   useEffect(() => {
@@ -87,8 +90,11 @@ async function registerForPushNotificationsAsync() {
   }
 
   if (Device.isDevice) {
+
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+
     let finalStatus = existingStatus;
+
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;

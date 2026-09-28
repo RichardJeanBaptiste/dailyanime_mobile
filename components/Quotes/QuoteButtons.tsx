@@ -1,5 +1,5 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import * as Linking from 'expo-linking';
 import { useEffect, useState } from 'react';
 import { Share, StyleSheet, View } from 'react-native';
@@ -106,11 +106,11 @@ export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButto
     const BookmarkItem = () => {
         if(quoteExists) {
             return (
-                <FontAwesome name="get-pocket" size={18} color="orange" />
+                <MaterialDesignIcons name="pocket" size={18} color="orange" />
             )
         } else {
             return (
-                <FontAwesome name="get-pocket" size={18} color="white" />
+                <MaterialDesignIcons name="pocket" size={18} color="white" />
             )
         }
     }
@@ -120,9 +120,9 @@ export default function QuoteButtons({wikiLink, quote, name, style} : QuoteButto
 
             <IconButton icon={<BookmarkItem/>} onPress={storeQuote}/>
 
-            <IconButton icon={<FontAwesome name="wikipedia-w" size={18} color="white" />} onPress={linkToWiki}/>
+            <IconButton icon={<MaterialDesignIcons name="wikipedia" size={18} color="white" />} onPress={linkToWiki}/>
                        
-            <IconButton icon={<FontAwesome name="share" size={18} color="white" />} onPress={shareQuote}/>
+            <IconButton icon={<MaterialDesignIcons name="share-variant" size={18} color="white" />} onPress={shareQuote}/>
 
         </View>   
     )

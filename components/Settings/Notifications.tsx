@@ -1,5 +1,5 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import useUserSettings from '../../hooks/useUserSettings';
@@ -27,11 +27,11 @@ export default function Notifications() {
             <View>
                 {userSettings.isNotifications ? 
                     <Pressable onPress={() => setNotifications(false)}>
-                        <MaterialCommunityIcons name="checkbox-outline" size={20} color="orange" />
+                        <MaterialDesignIcons name="checkbox-outline" size={20} color="orange" />
                     </Pressable>
                     :
                     <Pressable onPress={() => setNotifications(true)}>
-                        <MaterialCommunityIcons name="checkbox-blank-outline" size={20} color="white"/>
+                        <MaterialDesignIcons name="checkbox-blank-outline" size={20} color="white"/>
                     </Pressable>
                 }
             </View>
@@ -43,11 +43,11 @@ export default function Notifications() {
             <View>
                 {userSettings.isSoundOn ? 
                     <Pressable onPress={() => setSoundSettings(false)}>
-                        <MaterialCommunityIcons name="checkbox-outline" size={20} color="orange" />
+                        <MaterialDesignIcons name="checkbox-outline" size={20} color="orange" />
                     </Pressable>
                     :
                     <Pressable onPress={() => setSoundSettings(true)}>
-                        <MaterialCommunityIcons name="checkbox-blank-outline" size={20} color="white"/>
+                        <MaterialDesignIcons name="checkbox-blank-outline" size={20} color="white"/>
                     </Pressable>
                 }
             </View>
