@@ -12,3 +12,13 @@ export interface ModalInfo {
     modalVisible: boolean,
     setVisible: () => void
 }
+
+export type Quote = {
+  id: string | number;
+  quote: string;
+  char_name: string;
+  anime: string;
+  biography: string;
+  episode?: string | number;
+  imageUrl?: string;
+};

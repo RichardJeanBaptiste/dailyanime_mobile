@@ -151,7 +151,7 @@ export default function RootLayout() {
       <Drawer.Screen
         name="test"
         options={{
-          drawerLabel: '',
+          drawerLabel: 'test',
           drawerLabelStyle: {
             color: 'white'
           },
